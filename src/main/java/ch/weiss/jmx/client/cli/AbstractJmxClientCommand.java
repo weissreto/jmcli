@@ -55,8 +55,8 @@ public abstract class AbstractJmxClientCommand extends AbstractHeaderCommand
 
   private void runPeriodically()
   {
-    term.clear();
     term.cursor().hide();
+    term.clear().screen();
     try
     {
       while(System.in.available()==0)
@@ -73,8 +73,7 @@ public abstract class AbstractJmxClientCommand extends AbstractHeaderCommand
     finally
     {
       term.cursor().show();
-    }
-    
+    }    
   }
 
   private void sleep() throws IOException

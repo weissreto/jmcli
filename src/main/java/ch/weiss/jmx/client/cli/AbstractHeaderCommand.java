@@ -45,6 +45,7 @@ public abstract class AbstractHeaderCommand extends AbstractCommand
   {
     printName(intend, name);
     printSecondColumn(value);
+    term.clear().lineToEnd();
     term.newLine();
   }
   
@@ -57,6 +58,7 @@ public abstract class AbstractHeaderCommand extends AbstractCommand
   {
     printName(indent, name);
     printSecondColumn(Styles.ERROR, toErrorMessage(error));
+    term.clear().lineToEnd();
     term.newLine();
   }
 
