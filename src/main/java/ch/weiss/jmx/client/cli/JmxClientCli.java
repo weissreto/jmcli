@@ -3,6 +3,7 @@ package ch.weiss.jmx.client.cli;
 import ch.weiss.jmx.client.cli.info.Info;
 import ch.weiss.jmx.client.cli.list.List;
 import ch.weiss.jmx.client.cli.list.ListVirtualMachines;
+import ch.weiss.jmx.client.cli.set.Set;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Help;
@@ -21,7 +22,8 @@ import picocli.CommandLine.Help;
          "|@",
   subcommands = {
     List.class,
-    Info.class
+    Info.class,
+    Set.class
 })
 public class JmxClientCli extends AbstractCommand
 {
