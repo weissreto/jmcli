@@ -1,11 +1,17 @@
 package ch.weiss.jmx.client.cli;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
+import ch.weiss.jmx.client.JmxException;
 import ch.weiss.jmx.client.cli.info.Info;
+import ch.weiss.jmx.client.cli.invoke.Invoke;
 import ch.weiss.jmx.client.cli.list.List;
 import ch.weiss.jmx.client.cli.list.ListVirtualMachines;
 import ch.weiss.jmx.client.cli.set.Set;
+import ch.weiss.terminal.AnsiTerminal;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.ExecutionException;
 import picocli.CommandLine.Help;
 
 @Command(
@@ -23,13 +29,52 @@ import picocli.CommandLine.Help;
   subcommands = {
     List.class,
     Info.class,
-    Set.class
+    Set.class,
+    Invoke.class
 })
 public class JmxClientCli extends AbstractCommand
 {
   public static void main(String[] args)
   {
-    CommandLine.run(new JmxClientCli(), System.err, Help.Ansi.ON, args);    
+    try
+    {
+      CommandLine.run(new JmxClientCli(), System.err, Help.Ansi.ON, args);
+    }
+    catch(ExecutionException ex)
+    {
+      printError(ex);
+    }
+  }
+
+  private static void printError(ExecutionException ex)
+  {
+    AnsiTerminal term = AnsiTerminal.get();
+    term.style(Styles.ERROR);
+    term.newLine();
+    term.newLine();
+    String message = getRootMessage(ex);
+    term.write(message);
+    term.newLine();
+    term.newLine();
+    term.reset();
+  }
+
+  private static String getRootMessage(ExecutionException ex)
+  {
+    if (ex.getCause() instanceof CommandException)
+    {
+      return ex.getCause().getMessage();
+    }
+    if (ex.getCause() instanceof JmxException)
+    {
+      JmxException jmxEx = (JmxException) ex.getCause();
+      if (jmxEx.getCause() != null)
+      {
+        return ex.getCause().getMessage()+" because of "+ExceptionUtils.getRootCauseMessage(jmxEx);
+      }
+      return ex.getCause().getMessage();
+    }
+    return ex.getMessage();
   }
 
   @Override
