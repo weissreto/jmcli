@@ -19,7 +19,7 @@ public class InfoVirtualMachine extends AbstractJmxClientCommand
   @Override
   protected void execute()
   {
-    MBean runtime = getJmxClient().bean(MBeanName.createFor("java.lang:type=Runtime"));
+    MBean runtime = getJmxClient().bean(MBeanName.RUNTIME);
     MBean jmImpl = getJmxClient().bean(MBeanName.createFor("JMImplementation:type=MBeanServerDelegate"));
     term.newLine();
     printName(runtime.attribute("VmName").valueAsString());
