@@ -26,10 +26,12 @@ public abstract class AbstractHeaderCommand extends AbstractCommand
   
   protected void printHeader()
   {
+    term.clear().lineToEnd();
     term.newLine();
     term.style(Styles.TITLE);
     printTitle();
     term.reset();
+    term.clear().lineToEnd();
     term.newLine();
   }
   

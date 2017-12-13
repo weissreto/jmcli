@@ -27,6 +27,7 @@ public class ListThreads extends AbstractJmxClientCommand
   @Override
   protected void execute()
   {
+    term.clear().lineToEnd();
     term.newLine();
     
     Table table = new Table();
