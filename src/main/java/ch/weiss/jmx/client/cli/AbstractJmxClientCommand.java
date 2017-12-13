@@ -2,6 +2,8 @@ package ch.weiss.jmx.client.cli;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
+
 import ch.weiss.jmx.client.JmxClient;
 import ch.weiss.jmx.client.JmxException;
 import ch.weiss.jmx.client.Jvm;
@@ -9,8 +11,8 @@ import picocli.CommandLine.Option;
 
 public abstract class AbstractJmxClientCommand extends AbstractHeaderCommand
 {
-  @Option(names = {"-v", "--vm"}, description = "Id or part of the name of the virtual machine", required = true)
-  protected String vmIdOrName;
+  @Option(names = {"-j", "--jvm"}, description = "Process id or a part of the main class name or the host:port of the Java virtual machine", required = true)
+  protected String jvm;
   
   @Option(names = {"-i", "--interval"}, description = "Refresh interval in seconds")
   protected int interval=0;
@@ -45,12 +47,31 @@ public abstract class AbstractJmxClientCommand extends AbstractHeaderCommand
   
   private JmxClient connect()
   {
-    Jvm jvm = Jvm.runningJvm(vmIdOrName);
-    if (jvm == null)
+    if (isHostAndPort())
     {
-      throw new IllegalArgumentException("Virtual machine with id " + vmIdOrName + " not found");
+      return JmxClient.connectTo(getHost(), getPort());
     }
-    return jvm.connect();
+    Jvm attachableJvm = Jvm.runningJvm(jvm);
+    if (attachableJvm == null)
+    {
+      throw new CommandException("Java virtual machine {0} not found.\nPlease specify a correct Java process id or Java main class name or a host:port.", jvm);
+    }
+    return attachableJvm.connect();
+  }
+
+  private boolean isHostAndPort()
+  {
+    return StringUtils.contains(jvm, ":");
+  }
+
+  private String getHost()
+  {
+    return StringUtils.substringBefore(jvm, ":");
+  }
+  
+  private int getPort()
+  {
+    return Integer.parseInt(StringUtils.substringAfter(jvm, ":"));
   }
 
   private void runPeriodically()
