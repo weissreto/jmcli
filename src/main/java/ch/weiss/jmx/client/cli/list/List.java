@@ -6,7 +6,9 @@ import picocli.CommandLine.Command;
 @Command(name = "list", description="Lists objects", subcommands = {
     ListVirtualMachines.class,
     ListBeans.class,
-    ListAttributes.class/*,
+    ListAttributes.class,
+    ListThreads.class
+    /*,
     ListOperations.class*/})
 public class List extends AbstractCommand
 {

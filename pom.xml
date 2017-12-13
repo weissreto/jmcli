@@ -65,6 +65,7 @@
           <excludeArtifactIds>${project.artifactId},${project.artifactId}.source</excludeArtifactIds>
           <includeArtifactIds>
             check,
+            ansi-terminal-chart,
             ansi-terminal,
             ansi-terminal-for-windows,
             jna,
@@ -86,7 +87,7 @@
     </dependency>
     <dependency>
       <groupId>ch.weiss</groupId>
-      <artifactId>ansi-terminal</artifactId>
+      <artifactId>ansi-terminal-chart</artifactId>
       <version>0.0.2-SNAPSHOT</version>
     </dependency>
     <dependency>
