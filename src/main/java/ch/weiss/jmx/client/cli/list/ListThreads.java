@@ -1,8 +1,10 @@
 package ch.weiss.jmx.client.cli.list;
 
 import java.lang.management.ThreadInfo;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.LongStream;
 
 import javax.management.openmbean.CompositeData;
 
@@ -35,10 +37,12 @@ public class ListThreads extends AbstractJmxClientCommand
   protected boolean delta;
 
   private Map<Long, ThreadData> lastValues = new HashMap<>();
+
+  private java.util.List<String> deadlockedThreadNames = new ArrayList<>();
   
   private static final Style GREEN = Style.create().withColor(Color.BRIGHT_GREEN).toStyle();
   private static final Style YELLOW = Style.create().withColor(Color.BRIGHT_YELLOW).toStyle();
-
+  
   @Override
   protected void printTitle()
   {
@@ -65,6 +69,8 @@ public class ListThreads extends AbstractJmxClientCommand
     MBean threadBean = jmxClient.bean(MBeanName.THREAD);
     threadBean.attribute("ThreadCpuTimeEnabled").value(true);
     threadBean.attribute("ThreadContentionMonitoringEnabled").value(true);
+    long[] deadlockedThreads = (long[])threadBean.operation("findDeadlockedThreads").invoke(new Object[0]);
+    deadlockedThreadNames.clear();
     CompositeData[] threads = (CompositeData[])threadBean.operation("dumpAllThreads", "boolean", "boolean").invoke(false, false);
     for (CompositeData thread : threads)
     {
@@ -77,6 +83,10 @@ public class ListThreads extends AbstractJmxClientCommand
       if (lastData == null)
       {
         lastData = data;
+      }
+      if (isDeadlocked(deadlockedThreads, info))
+      {
+        deadlockedThreadNames.add(info.getThreadName());
       }
       table.addRow();
       table.addValue(info.getThreadName());
@@ -107,13 +117,13 @@ public class ListThreads extends AbstractJmxClientCommand
     return currentValue;
   }
 
-  private static Table declareTable()
+  private Table declareTable()
   {
     Table table = new Table();
     table.addColumn(
         Column.create("Name", 40)
           .withTitleStyle(Styles.NAME_TITLE)
-          .withCellStyle(Styles.NAME)
+          .withCellStyler(this::getDeadlockStyle)
           .toColumn());
     
     table.addColumn(
@@ -171,6 +181,16 @@ public class ListThreads extends AbstractJmxClientCommand
           .toColumn());
     return table;
   }
+  
+  private Style getDeadlockStyle(Object name)
+  {
+    if (deadlockedThreadNames.contains(name))
+    {
+      return Styles.ERROR;
+    }
+    return Styles.NAME;
+  }
+  
   
   private static Style getThreadStateStyle(Object state)
   {
@@ -238,7 +258,12 @@ public class ListThreads extends AbstractJmxClientCommand
     } while (newScaledUnit != scaledUnit);
     return valueStr + " "+scaledUnit.symbol();
   }
-  
+
+  private static boolean isDeadlocked(long[] deadlockedThreads, ThreadInfo info)
+  {
+    return deadlockedThreads != null && LongStream.of(deadlockedThreads).filter(x->x==info.getThreadId()).findAny().isPresent();
+  }
+
   private static class ThreadData
   {
     private ThreadInfo info;
