@@ -17,7 +17,6 @@ import ch.weiss.jmx.client.cli.Styles;
 import ch.weiss.terminal.Color;
 import ch.weiss.terminal.Style;
 import ch.weiss.terminal.chart.unit.Unit;
-import ch.weiss.terminal.table.Column;
 import ch.weiss.terminal.table.RowSorter;
 import ch.weiss.terminal.table.Table;
 import picocli.CommandLine.Command;
@@ -52,14 +51,13 @@ public class ListThreads extends AbstractJmxClientCommand
   @Override
   protected void execute()
   {
-    term.clear().lineToEnd();
-    term.newLine();
+    printEmptyLine();
     
-    Table table = declareTable();
+    Table<ThreadData> table = declareTable();
     
     if (StringUtils.isNotBlank(columnName))
     {
-      RowSorter sorter = table.sortColumn(columnName);
+      RowSorter<ThreadData> sorter = table.sortColumn(columnName);
       if ("DESC".equalsIgnoreCase(direction))
       {
         sorter.descending();
@@ -75,8 +73,7 @@ public class ListThreads extends AbstractJmxClientCommand
     for (CompositeData thread : threads)
     {
       ThreadInfo info = ThreadInfo.from(thread);
-      ThreadData data = new ThreadData();
-      data.info = info;
+      ThreadData data = new ThreadData(info);
       data.cpuTime = (long)threadBean.operation("getThreadCpuTime", "long").invoke(info.getThreadId());
       data.userTime = (long) threadBean.operation("getThreadUserTime", "long").invoke(info.getThreadId()); 
       ThreadData lastData = lastValues.get(info.getThreadId());
@@ -86,115 +83,95 @@ public class ListThreads extends AbstractJmxClientCommand
       }
       if (isDeadlocked(deadlockedThreads, info))
       {
-        deadlockedThreadNames.add(info.getThreadName());
+        data.isDeadLocked = true;
       }
-      table.addRow();
-      table.addValue(info.getThreadName());
-      table.addValue(info.getThreadState());
-      long cpuTime = deltaOrAbsolute(data.cpuTime, lastData.cpuTime); 
-      table.addValue(cpuTime);
-      long usrTime = deltaOrAbsolute(data.userTime, lastData.userTime);
-      table.addValue(usrTime);
-      long waitedTime = deltaOrAbsolute(data.info.getWaitedTime(), lastData.info.getWaitedTime());
-      table.addValue(waitedTime);
-      long waited = deltaOrAbsolute(data.info.getWaitedCount(), lastData.info.getWaitedCount());
-      table.addValue(waited);
-      long blockedTime = deltaOrAbsolute(data.info.getBlockedTime(), lastData.info.getBlockedTime());
-      table.addValue(blockedTime);
-      long blocked = deltaOrAbsolute(data.info.getBlockedCount(), lastData.info.getBlockedCount());
-      table.addValue(blocked);
+      table.addRow(deltaOrAbsolute(data, lastData));
       lastValues.put(info.getThreadId(), data);
     }
     table.print();
   }
 
-  private long deltaOrAbsolute(long currentValue, long lastValue)
+  private ThreadData deltaOrAbsolute(ThreadData currentValue, ThreadData lastValue)
   {
     if (delta)
     {
-      return currentValue-lastValue;
+      return new ThreadData(currentValue, lastValue);
     }
     return currentValue;
   }
 
-  private Table declareTable()
+  private Table<ThreadData> declareTable()
   {
-    Table table = new Table();
+    Table<ThreadData> table = new Table<>();
     table.addColumn(
-        Column.create("Name", 40)
+        table.createColumn("Name", 40)
           .withTitleStyle(Styles.NAME_TITLE)
           .withCellStyler(this::getDeadlockStyle)
+          .withTextProvider(data -> data.name)
           .toColumn());
     
     table.addColumn(
-        Column.create("State", 15)
+        table.createColumn("State", 15, data -> data.state)
           .withTitleStyle(Styles.NAME_TITLE)
           .withCellStyler(ListThreads::getThreadStateStyle)
           .toColumn());
     
     table.addColumn(
-        Column.create("Cpu", 9)
+        table.createColumn("Cpu", 9, data -> data.cpuTime)
           .withTitleStyle(Styles.NAME_TITLE)
           .withCellStyle(Styles.VALUE)
           .withTextProvider(ListThreads::formatNanoSeconds)
-          .withSorter(ListThreads::compareLongs)
           .toColumn());
         
     table.addColumn(
-        Column.create("User", 9)
+        table.createColumn("User", 9, data -> data.userTime)
           .withTitleStyle(Styles.NAME_TITLE)
           .withCellStyle(Styles.VALUE)
           .withTextProvider(ListThreads::formatNanoSeconds)
-          .withSorter(ListThreads::compareLongs)
           .toColumn());
     
     table.addColumn(
-        Column.create("Waited", 9)
+        table.createColumn("Waited", 9, data-> data.waitedTime)
           .withTitleStyle(Styles.NAME_TITLE)
           .withCellStyle(Styles.VALUE)
           .withTextProvider(ListThreads::formatMilliSeconds)
-          .withSorter(ListThreads::compareLongs)
           .toColumn());
     
     table.addColumn(
-        Column.create("Waited", 9)
+        table.createColumn("Waited", 9, data -> data.waitedCount)
           .withTitleStyle(Styles.NAME_TITLE)
           .withCellStyle(Styles.VALUE)
           .withTextProvider(ListThreads::formatCount)
-          .withSorter(ListThreads::compareLongs)
           .toColumn());
     
     table.addColumn(
-        Column.create("Blocked", 9)
+        table.createColumn("Blocked", 9, data -> data.blockedTime)
           .withTitleStyle(Styles.NAME_TITLE)
           .withCellStyle(Styles.VALUE)
           .withTextProvider(ListThreads::formatMilliSeconds)
-          .withSorter(ListThreads::compareLongs)
           .toColumn());
     
     table.addColumn(
-        Column.create("Blocked", 9)
+        table.createColumn("Blocked", 9, data -> data.blockedCount)
           .withTitleStyle(Styles.NAME_TITLE)
           .withCellStyle(Styles.VALUE)
           .withTextProvider(ListThreads::formatCount)
-          .withSorter(ListThreads::compareLongs)
           .toColumn());
     return table;
   }
   
-  private Style getDeadlockStyle(Object name)
+  private Style getDeadlockStyle(ThreadData data)
   {
-    if (deadlockedThreadNames.contains(name))
+    if (data.isDeadLocked)
     {
       return Styles.ERROR;
     }
     return Styles.NAME;
   }
   
-  
-  private static Style getThreadStateStyle(Object state)
+  private static Style getThreadStateStyle(Thread.State state)
   {
-    switch((Thread.State)state)
+    switch(state)
     {
       case NEW:
         return Styles.VALUE;
@@ -212,25 +189,20 @@ public class ListThreads extends AbstractJmxClientCommand
         return Styles.VALUE;
     }
   }
-  
-  private static int compareLongs(Object o1, Object o2)
+    
+  private static String formatNanoSeconds(Long value)
   {
-    return Long.compare((long)o1, (long)o2);
-  }
-  
-  private static String formatNanoSeconds(Object value)
-  {
-    return format((long)value, Unit.NANO_SECONDS, true);
+    return format(value, Unit.NANO_SECONDS, true);
   }
 
-  private static String formatMilliSeconds(Object value)
+  private static String formatMilliSeconds(Long value)
   {
-    return format((long)value, Unit.MILLI_SECONDS, true);
+    return format(value, Unit.MILLI_SECONDS, true);
   }
   
-  private static String formatCount(Object value)
+  private static String formatCount(Long value)
   {
-    return format((long)value, Unit.NONE, false);
+    return format(value, Unit.NONE, false);
   }
 
   private static  String format(long value, Unit unit, boolean doDownScale)
@@ -266,9 +238,38 @@ public class ListThreads extends AbstractJmxClientCommand
 
   private static class ThreadData
   {
-    private ThreadInfo info;
+    private ThreadData(ThreadData currentValue, ThreadData lastValue)
+    {
+      isDeadLocked = currentValue.isDeadLocked;
+      name = currentValue.name;
+      state = currentValue.state;
+      cpuTime = currentValue.cpuTime - lastValue.cpuTime;
+      userTime = currentValue.userTime - lastValue.userTime;
+      waitedTime = currentValue.waitedTime - lastValue.waitedTime;
+      waitedCount = currentValue.waitedCount - lastValue.waitedCount;
+      blockedTime = currentValue.blockedTime - lastValue.blockedTime;
+      blockedCount = currentValue.blockedCount - lastValue.blockedCount;
+    }
+    
+    private ThreadData(ThreadInfo info)
+    {
+      isDeadLocked = false;
+      name = info.getThreadName();
+      state = info.getThreadState();
+      waitedTime = info.getWaitedTime();
+      waitedCount = info.getWaitedCount();
+      blockedTime = info.getBlockedTime();
+      blockedCount = info.getBlockedCount();
+    }
+    
+    private boolean isDeadLocked;
+    private String name;
+    private Thread.State state;
     private long cpuTime;
-    private long userTime;    
+    private long userTime;
+    private long waitedTime;
+    private long waitedCount;
+    private long blockedTime;
+    private long blockedCount;
   }
-  
 }

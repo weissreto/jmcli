@@ -26,17 +26,21 @@ public abstract class AbstractHeaderCommand extends AbstractCommand
   
   protected void printHeader()
   {
-    term.clear().lineToEnd();
-    term.newLine();
+    printEmptyLine();
     term.style(Styles.TITLE);
     printTitle();
     term.reset();
-    term.clear().lineToEnd();
-    term.newLine();
-  }
+    printEmptyLine();
+  }  
   
   abstract protected void printTitle();
   abstract protected void execute();
+
+  protected void printEmptyLine()
+  {
+    term.clear().lineToEnd();
+    term.newLine();
+  }
 
   protected void printNameValue(String name, String value)
   {
