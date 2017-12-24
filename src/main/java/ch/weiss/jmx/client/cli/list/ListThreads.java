@@ -16,6 +16,7 @@ import ch.weiss.jmx.client.cli.AbstractJmxClientCommand;
 import ch.weiss.jmx.client.cli.Styles;
 import ch.weiss.terminal.Color;
 import ch.weiss.terminal.Style;
+import ch.weiss.terminal.StyledText;
 import ch.weiss.terminal.chart.unit.Unit;
 import ch.weiss.terminal.table.RowSorter;
 import ch.weiss.terminal.table.Table;
@@ -26,8 +27,10 @@ import picocli.CommandLine.Parameters;
 @Command(name = "threads", description="Lists all treads")
 public class ListThreads extends AbstractJmxClientCommand
 {
+  private static final int MILLIS_TO_NANOS = 1000*1000;
+
   @Parameters(index="0", arity="0..1", paramLabel="COLUMN", description="Column name to sort")
-  private String columnName;
+  private String sortColumnName;
 
   @Parameters(index="1", arity="0..1", paramLabel="DIRECTION", description="ASC or DESC")
   private String direction;
@@ -35,17 +38,48 @@ public class ListThreads extends AbstractJmxClientCommand
   @Option(names = {"-d", "--delta"}, description = "Displays delta instead of absolute values")
   protected boolean delta;
 
+  @Option(names = {"-f", "--format"}, description = "Format of the values (s)econds, (p)ercentage, (g)raphics)")
+  protected String format;
+
   private Map<Long, ThreadData> lastValues = new HashMap<>();
+  private long lastExecutionTimeInNanoSeconds = -1;
+  private long deltaTimeInNanoSeconds;
 
   private java.util.List<String> deadlockedThreadNames = new ArrayList<>();
+
   
   private static final Style GREEN = Style.create().withColor(Color.BRIGHT_GREEN).toStyle();
+  private static final Style[] GREENS_GRAPHICS = buildGradient(0, 63, 0, 0, 24, 0, 8);
+  private static final Style[] GREENS_PERCENTAGE = buildGradient(0, 155, 0, 0, 1, 0, 101);
   private static final Style YELLOW = Style.create().withColor(Color.BRIGHT_YELLOW).toStyle();
+  private static final Style[] YELLOWS_GRAPHICS = buildGradient(63, 63, 0, 24, 24, 0, 8);
+  private static final Style[] YELLOWS_PERCENTAGE = buildGradient(155, 155, 0, 1, 1, 0, 101);
+  private static final Style RED = Styles.ERROR;
+  private static final Style[] REDS_GRAPHICS = buildGradient(63, 0, 0, 24, 0, 0, 8);
+  private static final Style[] REDS_PERCENTAGE = buildGradient(155, 0, 0, 1, 0, 0, 101);
+
   
   @Override
   protected void printTitle()
   {
     term.write("Threads");
+  }
+
+  private static Style[] buildGradient(int startRed, int startGreen, int startBlue, int deltaRed, int deltaGreen, int deltaBlue, int count)
+  {
+    Style[] gradient = new Style[count];
+    for (int pos = 0; pos < count; pos++)
+    {
+      gradient[pos] = Style.create()
+          .withColor(
+              new Color(
+                  startRed+pos*deltaRed, 
+                  startGreen+pos*deltaGreen,
+                  startBlue+pos*deltaBlue)
+              )
+          .toStyle();
+    }
+    return gradient;
   }
 
   @Override
@@ -55,9 +89,9 @@ public class ListThreads extends AbstractJmxClientCommand
     
     Table<ThreadData> table = declareTable();
     
-    if (StringUtils.isNotBlank(columnName))
+    if (StringUtils.isNotBlank(sortColumnName))
     {
-      RowSorter<ThreadData> sorter = table.sortColumn(columnName);
+      RowSorter<ThreadData> sorter = table.sortColumn(sortColumnName);
       if ("DESC".equalsIgnoreCase(direction))
       {
         sorter.descending();
@@ -70,6 +104,7 @@ public class ListThreads extends AbstractJmxClientCommand
     long[] deadlockedThreads = (long[])threadBean.operation("findDeadlockedThreads").invoke(new Object[0]);
     deadlockedThreadNames.clear();
     CompositeData[] threads = (CompositeData[])threadBean.operation("dumpAllThreads", "boolean", "boolean").invoke(false, false);
+    computeDeltaTime();
     for (CompositeData thread : threads)
     {
       ThreadInfo info = ThreadInfo.from(thread);
@@ -91,6 +126,17 @@ public class ListThreads extends AbstractJmxClientCommand
     table.print();
   }
 
+  private void computeDeltaTime()
+  {
+    long currentExecutionTime = System.nanoTime();
+    deltaTimeInNanoSeconds = currentExecutionTime - lastExecutionTimeInNanoSeconds;
+    if (deltaTimeInNanoSeconds <= 0)
+    {
+      deltaTimeInNanoSeconds = 1;
+    }
+    lastExecutionTimeInNanoSeconds = currentExecutionTime;
+  }
+
   private ThreadData deltaOrAbsolute(ThreadData currentValue, ThreadData lastValue)
   {
     if (delta)
@@ -106,67 +152,67 @@ public class ListThreads extends AbstractJmxClientCommand
     table.addColumn(
         table.createColumn("Name", 40)
           .withTitleStyle(Styles.NAME_TITLE)
-          .withCellStyler(this::getDeadlockStyle)
-          .withTextProvider(data -> data.name)
+          .withStyledTextProvider(ListThreads::threadName)
           .toColumn());
     
     table.addColumn(
         table.createColumn("State", 15, data -> data.state)
           .withTitleStyle(Styles.NAME_TITLE)
-          .withCellStyler(ListThreads::getThreadStateStyle)
+          .withStyledTextProvider(ListThreads::threadState)
           .toColumn());
     
     table.addColumn(
         table.createColumn("Cpu", 9, data -> data.cpuTime)
           .withTitleStyle(Styles.NAME_TITLE)
-          .withCellStyle(Styles.VALUE)
-          .withTextProvider(ListThreads::formatNanoSeconds)
+          .withStyledTextProvider(this::cpuUsage)
           .toColumn());
         
     table.addColumn(
         table.createColumn("User", 9, data -> data.userTime)
           .withTitleStyle(Styles.NAME_TITLE)
-          .withCellStyle(Styles.VALUE)
-          .withTextProvider(ListThreads::formatNanoSeconds)
+          .withStyledTextProvider(this::cpuUsage)
           .toColumn());
     
     table.addColumn(
         table.createColumn("Waited", 9, data-> data.waitedTime)
           .withTitleStyle(Styles.NAME_TITLE)
-          .withCellStyle(Styles.VALUE)
-          .withTextProvider(ListThreads::formatMilliSeconds)
+          .withStyledTextProvider(this::waitedTime)
           .toColumn());
     
     table.addColumn(
         table.createColumn("Waited", 9, data -> data.waitedCount)
           .withTitleStyle(Styles.NAME_TITLE)
-          .withCellStyle(Styles.VALUE)
+          .withCellStyle(YELLOW)
           .withTextProvider(ListThreads::formatCount)
           .toColumn());
     
     table.addColumn(
         table.createColumn("Blocked", 9, data -> data.blockedTime)
           .withTitleStyle(Styles.NAME_TITLE)
-          .withCellStyle(Styles.VALUE)
-          .withTextProvider(ListThreads::formatMilliSeconds)
+          .withStyledTextProvider(this::blockedTime)
           .toColumn());
     
     table.addColumn(
         table.createColumn("Blocked", 9, data -> data.blockedCount)
           .withTitleStyle(Styles.NAME_TITLE)
-          .withCellStyle(Styles.VALUE)
+          .withCellStyle(Styles.ERROR)
           .withTextProvider(ListThreads::formatCount)
           .toColumn());
     return table;
   }
   
-  private Style getDeadlockStyle(ThreadData data)
+  private static StyledText threadName(ThreadData data)
   {
     if (data.isDeadLocked)
     {
-      return Styles.ERROR;
+      return new StyledText(data.name, Styles.ERROR);
     }
-    return Styles.NAME;
+    return new StyledText(data.name, Styles.NAME);
+  }
+  
+  private static StyledText threadState(Thread.State state)
+  {
+    return new StyledText(state.toString(), getThreadStateStyle(state));
   }
   
   private static Style getThreadStateStyle(Thread.State state)
@@ -189,10 +235,70 @@ public class ListThreads extends AbstractJmxClientCommand
         return Styles.VALUE;
     }
   }
-    
+  
+  private StyledText cpuUsage(Long value)
+  {
+    if (isFormatGraphics())
+    {
+      long count = scaledDeltaValue(value, 8, 1);
+      return buildGraphics(count, ">", GREENS_GRAPHICS);
+    }
+    if (isFormatPercentage())
+    {
+      int percentage = (int)scaledDeltaValue(value, 100, 1);
+      return new StyledText(Long.toString(percentage)+" %", GREENS_PERCENTAGE[percentage]);
+    }
+    return new StyledText(formatNanoSeconds(value), GREEN);
+  }
+
   private static String formatNanoSeconds(Long value)
   {
     return format(value, Unit.NANO_SECONDS, true);
+  }
+
+  private StyledText waitedTime(Long value)
+  {
+    if (isFormatGraphics())
+    {
+      long count = scaledDeltaValue(value, 8, MILLIS_TO_NANOS);
+      return buildGraphics(count, "o", YELLOWS_GRAPHICS);
+    }
+    if (isFormatPercentage())
+    {
+      int percentage = (int)scaledDeltaValue(value, 100, MILLIS_TO_NANOS);
+      return new StyledText(Long.toString(percentage)+" %", YELLOWS_PERCENTAGE[percentage]);
+    }
+    return new StyledText(formatMilliSeconds(value), YELLOW);
+  }
+
+  private StyledText blockedTime(Long value)
+  {
+    if (isFormatGraphics())
+    {
+      long count = scaledDeltaValue(value, 8, MILLIS_TO_NANOS);
+      return buildGraphics(count, "x", REDS_GRAPHICS);
+    }
+    if (isFormatPercentage())
+    {
+      int percentage = (int)scaledDeltaValue(value, 100, MILLIS_TO_NANOS);
+      return new StyledText(Long.toString(percentage)+" %", REDS_PERCENTAGE[percentage]);
+    }
+    return new StyledText(formatMilliSeconds(value), RED);
+  }
+
+  private static StyledText buildGraphics(long count, String symbol, Style[] gradient)
+  {
+    StyledText graphicText = new StyledText("");
+    for (int pos = 0; pos < count; pos++)
+    {
+      graphicText = graphicText.append(symbol, gradient[pos]); 
+    }
+    return graphicText;
+  }
+
+  private long scaledDeltaValue(long value, long maxValue, long unitScale)
+  {
+    return Math.min(value*maxValue*unitScale/deltaTimeInNanoSeconds, maxValue);
   }
 
   private static String formatMilliSeconds(Long value)
@@ -234,6 +340,26 @@ public class ListThreads extends AbstractJmxClientCommand
   private static boolean isDeadlocked(long[] deadlockedThreads, ThreadInfo info)
   {
     return deadlockedThreads != null && LongStream.of(deadlockedThreads).filter(x->x==info.getThreadId()).findAny().isPresent();
+  }
+  
+  private boolean isFormatGraphics()
+  {
+    return isDelta() && 
+           format != null &&
+           format.startsWith("g");
+  }
+  
+  private boolean isFormatPercentage()
+  {
+    return isDelta() &&
+           format != null &&
+           format.startsWith("p");
+  }
+
+  private boolean isDelta()
+  {
+    return interval > 0 && 
+           delta;
   }
 
   private static class ThreadData
