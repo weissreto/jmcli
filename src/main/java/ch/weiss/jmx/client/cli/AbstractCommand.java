@@ -9,4 +9,7 @@ public abstract class AbstractCommand implements Runnable
   
   @Option(names = {"-h", "--help"}, usageHelp = true, description = "Display this help message")
   private boolean usageHelpRequested;
+  
+  @Option(names = {"-v", "--verbose"}, description = "Display details message")
+  private boolean verbose;
 }
