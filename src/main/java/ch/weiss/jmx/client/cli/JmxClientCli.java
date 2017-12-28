@@ -1,8 +1,11 @@
 package ch.weiss.jmx.client.cli;
 
+import java.util.Arrays;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import ch.weiss.jmx.client.JmxException;
+import ch.weiss.jmx.client.cli.chart.Chart;
 import ch.weiss.jmx.client.cli.info.Info;
 import ch.weiss.jmx.client.cli.invoke.Invoke;
 import ch.weiss.jmx.client.cli.list.List;
@@ -30,7 +33,8 @@ import picocli.CommandLine.Help;
     List.class,
     Info.class,
     Set.class,
-    Invoke.class
+    Invoke.class,
+    Chart.class
 })
 public class JmxClientCli extends AbstractCommand
 {
@@ -42,11 +46,11 @@ public class JmxClientCli extends AbstractCommand
     }
     catch(ExecutionException ex)
     {
-      printError(ex);
+      printError(ex, args);
     }
   }
 
-  private static void printError(ExecutionException ex)
+  private static void printError(ExecutionException ex, String[] args)
   {
     AnsiTerminal term = AnsiTerminal.get();
     term.style(Styles.ERROR);
@@ -56,6 +60,10 @@ public class JmxClientCli extends AbstractCommand
     term.write(message);
     term.newLine();
     term.newLine();
+    if (Arrays.asList(args).stream().filter(arg -> arg.equals("-v")).findAny().isPresent())
+    {
+      term.write(ExceptionUtils.getStackTrace(ex));
+    }
     term.reset();
   }
 
