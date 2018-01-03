@@ -3,6 +3,13 @@ package ch.weiss.jmx.client.cli.chart.data.channel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.OpenType;
+import javax.management.openmbean.SimpleType;
+
+import org.apache.commons.lang3.StringUtils;
 
 import ch.weiss.check.Check;
 import ch.weiss.jmx.client.JmxClient;
@@ -34,20 +41,73 @@ public class DataChannelFactory
       }
       String name = dataChannelName(bean, attribute, specification, false);
       MAttributeDataChannel attributeDataChannel = new MAttributeDataChannel(name, attribute);
-      if (specification.getCompositeKeys().isEmpty())
+      if (specification.compositeKeys().isEmpty())
       {
-        dataChannels.add(attributeDataChannel);
+        addDataChannels(dataChannels, attributeDataChannel);
       }
       else
       {
         name = dataChannelName(bean, attribute, specification, true);
-        DataChannel dataChannel = new MCompositeDataChannel(name, attributeDataChannel, specification.getCompositeKeys());
+        DataChannel dataChannel = new MCompositeDataChannel(name, attributeDataChannel, specification.compositeKeys());
         dataChannels.add(dataChannel);
       }      
+    }
+    if (specification.deltaValues())
+    {
+      dataChannels = toDeltaDataChannels(dataChannels);
     }
     return dataChannels;
   }
   
+  private static List<DataChannel> toDeltaDataChannels(List<DataChannel> dataChannels)
+  {    
+    return dataChannels
+        .stream()
+        .map(dataChannel -> new DeltaDataChannel(dataChannel))
+        .collect(Collectors.toList());
+  }
+
+  private void addDataChannels(List<DataChannel> dataChannels, MAttributeDataChannel attributeDataChannel)
+  {
+    OpenType<?> type = attributeDataChannel.attribute().openType();
+    if (type == null)
+    {
+      dataChannels.add(attributeDataChannel);
+    }
+    else if (SimpleType.LONG.equals(type))
+    {
+      dataChannels.add(attributeDataChannel);
+    }
+    else if (type instanceof CompositeType)
+    {
+      addDataChannels(dataChannels, attributeDataChannel, (CompositeType)type, new ArrayList<>());
+    }
+    else
+    {
+      throw new CommandException("Attribute type not compatible with charts");
+    }
+  }
+
+  private void addDataChannels(List<DataChannel> dataChannels, MAttributeDataChannel attributeDataChannel,
+      CompositeType type, List<String> parentItemNames)
+  {
+    for (String itemName : type.keySet())
+    {
+      List<String> itemNames = new ArrayList<>(parentItemNames);
+      itemNames.add(itemName);
+      String name = attributeDataChannel.name()+" "+StringUtils.join(itemNames, ".");
+      OpenType<?> itemType = type.getType(itemName);
+      if (SimpleType.LONG.equals(itemType))
+      {        
+        dataChannels.add(new MCompositeDataChannel(name, attributeDataChannel, itemNames));
+      }
+      else if (itemType instanceof CompositeType)
+      {
+        addDataChannels(dataChannels, attributeDataChannel, (CompositeType)itemType, itemNames);
+      }
+    }
+  }
+
   private static String dataChannelName(MBean bean, MAttribute attribute, DataChannelSpecification specification, boolean appendCompositeKeys)
   {
     StringBuilder builder = new StringBuilder();
@@ -75,7 +135,7 @@ public class DataChannelFactory
     if (appendCompositeKeys)
     {
       builder.append(" ");
-      for (String key : specification.getCompositeKeys())
+      for (String key : specification.compositeKeys())
       {
         builder.append(key);
         builder.append(" ");

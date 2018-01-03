@@ -4,20 +4,20 @@ import ch.weiss.check.Check;
 
 public abstract class FunctionDataChannel extends DataChannel
 {
-  private final ScannableDataChannel scannableDataChannel;
+  private final DataChannel baseValueDataChannel;
   
-  protected FunctionDataChannel(String name, ScannableDataChannel scannableDataChannel)
+  protected FunctionDataChannel(String name, DataChannel baseValueDataChannel)
   {
     super(name);
-    Check.parameter("scannableDataChannel").withValue(scannableDataChannel).isNotNull();
-    this.scannableDataChannel = scannableDataChannel;
+    Check.parameter("baseValueDataChannel").withValue(baseValueDataChannel).isNotNull();
+    this.baseValueDataChannel = baseValueDataChannel;
   }
   
   @Override
   public Object value()
   {
-    Object compositeData = scannableDataChannel.value();
-    Object value = apply(compositeData);
+    Object baseValue = baseValueDataChannel.value();
+    Object value = apply(baseValue);
     return value;
   }
 
@@ -25,6 +25,10 @@ public abstract class FunctionDataChannel extends DataChannel
 
   ScannableDataChannel scannableDataChannel()
   {
-    return scannableDataChannel;
+    if (baseValueDataChannel instanceof ScannableDataChannel)
+    {
+      return (ScannableDataChannel) baseValueDataChannel;
+    }
+    return ((FunctionDataChannel)baseValueDataChannel).scannableDataChannel();
   }
 }

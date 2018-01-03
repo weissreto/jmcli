@@ -5,7 +5,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
+
 import ch.weiss.jmx.client.cli.AbstractJmxClientCommand;
+import ch.weiss.jmx.client.cli.CommandException;
 import ch.weiss.jmx.client.cli.chart.data.channel.DataChannel;
 import ch.weiss.jmx.client.cli.chart.data.channel.DataChannelFactory;
 import ch.weiss.jmx.client.cli.chart.data.channel.DataChannelScanner;
@@ -93,12 +96,12 @@ public class ChartUserDefined extends AbstractJmxClientCommand
       int color=0;
       for (String beanAttributeName : beanAttributeNames)
       {        
-        DataChannelSpecification specification = new DataChannelSpecification(beanAttributeName);
+        DataChannelSpecification specification = new DataChannelSpecification(beanAttributeName, delta);
         List<DataChannel> dataChannels = factory.createFor(specification);
         for (DataChannel dataChannel : dataChannels)
         {
           Axis yAxis = new Axis(dataChannel.name(), getUnit());
-          RollingTimeSerie serie = new RollingTimeSerie(yAxis, 60, TimeUnit.SECONDS, COLORS.get(color++));
+          RollingTimeSerie serie = new RollingTimeSerie(yAxis, 60, TimeUnit.SECONDS, COLORS.get(color++%COLORS.size()));
           dataChannelSeries.add(new DataChannelSerie(dataChannel, serie));
           scanner.add(dataChannel);
         }
@@ -110,7 +113,16 @@ public class ChartUserDefined extends AbstractJmxClientCommand
 
   private Unit getUnit()
   {
-    return Unit.MILLI_SECONDS;
+    if (StringUtils.isBlank(unit))
+    {
+      return Unit.NONE;
+    }
+    Unit u = Unit.fromSymbol(unit);
+    if (u != null)
+    {
+      return u;
+    }
+    throw new CommandException("Unknown unit {0}", unit);
   }
 
   private static class DataChannelSerie

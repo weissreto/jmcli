@@ -19,5 +19,10 @@ class MAttributeDataChannel extends ScannableDataChannel
   {
     return attribute.value();
   }
+
+  MAttribute attribute()
+  {
+    return attribute;
+  }
   
 }

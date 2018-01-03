@@ -14,9 +14,11 @@ public class DataChannelSpecification
   private final MBeanFilter beanFilter;
   private final String attributeFilter;
   private final List<String> compositeKeys;
+  private final boolean deltaValues;
 
-  public DataChannelSpecification(String specification)
+  public DataChannelSpecification(String specification, boolean deltaValues)
   {
+    this.deltaValues = deltaValues;
     int pos = StringUtils.indexOf(specification, ":");
     if (pos > 0)
     {
@@ -53,8 +55,13 @@ public class DataChannelSpecification
     return attributeFilter;
   }
 
-  public List<String> getCompositeKeys()
+  public List<String> compositeKeys()
   {
     return compositeKeys;
+  }
+  
+  public boolean deltaValues()
+  {
+    return deltaValues;
   }
 }
