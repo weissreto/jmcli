@@ -14,6 +14,7 @@ import ch.weiss.jmx.client.cli.chart.data.channel.DataChannelFactory;
 import ch.weiss.jmx.client.cli.chart.data.channel.DataChannelScanner;
 import ch.weiss.jmx.client.cli.chart.data.channel.DataChannelSpecification;
 import ch.weiss.terminal.Color;
+import ch.weiss.terminal.Position;
 import ch.weiss.terminal.chart.XYChart;
 import ch.weiss.terminal.chart.serie.Axis;
 import ch.weiss.terminal.chart.serie.DataSerie;
@@ -32,10 +33,10 @@ public class ChartUserDefined extends AbstractJmxClientCommand
   protected boolean delta;
 
   @Option(names = {"-H", "--height"}, description = "Height of the chart")
-  private int height = 40;
+  private int height = -1;
   
   @Option(names = {"-w", "--width"}, description = "Width of the chart")
-  private int width = 120;
+  private int width = -1;
   
   @Option(names = {"-u", "--unit"}, description = "Unit of the values")
   private String unit = "";
@@ -105,10 +106,34 @@ public class ChartUserDefined extends AbstractJmxClientCommand
           dataChannelSeries.add(new DataChannelSerie(dataChannel, serie));
           scanner.add(dataChannel);
         }
-      }
-      chart = new XYChart(title, new Rectangle(new Point(0,0), width, height), 
+      }      
+      chart = new XYChart(title, getChartWindow(), 
           dataChannelSeries.stream().map(channel -> channel.serie).toArray(DataSerie[]::new));
     }
+    else
+    {
+      chart.setWindow(getChartWindow());
+    }
+  }
+
+  private Rectangle getChartWindow()
+  {
+    int w = width;
+    int h = height;
+    
+    if (width < 0 || height < 0)
+    {
+      Position maxPosition = term.cursor().maxPosition();
+      if (width < 0)
+      {
+        w = maxPosition.column()-1;
+      }
+      if (height < 0)
+      {
+        h = maxPosition.line()-1;
+      }        
+    }
+    return new Rectangle(Point.ORIGIN, w, h);
   }
 
   private Unit getUnit()
