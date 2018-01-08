@@ -19,12 +19,12 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <Automatic-Module-Name>ch.weiss.jmx.client.cli</Automatic-Module-Name>
+              <Automatic-Module-Name>ch.rweiss.jmx.client.cli</Automatic-Module-Name>
               <Built-By>Reto Weiss</Built-By>
               <Implementation-Title>${project.artifactId}</Implementation-Title>
               <Implementation-Vendor>Reto Weiss</Implementation-Vendor>
               <Implementation-Version>${project.version}</Implementation-Version>
-              <Main-Class>ch.weiss.jmx.client.cli.JmxClientCli</Main-Class>
+              <Main-Class>ch.rweiss.jmx.client.cli.JmxClientCli</Main-Class>
             </manifestEntries>
           </archive>
         </configuration>
