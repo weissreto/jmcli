@@ -3,4 +3,4 @@ series:
   - name: ${bean.name}
     unit: ms
     description: 
-    dataChannel: java.lang:type=GarbageCollector,name=*.CollectionTime->DELTA
+    dataChannel: java.lang:type=GarbageCollector,name=*.CollectionTime+DELTA

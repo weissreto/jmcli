@@ -37,7 +37,7 @@ public class DataChannelFactory
 
   public List<DataChannel> createFor(DataChannelSpecification specification, String nameTemplate)
   {
-      List<DataChannel> dataChannels = new ArrayList<>();
+    List<DataChannel> dataChannels = new ArrayList<>();
     List<MBean> beans = jmxClient.beansThatMatch(specification.beanFilter());
     for (MBean bean : beans)
     {

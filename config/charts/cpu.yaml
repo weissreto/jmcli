@@ -4,10 +4,10 @@ series:
     unit: '%'
     description: 
     color: RED
-    dataChannel: java.lang:type=OperatingSystem.SystemCpuLoad->PERCENTAGE
+    dataChannel: java.lang:type=OperatingSystem.SystemCpuLoad+PERCENTAGE
   - name: Process
     unit: '%'
     description: 
     color: YELLOW
-    dataChannel: java.lang:type=OperatingSystem.ProcessCpuLoad->PERCENTAGE
+    dataChannel: java.lang:type=OperatingSystem.ProcessCpuLoad+PERCENTAGE
    
