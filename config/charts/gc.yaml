@@ -1,0 +1,6 @@
+title: Garbage Collector
+series:
+  - name: ${bean.name}
+    unit: ms
+    description: 
+    dataChannel: java.lang:type=GarbageCollector,name=*.CollectionTime->DELTA

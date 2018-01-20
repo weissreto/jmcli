@@ -1,5 +1,6 @@
 package ch.rweiss.jmx.client.cli.chart.data.channel;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -11,12 +12,13 @@ import javax.management.openmbean.SimpleType;
 
 import org.apache.commons.lang3.StringUtils;
 
-import ch.rweiss.jmx.client.cli.CommandException;
 import ch.rweiss.check.Check;
 import ch.rweiss.jmx.client.JmxClient;
 import ch.rweiss.jmx.client.MAttribute;
 import ch.rweiss.jmx.client.MBean;
 import ch.rweiss.jmx.client.MBeanName;
+import ch.rweiss.jmx.client.cli.CommandException;
+import ch.rweiss.jmx.client.cli.chart.data.channel.DataChannelSpecification.Function;
 
 public class DataChannelFactory
 {
@@ -30,7 +32,12 @@ public class DataChannelFactory
   
   public List<DataChannel> createFor(DataChannelSpecification specification)
   {
-    List<DataChannel> dataChannels = new ArrayList<>();
+    return createFor(specification, null);
+  }
+
+  public List<DataChannel> createFor(DataChannelSpecification specification, String nameTemplate)
+  {
+      List<DataChannel> dataChannels = new ArrayList<>();
     List<MBean> beans = jmxClient.beansThatMatch(specification.beanFilter());
     for (MBean bean : beans)
     {
@@ -39,7 +46,7 @@ public class DataChannelFactory
       {
         throw new CommandException("Bean "+bean.name()+" has no "+specification.attributeFilter()+" attribute.");
       }
-      String name = dataChannelName(bean, attribute, specification, false);
+      String name = dataChannelName(nameTemplate, bean, attribute, specification, false);
       MAttributeDataChannel attributeDataChannel = new MAttributeDataChannel(name, attribute);
       if (specification.compositeKeys().isEmpty())
       {
@@ -47,24 +54,48 @@ public class DataChannelFactory
       }
       else
       {
-        name = dataChannelName(bean, attribute, specification, true);
+        name = dataChannelName(nameTemplate, bean, attribute, specification, true);
         DataChannel dataChannel = new MCompositeDataChannel(name, attributeDataChannel, specification.compositeKeys());
         dataChannels.add(dataChannel);
       }      
     }
-    if (specification.deltaValues())
+    dataChannels = addPostProcessorFunctions(specification.postProcessorFunctions(), dataChannels);
+    return dataChannels;
+  }
+  
+  private static List<DataChannel> addPostProcessorFunctions(List<Function> functions, List<DataChannel> dataChannels)
+  {
+    for (Function function : functions)
     {
-      dataChannels = toDeltaDataChannels(dataChannels);
+      dataChannels = addPostProcessorFunction(function, dataChannels);
     }
     return dataChannels;
   }
   
-  private static List<DataChannel> toDeltaDataChannels(List<DataChannel> dataChannels)
-  {    
+  private static List<DataChannel> addPostProcessorFunction(Function function, List<DataChannel> dataChannels)
+  {
     return dataChannels
         .stream()
-        .map(dataChannel -> new DeltaDataChannel(dataChannel))
+        .map(dataChannel -> createPostProcessorFunction(function, dataChannel))
         .collect(Collectors.toList());
+  }
+  
+  @SuppressWarnings("unchecked")
+  private static FunctionDataChannel createPostProcessorFunction(Function function, DataChannel dataChannel)
+  {
+    try
+    {
+      String simpleName = StringUtils.capitalize(function.name().toLowerCase())+"DataChannel";
+      String className = Function.class.getPackage().getName()+"."+simpleName;
+      Class<FunctionDataChannel> functionClass;
+      functionClass = (Class<FunctionDataChannel>) Class.forName(className);
+      Constructor<FunctionDataChannel> constructor = functionClass.getConstructor(DataChannel.class);
+      return constructor.newInstance(dataChannel);
+    }
+    catch (Exception ex)
+    {
+      throw new CommandException(ex, "Could not instantiate class for data channel function {0}", function);
+    }
   }
 
   private void addDataChannels(List<DataChannel> dataChannels, MAttributeDataChannel attributeDataChannel)
@@ -108,8 +139,22 @@ public class DataChannelFactory
     }
   }
 
-  private static String dataChannelName(MBean bean, MAttribute attribute, DataChannelSpecification specification, boolean appendCompositeKeys)
+  private static String dataChannelName(String nameTemplate, MBean bean, MAttribute attribute, DataChannelSpecification specification, boolean appendCompositeKeys)
   {
+    if (StringUtils.isBlank(nameTemplate))
+    {
+      return dataChannelName(bean, attribute, specification, appendCompositeKeys);
+    }
+    if (StringUtils.contains(nameTemplate, "${"))
+    {
+      return expandNameTemplate(nameTemplate, bean, attribute);
+    }
+    return nameTemplate;
+    
+  }
+  
+  private static String dataChannelName(MBean bean, MAttribute attribute, DataChannelSpecification specification, boolean appendCompositeKeys)
+  {    
     StringBuilder builder = new StringBuilder();
     MBeanName beanName = bean.name();
     MBeanName specName = MBeanName.createFor(specification.beanFilter().toString());
@@ -145,6 +190,42 @@ public class DataChannelFactory
     return name.trim();
   }
   
-  
-  
+  private static String expandNameTemplate(String nameTemplate, MBean bean, MAttribute attribute)
+  {
+    String name = nameTemplate;
+    for (String template : getTemplates(nameTemplate))
+    {
+      name = StringUtils.replace(name, "${"+template+"}", expandTemplate(template.trim(), bean, attribute));
+    }
+    return name;
+  }
+
+  private static String expandTemplate(String template, MBean bean, MAttribute attribute)
+  {
+    if ("attribute".equals(template))
+    {
+      return attribute.name();
+    }
+    if ("bean".equals(template))
+    {
+      return bean.name().fullQualifiedName();
+    }
+    if (StringUtils.startsWith(template, "bean."))
+    {
+      String key = StringUtils.substringAfter(template, "bean.");
+      String value = bean.name().valuePartFor(key);
+      if (StringUtils.isBlank(value))
+      {
+        return "Unknown template "+template;
+      }
+      return value;
+    }
+    return "Unknown template "+template;
+  }
+
+  private static String[] getTemplates(String nameTemplate)
+  {
+    return StringUtils.substringsBetween(nameTemplate, "${", "}");
+  }
+
 }

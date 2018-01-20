@@ -1,0 +1,17 @@
+title: Classes
+series:
+  - name: Loaded
+    unit: 
+    description: 
+    color: RED
+    dataChannel: java.lang:type=ClassLoading.LoadedClassCount
+  - name: Unloaded
+    unit: 
+    description: 
+    color: YELLOW
+    dataChannel: java.lang:type=ClassLoading.UnloadedClassCount
+  - name: Total Loaded
+    unit: 
+    description: 
+    color: MAGENTA
+    dataChannel: java.lang:type=ClassLoading.TotalLoadedClassCount        

@@ -1,0 +1,13 @@
+title: Threads
+series:
+  - name: Total
+    unit: 
+    description: 
+    color: RED
+    dataChannel: java.lang:type=Threading.ThreadCount
+  - name: Daemon
+    unit: 
+    description: 
+    color: YELLOW
+    dataChannel: java.lang:type=Threading.DaemonThreadCount  
+   

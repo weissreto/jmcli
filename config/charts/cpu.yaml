@@ -1,0 +1,13 @@
+title: CPU
+series:
+  - name: System
+    unit: '%'
+    description: 
+    color: RED
+    dataChannel: java.lang:type=OperatingSystem.SystemCpuLoad->PERCENTAGE
+  - name: Process
+    unit: '%'
+    description: 
+    color: YELLOW
+    dataChannel: java.lang:type=OperatingSystem.ProcessCpuLoad->PERCENTAGE
+   

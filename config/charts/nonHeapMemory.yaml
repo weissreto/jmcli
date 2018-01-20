@@ -1,0 +1,13 @@
+title: Non Heap Memory
+series:
+  - name: Used
+    unit: B
+    description: 
+    color: RED
+    dataChannel: java.lang:type=Memory.NonHeapMemoryUsage.used
+  - name: Committed
+    unit: B
+    description: 
+    color: YELLOW
+    dataChannel: java.lang:type=Memory.NonHeapMemoryUsage.committed  
+   

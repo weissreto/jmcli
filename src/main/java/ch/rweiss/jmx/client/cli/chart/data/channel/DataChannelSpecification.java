@@ -1,48 +1,70 @@
 package ch.rweiss.jmx.client.cli.chart.data.channel;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import ch.rweiss.jmx.client.cli.CommandException;
 import ch.rweiss.jmx.client.MBeanFilter;
+import ch.rweiss.jmx.client.cli.CommandException;
 
 public class DataChannelSpecification
 {
   private final MBeanFilter beanFilter;
   private final String attributeFilter;
   private final List<String> compositeKeys;
-  private final boolean deltaValues;
-
-  public DataChannelSpecification(String specification, boolean deltaValues)
+  private final List<Function> postProcessorFunctions = new ArrayList<>();
+  
+  public enum Function
   {
-    this.deltaValues = deltaValues;
-    int pos = StringUtils.indexOf(specification, ":");
+    DELTA, 
+    PERCENTAGE;
+  }
+
+  public DataChannelSpecification(String specification)
+  {
+    String filterSpec = parsePostProcessorFunctions(specification);
+    int pos = StringUtils.indexOf(filterSpec, ":");
     if (pos > 0)
     {
-      pos = StringUtils.indexOf(specification, ".", pos+1);
+      pos = StringUtils.indexOf(filterSpec, ".", pos+1);
     }
     else
     {
-      pos = StringUtils.indexOf(specification, ".");
+      pos = StringUtils.indexOf(filterSpec, ".");
     }
     if (pos < 0)
     {
       throw new CommandException("Data channel specification "+specification+ " has wrong format");     
     }
-    beanFilter = MBeanFilter.with(StringUtils.substring(specification, 0, pos));
-    int attributeEnd = StringUtils.indexOf(specification, ".", pos+1);
+    beanFilter = MBeanFilter.with(StringUtils.substring(filterSpec, 0, pos));
+    int attributeEnd = StringUtils.indexOf(filterSpec, ".", pos+1);
     if (attributeEnd < 0)
     {
-      attributeFilter = StringUtils.substring(specification, pos+1);
+      attributeFilter = StringUtils.substring(filterSpec, pos+1);
       compositeKeys = Collections.emptyList();
       return;
     }
-    attributeFilter = StringUtils.substring(specification, pos+1, attributeEnd);
-    String composite = StringUtils.substring(specification, attributeEnd+1);
+    attributeFilter = StringUtils.substring(filterSpec, pos+1, attributeEnd);
+    String composite = StringUtils.substring(filterSpec, attributeEnd+1);
     compositeKeys = Arrays.asList(StringUtils.split(composite, "."));
+  }
+
+  private String parsePostProcessorFunctions(String specification)
+  {
+    String functionsSpec = StringUtils.substringAfter(specification, "->");
+    if (StringUtils.isBlank(functionsSpec))
+    {
+      return specification;
+    }
+    String filterSpec = StringUtils.substringBefore(specification, "->");
+    for (String function : StringUtils.split(functionsSpec, "->"))
+    {
+      postProcessorFunctions.add(Function.valueOf(function.toUpperCase())); 
+    }
+    return filterSpec;
   }
 
   public MBeanFilter beanFilter()
@@ -60,8 +82,8 @@ public class DataChannelSpecification
     return compositeKeys;
   }
   
-  public boolean deltaValues()
+  public List<Function> postProcessorFunctions()
   {
-    return deltaValues;
+    return postProcessorFunctions;
   }
 }
