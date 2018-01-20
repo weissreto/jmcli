@@ -173,7 +173,8 @@ public class Chart extends AbstractJmxClientCommand
     
     private void addDataPoint()
     {
-      serie.addDataPoint(toLong(dataChannel.value()));
+      long value = toLong(dataChannel.value());
+      serie.addDataPoint(value);
     }
 
     private static long toLong(Object value)
@@ -181,6 +182,10 @@ public class Chart extends AbstractJmxClientCommand
       if (value instanceof Long)
       {
         return (long)value;
+      }
+      if (value instanceof Number)
+      {
+        return ((Number)value).longValue();
       }
       return -1;
     }
