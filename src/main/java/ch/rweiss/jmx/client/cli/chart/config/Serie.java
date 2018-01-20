@@ -3,6 +3,9 @@ package ch.rweiss.jmx.client.cli.chart.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.rweiss.terminal.Color;
+import ch.rweiss.terminal.chart.unit.Unit;
+
 public class Serie
 {
   private String name;
@@ -36,9 +39,9 @@ public class Serie
     this.description = description;
   }
 
-  public String getUnit()
+  public Unit getUnit()
   {
-    return unit;
+    return new UnitConverter(unit).toUnit();
   }
 
   public void setUnit(String unit)
@@ -46,11 +49,11 @@ public class Serie
     this.unit = unit;
   }
 
-  public String getColor()
+  public Color getColor()
   {
-    return color;
+    return new ColorConverter(color).toColor();
   }
-
+  
   public void setColor(String color)
   {
     this.color = color;

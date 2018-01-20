@@ -213,7 +213,7 @@ public class DataChannelFactory
     if (StringUtils.startsWith(template, "bean."))
     {
       String key = StringUtils.substringAfter(template, "bean.");
-      String value = bean.name().valuePartFor(key);
+      String value = bean.name().valuePartOf(key);
       if (StringUtils.isBlank(value))
       {
         return "Unknown template "+template;

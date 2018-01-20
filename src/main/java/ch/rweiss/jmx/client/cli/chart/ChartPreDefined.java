@@ -1,13 +1,11 @@
 package ch.rweiss.jmx.client.cli.chart;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.StringUtils;
-
 import ch.rweiss.jmx.client.cli.AbstractJmxClientCommand;
-import ch.rweiss.jmx.client.cli.CommandException;
 import ch.rweiss.jmx.client.cli.chart.config.ChartConfig;
 import ch.rweiss.jmx.client.cli.chart.config.ChartConfigLoader;
 import ch.rweiss.jmx.client.cli.chart.config.Serie;
@@ -21,7 +19,6 @@ import ch.rweiss.terminal.chart.XYChart;
 import ch.rweiss.terminal.chart.serie.Axis;
 import ch.rweiss.terminal.chart.serie.DataSerie;
 import ch.rweiss.terminal.chart.serie.RollingTimeSerie;
-import ch.rweiss.terminal.chart.unit.Unit;
 import ch.rweiss.terminal.graphics.Point;
 import ch.rweiss.terminal.graphics.Rectangle;
 import picocli.CommandLine.Command;
@@ -31,6 +28,7 @@ import picocli.CommandLine.Parameters;
 @Command(name="pre", description="Predefined chart")
 public class ChartPreDefined extends AbstractJmxClientCommand
 {
+
   @Option(names = {"-H", "--height"}, description = "Height of the chart")
   private int height = -1;
   
@@ -44,6 +42,19 @@ public class ChartPreDefined extends AbstractJmxClientCommand
   private XYChart chart;
   private DataChannelScanner scanner = new DataChannelScanner();
   private List<DataChannelSerie> dataChannelSeries = new ArrayList<>();
+  
+  private static int nextColor = 0;
+  private static final List<Color> COLORS;
+  static
+  {
+    List<Color> colors  = new ArrayList<>();
+    colors.addAll(Color.BRIGHT_STANDARD_COLORS);
+    colors.addAll(Color.STANDARD_COLORS);
+    colors.remove(Color.BLACK);
+    colors.remove(Color.BRIGHT_BLACK);
+    COLORS = Collections.unmodifiableList(colors);
+  }
+
   
   @Override
   public void run()
@@ -84,8 +95,8 @@ public class ChartPreDefined extends AbstractJmxClientCommand
         List<DataChannel> dataChannels = factory.createFor(specification, serieConfig.getName());
         for (DataChannel dataChannel : dataChannels)
         {
-          Axis yAxis = new Axis(dataChannel.name(), toUnit(serieConfig.getUnit()));
-          RollingTimeSerie serie = new RollingTimeSerie(yAxis, 60, TimeUnit.SECONDS, toColor(serieConfig.getColor()));
+          Axis yAxis = new Axis(dataChannel.name(), serieConfig.getUnit());
+          RollingTimeSerie serie = new RollingTimeSerie(yAxis, 60, TimeUnit.SECONDS, ensureColor(serieConfig.getColor()));
           dataChannelSeries.add(new DataChannelSerie(dataChannel, serie));
           scanner.add(dataChannel);
         }
@@ -99,31 +110,13 @@ public class ChartPreDefined extends AbstractJmxClientCommand
     }
   }
 
-  private static Color toColor(String color)
+  private static Color ensureColor(Color color)
   {
-    if ("RED".equals(color))
+    if (color == null)
     {
-      return Color.RED;
+      return COLORS.get(nextColor ++%COLORS.size());
     }
-    if ("YELLOW".equals(color))
-    {
-      return Color.YELLOW;
-    }
-    return Color.WHITE;
-  }
-
-  private static Unit toUnit(String unit)
-  {
-    if (StringUtils.isBlank(unit))
-    {
-      return Unit.NONE;
-    }
-    Unit u = Unit.fromSymbol(unit);
-    if (u != null)
-    {
-      return u;
-    }
-    throw new CommandException("Unknown unit {0}", unit);
+    return color;
   }
 
   private Rectangle getChartWindow()
