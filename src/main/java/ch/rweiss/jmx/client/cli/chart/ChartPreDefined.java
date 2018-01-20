@@ -1,7 +1,6 @@
 package ch.rweiss.jmx.client.cli.chart;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -28,7 +27,6 @@ import picocli.CommandLine.Parameters;
 @Command(name="pre", description="Predefined chart")
 public class ChartPreDefined extends AbstractJmxClientCommand
 {
-
   @Option(names = {"-H", "--height"}, description = "Height of the chart")
   private int height = -1;
   
@@ -42,19 +40,7 @@ public class ChartPreDefined extends AbstractJmxClientCommand
   private XYChart chart;
   private DataChannelScanner scanner = new DataChannelScanner();
   private List<DataChannelSerie> dataChannelSeries = new ArrayList<>();
-  
-  private static int nextColor = 0;
-  private static final List<Color> COLORS;
-  static
-  {
-    List<Color> colors  = new ArrayList<>();
-    colors.addAll(Color.BRIGHT_STANDARD_COLORS);
-    colors.addAll(Color.STANDARD_COLORS);
-    colors.remove(Color.BLACK);
-    colors.remove(Color.BRIGHT_BLACK);
-    COLORS = Collections.unmodifiableList(colors);
-  }
-
+  private ColorGenerator colorGenerator = new ColorGenerator();
   
   @Override
   public void run()
@@ -110,11 +96,11 @@ public class ChartPreDefined extends AbstractJmxClientCommand
     }
   }
 
-  private static Color ensureColor(Color color)
+  private Color ensureColor(Color color)
   {
     if (color == null)
     {
-      return COLORS.get(nextColor ++%COLORS.size());
+      return colorGenerator.nextColor();
     }
     return color;
   }

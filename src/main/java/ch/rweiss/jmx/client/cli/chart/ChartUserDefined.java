@@ -1,7 +1,6 @@
 package ch.rweiss.jmx.client.cli.chart;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -12,7 +11,6 @@ import ch.rweiss.jmx.client.cli.chart.data.channel.DataChannelFactory;
 import ch.rweiss.jmx.client.cli.chart.data.channel.DataChannelScanner;
 import ch.rweiss.jmx.client.cli.chart.data.channel.DataChannelSpecification;
 import ch.rweiss.jmx.client.cli.chart.data.channel.DataChannelSpecification.Function;
-import ch.rweiss.terminal.Color;
 import ch.rweiss.terminal.Position;
 import ch.rweiss.terminal.chart.XYChart;
 import ch.rweiss.terminal.chart.serie.Axis;
@@ -49,17 +47,7 @@ public class ChartUserDefined extends AbstractJmxClientCommand
   private XYChart chart;
   private DataChannelScanner scanner = new DataChannelScanner();
   private List<DataChannelSerie> dataChannelSeries = new ArrayList<>();
-  private static final List<Color> COLORS;
-  static
-  {
-    List<Color> colors  = new ArrayList<>();
-    colors.addAll(Color.BRIGHT_STANDARD_COLORS);
-    colors.addAll(Color.STANDARD_COLORS);
-    colors.remove(Color.BLACK);
-    colors.remove(Color.BRIGHT_BLACK);
-    COLORS = Collections.unmodifiableList(colors);
-  }
-
+  private ColorGenerator colorGenerator = new ColorGenerator();
   
   @Override
   protected void printTitle()
@@ -87,7 +75,6 @@ public class ChartUserDefined extends AbstractJmxClientCommand
     if (chart == null)
     {
       DataChannelFactory factory = new DataChannelFactory(jmxClient);
-      int color=0;
       for (String beanAttributeName : beanAttributeNames)
       {        
         if (delta)
@@ -99,7 +86,7 @@ public class ChartUserDefined extends AbstractJmxClientCommand
         for (DataChannel dataChannel : dataChannels)
         {
           Axis yAxis = new Axis(dataChannel.name(), getUnit());
-          RollingTimeSerie serie = new RollingTimeSerie(yAxis, 60, TimeUnit.SECONDS, COLORS.get(color++%COLORS.size()));
+          RollingTimeSerie serie = new RollingTimeSerie(yAxis, 60, TimeUnit.SECONDS, colorGenerator.nextColor());
           dataChannelSeries.add(new DataChannelSerie(dataChannel, serie));
           scanner.add(dataChannel);
         }
