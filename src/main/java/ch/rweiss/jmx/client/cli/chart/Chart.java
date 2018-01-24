@@ -80,7 +80,7 @@ public class Chart extends AbstractJmxClientCommand
     {
       channel.addDataPoint();
     }
-    chart.paint();
+    chart.paint(term.graphics());
   }
   
   private void ensureChart()
@@ -101,12 +101,12 @@ public class Chart extends AbstractJmxClientCommand
           scanner.add(dataChannel);
         }
       }      
-      chart = new XYChart(config.getTitle(), getChartWindow(), 
+      chart = new XYChart(config.getTitle(), getChartBounds(), 
           dataChannelSeries.stream().map(channel -> channel.serie).toArray(DataSerie[]::new));
     }
     else
     {
-      chart.setWindow(getChartWindow());
+      chart.bounds(getChartBounds());
     }
   }
 
@@ -140,7 +140,7 @@ public class Chart extends AbstractJmxClientCommand
     return color;
   }
 
-  private Rectangle getChartWindow()
+  private Rectangle getChartBounds()
   {
     int w = width;
     int h = height;
@@ -160,18 +160,18 @@ public class Chart extends AbstractJmxClientCommand
     return new Rectangle(Point.ORIGIN, w, h);
   }
   
-  private static class DataChannelSerie
+  public static class DataChannelSerie
   {
     private final DataChannel dataChannel;
-    private final RollingTimeSerie serie;
+    public final RollingTimeSerie serie;
 
-    private DataChannelSerie(DataChannel dataChannel, RollingTimeSerie serie)
+    public DataChannelSerie(DataChannel dataChannel, RollingTimeSerie serie)
     {
       this.dataChannel = dataChannel;
       this.serie = serie;
     }
     
-    private void addDataPoint()
+    public void addDataPoint()
     {
       long value = toLong(dataChannel.value());
       serie.addDataPoint(value);

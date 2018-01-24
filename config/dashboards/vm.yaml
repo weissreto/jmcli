@@ -1,0 +1,20 @@
+title: Virtual Maschine
+sections:
+  - row: 0
+    column: 0
+    chart: cpu
+  - row: 0
+    column: 1
+    chart: threads
+  - row: 0
+    column: 2
+    chart: classes
+  - row: 1
+    column: 0
+    chart: nonHeapMemory
+  - row: 1
+    column: 1
+    chart: heapMemory
+  - row: 1
+    column: 2
+    chart: gc   

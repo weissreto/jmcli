@@ -25,7 +25,7 @@ public class ChartConfigLoader
     }
     catch(IOException ex)
     {
-      throw new CommandException(ex, "Cannot read thread config file {0}", configFile.getPath());
+      throw new CommandException(ex, "Cannot read chart config file {0}", configFile.getPath());
     }
   }
 }

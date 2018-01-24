@@ -4,13 +4,14 @@ import java.util.Arrays;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
+import ch.rweiss.jmx.client.JmxException;
 import ch.rweiss.jmx.client.cli.chart.Chart;
+import ch.rweiss.jmx.client.cli.dashboard.Dashboard;
 import ch.rweiss.jmx.client.cli.info.Info;
 import ch.rweiss.jmx.client.cli.invoke.Invoke;
 import ch.rweiss.jmx.client.cli.list.List;
 import ch.rweiss.jmx.client.cli.list.ListVirtualMachines;
 import ch.rweiss.jmx.client.cli.set.Set;
-import ch.rweiss.jmx.client.JmxException;
 import ch.rweiss.terminal.AnsiTerminal;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -34,7 +35,8 @@ import picocli.CommandLine.Help;
     Info.class,
     Set.class,
     Invoke.class,
-    Chart.class
+    Chart.class,
+    Dashboard.class
 })
 public class JmxClientCli extends AbstractCommand
 {

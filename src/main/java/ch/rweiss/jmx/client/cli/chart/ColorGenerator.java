@@ -6,7 +6,7 @@ import java.util.List;
 
 import ch.rweiss.terminal.Color;
 
-class ColorGenerator
+public class ColorGenerator
 {
   private static final List<Color> COLORS;
   private static int nextColor = 0;
@@ -22,7 +22,7 @@ class ColorGenerator
     COLORS = Collections.unmodifiableList(colors);
   }
 
-  Color nextColor()
+  public Color nextColor()
   {
     return COLORS.get(nextColor++%COLORS.size());
   }
