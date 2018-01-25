@@ -109,6 +109,18 @@ public class DataChannelFactory
     {
       dataChannels.add(attributeDataChannel);
     }
+    else if (SimpleType.INTEGER.equals(type))
+    {
+      dataChannels.add(attributeDataChannel);
+    }
+    else if (SimpleType.FLOAT.equals(type))
+    {
+      dataChannels.add(attributeDataChannel);
+    }
+    else if (SimpleType.DOUBLE.equals(type))
+    {
+      dataChannels.add(attributeDataChannel);
+    }
     else if (type instanceof CompositeType)
     {
       addDataChannels(dataChannels, attributeDataChannel, (CompositeType)type, new ArrayList<>());
