@@ -5,6 +5,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
@@ -17,7 +19,17 @@ public class ChartConfigLoader
   
   public ChartConfig load(String chart)
   {
-    File configFile = new File(chartConfigDirectory, chart+".yaml");
+    File dir = chartConfigDirectory;
+    String fileName = chart;
+    if (StringUtils.contains(chart, "."))
+    {
+      String relativeDirectory = StringUtils.substringBeforeLast(chart, ".");
+      fileName = StringUtils.substringAfterLast(chart, ".");
+      relativeDirectory = StringUtils.replace(relativeDirectory, ".", File.separator);
+      dir = new File(dir, relativeDirectory);
+    }
+    
+    File configFile = new File(dir, fileName+".yaml");
     try (Reader yamlSource = new FileReader(configFile))
     {
       ChartConfig config = mapper.readValue(yamlSource, ChartConfig.class);
