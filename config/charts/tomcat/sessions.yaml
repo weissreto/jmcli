@@ -1,0 +1,4 @@
+title: Sessions
+series:
+  - name: Active
+    dataChannel: "*:type=Manager,host=*,context=*.activeSessions"

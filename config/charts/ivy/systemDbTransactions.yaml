@@ -1,0 +1,8 @@
+title: System Database Transactions
+series:
+  - name: Transactions
+    color: YELLOW
+    dataChannel: "ivy Engine:type=Database Persistency Service.transactions+DELTA"
+  - name: Errors
+    color: RED
+    dataChannel: "ivy Engine:type=Database Persistency Service.errors+DELTA"

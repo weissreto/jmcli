@@ -1,0 +1,4 @@
+title: External Database Connections
+series:
+  - name: ${bean.name} Used
+    dataChannel: "ivy Engine:type=External Database,application=*,environment=*,name=*.usedConnections"

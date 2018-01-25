@@ -1,0 +1,14 @@
+title: Tomcat
+sections:
+  - row: 0
+    column: 0
+    chart: tomcat.requests
+  - row: 0
+    column: 1
+    chart: tomcat.processingTimes
+  - row: 1
+    column: 0
+    chart: tomcat.sessions
+  - row: 1
+    column: 1
+    chart: tomcat.errors

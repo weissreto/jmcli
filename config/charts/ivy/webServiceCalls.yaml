@@ -1,0 +1,4 @@
+title: Web Service Calls
+series:
+  - name: ${bean.name}
+    dataChannel: "ivy Engine:type=External Web Service,application=*,environment=*,name=*.calls+DELTA"

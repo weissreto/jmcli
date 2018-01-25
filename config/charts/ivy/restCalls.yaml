@@ -1,0 +1,4 @@
+title: Rest Calls
+series:
+  - name: ${bean.name}
+    dataChannel: "ivy Engine:type=External REST Web Service,application=*,environment=*,name=*.calls+DELTA"

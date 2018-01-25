@@ -1,0 +1,4 @@
+title: Requests
+series:
+  - name: ${bean.name}
+    dataChannel: "*:type=GlobalRequestProcessor,name=*.requestCount+DELTA"

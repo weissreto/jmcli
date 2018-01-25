@@ -1,0 +1,27 @@
+title: Axon.ivy 
+sections:
+  - row: 0
+    column: 0
+    chart: ivy.systemDbConnections
+  - row: 0
+    column: 1
+    chart: ivy.systemDbTransactions
+  - row: 0
+    column: 2
+    chart: ivy.externalDbConnections
+  - row: 0
+    column: 3
+    chart: ivy.externalDbTransactions
+  - row: 1
+    column: 0
+    chart: ivy.restCalls
+  - row: 1
+    column: 1
+    chart: ivy.restCallErrors
+  - row: 1
+    column: 2
+    chart: ivy.webServiceCalls
+  - row: 1
+    column: 3
+    chart: ivy.webServiceCallErrors
+    

@@ -1,0 +1,4 @@
+title: External Database Transactions
+series:
+  - name: ${bean.name}
+    dataChannel: "ivy Engine:type=External Database,application=*,environment=*,name=*.transactions"

@@ -1,0 +1,4 @@
+title: Errors
+series:
+  - name: ${bean.name}
+    dataChannel: "*:type=GlobalRequestProcessor,name=*.errorCount+DELTA"
