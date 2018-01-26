@@ -11,7 +11,7 @@ import picocli.CommandLine.Option;
 
 public abstract class AbstractJmxClientCommand extends AbstractHeaderCommand
 {
-  @Option(names = {"-j", "--jvm"}, description = "Process id or a part of the main class name or the host:port of the Java virtual machine", required = true)
+  @Option(names = {"-j", "--jvm"}, description = "Process id or a part of the main class name or the host:port of the Java virtual machine")
   protected String jvm;
   
   @Option(names = {"-i", "--interval"}, description = "Refresh interval in seconds")
