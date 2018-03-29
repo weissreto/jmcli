@@ -1,4 +1,4 @@
-package ch.weiss.jmx.client.cli.list;
+package ch.rweiss.jmx.client.cli.list;
 
 import java.lang.management.ThreadInfo;
 import java.util.ArrayList;
@@ -10,16 +10,16 @@ import javax.management.openmbean.CompositeData;
 
 import org.apache.commons.lang3.StringUtils;
 
-import ch.weiss.jmx.client.MBean;
-import ch.weiss.jmx.client.MBeanName;
-import ch.weiss.jmx.client.cli.AbstractJmxClientCommand;
-import ch.weiss.jmx.client.cli.Styles;
-import ch.weiss.terminal.Color;
-import ch.weiss.terminal.Style;
-import ch.weiss.terminal.StyledText;
-import ch.weiss.terminal.chart.unit.Unit;
-import ch.weiss.terminal.table.RowSorter;
-import ch.weiss.terminal.table.Table;
+import ch.rweiss.jmx.client.cli.AbstractJmxClientCommand;
+import ch.rweiss.jmx.client.cli.Styles;
+import ch.rweiss.jmx.client.MBean;
+import ch.rweiss.jmx.client.MBeanName;
+import ch.rweiss.terminal.Color;
+import ch.rweiss.terminal.Style;
+import ch.rweiss.terminal.StyledText;
+import ch.rweiss.terminal.chart.unit.Unit;
+import ch.rweiss.terminal.table.RowSorter;
+import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
