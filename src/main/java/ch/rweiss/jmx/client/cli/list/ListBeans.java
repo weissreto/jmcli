@@ -1,14 +1,16 @@
 package ch.rweiss.jmx.client.cli.list;
 
+import ch.rweiss.jmx.client.MBeanTreeNode;
 import ch.rweiss.jmx.client.cli.AbstractJmxClientCommand;
 import ch.rweiss.jmx.client.cli.Styles;
-import ch.rweiss.jmx.client.MBean;
-import ch.rweiss.jmx.client.MBeanTreeNode;
+import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
 
 @Command(name = "beans", description="Lists all available management beans")
 public class ListBeans extends AbstractJmxClientCommand
 {
+  private Table<MBeanTreeNode> table = declareTable();
+
   @Override
   protected void printTitle()
   {
@@ -18,39 +20,53 @@ public class ListBeans extends AbstractJmxClientCommand
   @Override
   protected void execute()
   {
-    MBeanTreeNode beanTree = getJmxClient().beanTree();
-    print(beanTree, -2);
-    term.reset();
+    printEmptyLine();
+    
+    table.clear();
+
+    MBeanTreeNode beanTree = getJmxClient().beanTree();    
+    addBeans(beanTree);
+
+    table.printWithoutHeader();
   }
 
-  private void print(MBeanTreeNode node, int indent)
+  private static Table<MBeanTreeNode> declareTable()
   {
-    if (indent >= 0)
+    Table<MBeanTreeNode> table = new Table<>();
+    table.addColumn(
+        table.createColumn("Name", 40, node -> simpleNameWithIndent(node))
+          .withTitleStyle(Styles.NAME_TITLE)
+          .withCellStyle(Styles.NAME)
+          .toColumn());
+    
+    table.addColumn(
+        table.createColumn("Full Qualified Name", 0, node -> node.name().fullQualifiedName())
+          .withTitleStyle(Styles.NAME_TITLE)
+          .withCellStyle(Styles.ID)
+          .toColumn());
+    return table;
+  }
+
+  private static String simpleNameWithIndent(MBeanTreeNode node)
+  {
+    StringBuilder builder = new StringBuilder();
+    for (int indent = 0; indent < node.name().countParts()-1; indent++)
     {
-      print(indent);
-      term.style(Styles.NAME);
-      term.write(node.name().simpleName());
-      MBean bean = node.bean();
-      if (bean != null)
-      {
-        term.cursor().column(40);
-        term.style(Styles.ID);
-        term.write(bean.name().fullQualifiedName());
-      }
-      term.newLine();
+      builder.append("  ");
+    }
+    builder.append(node.name().simpleName());
+    return builder.toString();
+  }
+
+  private void addBeans(MBeanTreeNode node)
+  {
+    if (node.name().countParts() > 0)
+    {
+      table.addRow(node);
     }
     for (MBeanTreeNode child : node.children())
     {
-      print(child, indent + 2);
+      addBeans(child);
     }
   }
-
-  private void print(int indent)
-  {
-    for (int pos = 0; pos < indent; pos++)
-    {
-      term.write(" ");
-    }
-  }
-
 }

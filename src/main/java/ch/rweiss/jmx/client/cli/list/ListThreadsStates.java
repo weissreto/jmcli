@@ -10,13 +10,14 @@ import java.util.stream.LongStream;
 
 import javax.management.openmbean.CompositeData;
 
-import ch.rweiss.jmx.client.cli.AbstractJmxClientCommand;
-import ch.rweiss.jmx.client.cli.Styles;
 import ch.rweiss.jmx.client.MBean;
 import ch.rweiss.jmx.client.MBeanName;
+import ch.rweiss.jmx.client.cli.AbstractJmxClientCommand;
+import ch.rweiss.jmx.client.cli.Styles;
 import ch.rweiss.terminal.Color;
 import ch.rweiss.terminal.Style;
 import ch.rweiss.terminal.StyledText;
+import ch.rweiss.terminal.table.AbbreviateStyle;
 import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
 
@@ -27,12 +28,12 @@ public class ListThreadsStates extends AbstractJmxClientCommand
   private int valueCount = 0;
 
   private java.util.List<String> deadlockedThreadNames = new ArrayList<>();
+  private Table<ThreadData> table = declareTable();
 
   private static final Style GREEN = Style.create().withColor(Color.BRIGHT_GREEN).toStyle();
   private static final Style YELLOW = Style.create().withColor(Color.BRIGHT_YELLOW).toStyle();
   private static final Style RED = Style.create().withColor(Color.BRIGHT_RED).toStyle();
   private static final int MAX_STATES = 80;
-
   
   @Override
   protected void printTitle()
@@ -45,13 +46,13 @@ public class ListThreadsStates extends AbstractJmxClientCommand
   {
     printEmptyLine();
     
-    Table<ThreadData> table = declareTable();
     MBean threadBean = jmxClient.bean(MBeanName.THREAD);
     threadBean.attribute("ThreadCpuTimeEnabled").value(true);
     threadBean.attribute("ThreadContentionMonitoringEnabled").value(true);
     long[] deadlockedThreads = (long[])threadBean.operation("findDeadlockedThreads").invoke(new Object[0]);
     deadlockedThreadNames.clear();
     CompositeData[] threadDump = (CompositeData[])threadBean.operation("dumpAllThreads", "boolean", "boolean").invoke(false, false);
+    table.clear();
     for (CompositeData thread : threadDump)
     {        
       ThreadInfo info = ThreadInfo.from(thread);
@@ -64,7 +65,7 @@ public class ListThreadsStates extends AbstractJmxClientCommand
       table.addRow(data);
     }
     valueCount++;
-    table.print();
+    table.printWithoutHeader();
   }
 
   private static Table<ThreadData> declareTable()
@@ -74,12 +75,14 @@ public class ListThreadsStates extends AbstractJmxClientCommand
         table.createColumn("Name", 40)
           .withTitleStyle(Styles.NAME_TITLE)
           .withStyledTextProvider(ListThreadsStates::threadName)
+          .withAbbreviateStyle(AbbreviateStyle.LEFT_WITH_DOTS)
           .toColumn());
     
     table.addColumn(
-        table.createColumn("State", MAX_STATES, data -> data.states)
+        table.createColumn("State", 0, data -> data.states)
           .withTitleStyle(Styles.NAME_TITLE)
           .withStyledTextProvider(ListThreadsStates::threadStates)
+          .withAbbreviateStyle(AbbreviateStyle.LEFT)
           .toColumn());
       return table;
   }

@@ -29,6 +29,7 @@ public abstract class AbstractHeaderCommand extends AbstractCommand
     printEmptyLine();
     term.style(Styles.TITLE);
     printTitle();
+    term.clear().lineToEnd();
     term.reset();
     printEmptyLine();
   }  
@@ -68,7 +69,7 @@ public abstract class AbstractHeaderCommand extends AbstractCommand
     term.newLine();
   }
 
-  private static String toErrorMessage(JmxException error)
+  protected static String toErrorMessage(JmxException error)
   {
     String message;
     message = error.getShortDisplayMessage();
@@ -88,6 +89,7 @@ public abstract class AbstractHeaderCommand extends AbstractCommand
   protected void printNameTitle(int intend, String text)
   {
     printFirstColumn(intend, Styles.NAME_TITLE, text);
+    term.clear().lineToEnd();
     term.newLine();
   }
 

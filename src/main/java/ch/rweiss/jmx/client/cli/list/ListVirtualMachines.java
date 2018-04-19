@@ -1,14 +1,15 @@
 package ch.rweiss.jmx.client.cli.list;
 
+import ch.rweiss.jmx.client.Jvm;
 import ch.rweiss.jmx.client.cli.AbstractHeaderCommand;
 import ch.rweiss.jmx.client.cli.Styles;
-import ch.rweiss.jmx.client.Jvm;
 import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
 
 @Command(name="vm", description="Lists all available java virtual maschines")
 public class ListVirtualMachines extends AbstractHeaderCommand
 {
+  private Table<Jvm> table = declareTable();
 
   @Override
   protected void printTitle()
@@ -21,6 +22,16 @@ public class ListVirtualMachines extends AbstractHeaderCommand
   {
     printEmptyLine();
     
+    table.clear();
+    for (Jvm jvm : Jvm.getAvailableRunningJvms())
+    {
+      table.addRow(jvm);
+    }
+    table.print();
+  }
+
+  private static Table<Jvm> declareTable()
+  {
     Table<Jvm> table = new Table<>();
     table.addColumn(
         table.createColumn("Id", 10, jvm -> jvm.id())
@@ -29,16 +40,12 @@ public class ListVirtualMachines extends AbstractHeaderCommand
           .toColumn());
 
     table.addColumn(
-        table.createColumn("Display Name", 120, jvm -> jvm.displayName())
+        table.createColumn("Display Name", 0, jvm -> jvm.displayName())
           .withTitleStyle(Styles.NAME_TITLE)
           .withCellStyle(Styles.NAME)
+          .multiLine()
           .toColumn());
-
-    for (Jvm jvm : Jvm.getAvailableRunningJvms())
-    {
-      table.addRow(jvm);
-    }
-    table.print();
+    return table;
   }
 
 }

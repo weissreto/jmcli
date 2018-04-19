@@ -10,14 +10,15 @@ import javax.management.openmbean.CompositeData;
 
 import org.apache.commons.lang3.StringUtils;
 
-import ch.rweiss.jmx.client.cli.AbstractJmxClientCommand;
-import ch.rweiss.jmx.client.cli.Styles;
 import ch.rweiss.jmx.client.MBean;
 import ch.rweiss.jmx.client.MBeanName;
+import ch.rweiss.jmx.client.cli.AbstractJmxClientCommand;
+import ch.rweiss.jmx.client.cli.Styles;
 import ch.rweiss.terminal.Color;
 import ch.rweiss.terminal.Style;
 import ch.rweiss.terminal.StyledText;
 import ch.rweiss.terminal.chart.unit.Unit;
+import ch.rweiss.terminal.table.AbbreviateStyle;
 import ch.rweiss.terminal.table.RowSorter;
 import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
@@ -47,6 +48,7 @@ public class ListThreads extends AbstractJmxClientCommand
 
   private java.util.List<String> deadlockedThreadNames = new ArrayList<>();
 
+  private Table<ThreadData> table = declareTable();
   
   private static final Style GREEN = Style.create().withColor(Color.BRIGHT_GREEN).toStyle();
   private static final Style[] GREENS_GRAPHICS = buildGradient(0, 63, 0, 0, 24, 0, 8);
@@ -57,6 +59,7 @@ public class ListThreads extends AbstractJmxClientCommand
   private static final Style RED = Styles.ERROR;
   private static final Style[] REDS_GRAPHICS = buildGradient(63, 0, 0, 24, 0, 0, 8);
   private static final Style[] REDS_PERCENTAGE = buildGradient(155, 0, 0, 1, 0, 0, 101);
+
 
   
   @Override
@@ -87,8 +90,6 @@ public class ListThreads extends AbstractJmxClientCommand
   {
     printEmptyLine();
     
-    Table<ThreadData> table = declareTable();
-    
     if (StringUtils.isNotBlank(sortColumnName))
     {
       RowSorter<ThreadData> sorter = table.sortColumn(sortColumnName);
@@ -105,6 +106,7 @@ public class ListThreads extends AbstractJmxClientCommand
     deadlockedThreadNames.clear();
     CompositeData[] threads = (CompositeData[])threadBean.operation("dumpAllThreads", "boolean", "boolean").invoke(false, false);
     computeDeltaTime();
+    table.clear();
     for (CompositeData thread : threads)
     {
       ThreadInfo info = ThreadInfo.from(thread);
@@ -120,10 +122,10 @@ public class ListThreads extends AbstractJmxClientCommand
       {
         data.isDeadLocked = true;
       }
-      table.addRow(deltaOrAbsolute(data, lastData));
+      table .addRow(deltaOrAbsolute(data, lastData));
       lastValues.put(info.getThreadId(), data);
     }
-    table.print();
+    table .print();
   }
 
   private void computeDeltaTime()
@@ -148,57 +150,58 @@ public class ListThreads extends AbstractJmxClientCommand
 
   private Table<ThreadData> declareTable()
   {
-    Table<ThreadData> table = new Table<>();
-    table.addColumn(
-        table.createColumn("Name", 40)
+    Table<ThreadData> threadsTable = new Table<>();
+    threadsTable.addColumn(
+        threadsTable.createColumn("Name", 0)
           .withTitleStyle(Styles.NAME_TITLE)
           .withStyledTextProvider(ListThreads::threadName)
+          .withAbbreviateStyle(AbbreviateStyle.LEFT_WITH_DOTS)
           .toColumn());
     
-    table.addColumn(
-        table.createColumn("State", 15, data -> data.state)
+    threadsTable.addColumn(
+        threadsTable.createColumn("State", 15, data -> data.state)
           .withTitleStyle(Styles.NAME_TITLE)
           .withStyledTextProvider(ListThreads::threadState)
           .toColumn());
     
-    table.addColumn(
-        table.createColumn("Cpu", 9, data -> data.cpuTime)
+    threadsTable.addColumn(
+        threadsTable.createColumn("Cpu", 9, data -> data.cpuTime)
           .withTitleStyle(Styles.NAME_TITLE)
           .withStyledTextProvider(this::cpuUsage)
           .toColumn());
         
-    table.addColumn(
-        table.createColumn("User", 9, data -> data.userTime)
+    threadsTable.addColumn(
+        threadsTable.createColumn("User", 9, data -> data.userTime)
           .withTitleStyle(Styles.NAME_TITLE)
           .withStyledTextProvider(this::cpuUsage)
           .toColumn());
     
-    table.addColumn(
-        table.createColumn("Waited", 9, data-> data.waitedTime)
+    threadsTable.addColumn(
+        threadsTable.createColumn("Waited", 9, data-> data.waitedTime)
           .withTitleStyle(Styles.NAME_TITLE)
           .withStyledTextProvider(this::waitedTime)
           .toColumn());
     
-    table.addColumn(
-        table.createColumn("Waited", 9, data -> data.waitedCount)
+    threadsTable.addColumn(
+        threadsTable.createColumn("Waited", 9, data -> data.waitedCount)
           .withTitleStyle(Styles.NAME_TITLE)
           .withCellStyle(YELLOW)
           .withTextProvider(ListThreads::formatCount)
           .toColumn());
     
-    table.addColumn(
-        table.createColumn("Blocked", 9, data -> data.blockedTime)
+    threadsTable.addColumn(
+        threadsTable.createColumn("Blocked", 9, data -> data.blockedTime)
           .withTitleStyle(Styles.NAME_TITLE)
           .withStyledTextProvider(this::blockedTime)
           .toColumn());
     
-    table.addColumn(
-        table.createColumn("Blocked", 9, data -> data.blockedCount)
+    threadsTable.addColumn(
+        threadsTable.createColumn("Blocked", 9, data -> data.blockedCount)
           .withTitleStyle(Styles.NAME_TITLE)
           .withCellStyle(Styles.ERROR)
           .withTextProvider(ListThreads::formatCount)
           .toColumn());
-    return table;
+    return threadsTable;
   }
   
   private static StyledText threadName(ThreadData data)
