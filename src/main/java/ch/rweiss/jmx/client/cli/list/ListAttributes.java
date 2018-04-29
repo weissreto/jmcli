@@ -41,10 +41,11 @@ public class ListAttributes extends AbstractAttributeCommand
           .toColumn());
     
     table.addColumn(
-        table.createColumn("Value", 0)        
+        table.createColumn("Value", 20)        
           .withTitleStyle(Styles.NAME_TITLE)
           .withStyledTextProvider(attribute -> getValue(attribute))
           .multiLine()
+          .expandHorizontal()
           .toColumn());
     return table;
   }

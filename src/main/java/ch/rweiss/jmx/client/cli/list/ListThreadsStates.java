@@ -79,10 +79,11 @@ public class ListThreadsStates extends AbstractJmxClientCommand
           .toColumn());
     
     table.addColumn(
-        table.createColumn("State", 0, data -> data.states)
+        table.createColumn("State", 10, data -> data.states)
           .withTitleStyle(Styles.NAME_TITLE)
           .withStyledTextProvider(ListThreadsStates::threadStates)
           .withAbbreviateStyle(AbbreviateStyle.LEFT)
+          .expandHorizontal()
           .toColumn());
       return table;
   }

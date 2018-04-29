@@ -40,9 +40,10 @@ public class ListBeans extends AbstractJmxClientCommand
           .toColumn());
     
     table.addColumn(
-        table.createColumn("Full Qualified Name", 0, node -> node.name().fullQualifiedName())
+        table.createColumn("Full Qualified Name", 40, node -> node.name().fullQualifiedName())
           .withTitleStyle(Styles.NAME_TITLE)
           .withCellStyle(Styles.ID)
+          .expandHorizontal()
           .toColumn());
     return table;
   }

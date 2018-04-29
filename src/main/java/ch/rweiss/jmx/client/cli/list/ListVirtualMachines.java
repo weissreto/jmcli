@@ -40,10 +40,11 @@ public class ListVirtualMachines extends AbstractHeaderCommand
           .toColumn());
 
     table.addColumn(
-        table.createColumn("Display Name", 0, jvm -> jvm.displayName())
+        table.createColumn("Display Name", 20, jvm -> jvm.displayName())
           .withTitleStyle(Styles.NAME_TITLE)
           .withCellStyle(Styles.NAME)
           .multiLine()
+          .expandHorizontal()
           .toColumn());
     return table;
   }
