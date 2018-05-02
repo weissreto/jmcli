@@ -44,7 +44,7 @@ public class ListVirtualMachines extends AbstractHeaderCommand
           .withTitleStyle(Styles.NAME_TITLE)
           .withCellStyle(Styles.NAME)
           .multiLine()
-          .expandHorizontal()
+          .withMinWidth(10)
           .toColumn());
     return table;
   }

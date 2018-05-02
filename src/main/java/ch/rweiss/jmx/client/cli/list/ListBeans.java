@@ -34,16 +34,17 @@ public class ListBeans extends AbstractJmxClientCommand
   {
     Table<MBeanTreeNode> table = new Table<>();
     table.addColumn(
-        table.createColumn("Name", 40, node -> simpleNameWithIndent(node))
+        table.createColumn("Name", 30, node -> simpleNameWithIndent(node))
           .withTitleStyle(Styles.NAME_TITLE)
           .withCellStyle(Styles.NAME)
+          .withMinWidth(20)
           .toColumn());
     
     table.addColumn(
-        table.createColumn("Full Qualified Name", 40, node -> node.name().fullQualifiedName())
+        table.createColumn("Full Qualified Name", 60, node -> node.name().fullQualifiedName())
           .withTitleStyle(Styles.NAME_TITLE)
           .withCellStyle(Styles.ID)
-          .expandHorizontal()
+          .withMinWidth(10)
           .toColumn());
     return table;
   }

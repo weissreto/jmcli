@@ -35,17 +35,18 @@ public class ListAttributes extends AbstractAttributeCommand
   {
     Table<MAttribute> table = new Table<>();
     table.addColumn(
-        table.createColumn("Name", 40, attribute -> attribute.name())
+        table.createColumn("Name", 20, attribute -> attribute.name())
           .withTitleStyle(Styles.NAME_TITLE)
           .withCellStyle(Styles.NAME)
+          .withMinWidth(10)
           .toColumn());
     
     table.addColumn(
-        table.createColumn("Value", 20)        
+        table.createColumn("Value", 40)        
           .withTitleStyle(Styles.NAME_TITLE)
           .withStyledTextProvider(attribute -> getValue(attribute))
           .multiLine()
-          .expandHorizontal()
+          .withMinWidth(10)
           .toColumn());
     return table;
   }

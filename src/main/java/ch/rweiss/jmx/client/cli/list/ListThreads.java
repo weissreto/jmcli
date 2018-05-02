@@ -152,11 +152,11 @@ public class ListThreads extends AbstractJmxClientCommand
   {
     Table<ThreadData> threadsTable = new Table<>();
     threadsTable.addColumn(
-        threadsTable.createColumn("Name", 10)
+        threadsTable.createColumn("Name", 30)
           .withTitleStyle(Styles.NAME_TITLE)
           .withStyledTextProvider(ListThreads::threadName)
           .withAbbreviateStyle(AbbreviateStyle.LEFT_WITH_DOTS)
-          .expandHorizontal()
+          .withMinWidth(10)
           .toColumn());
     
     threadsTable.addColumn(
