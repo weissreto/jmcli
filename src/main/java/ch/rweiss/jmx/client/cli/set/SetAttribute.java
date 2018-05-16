@@ -6,7 +6,7 @@ import ch.rweiss.jmx.client.MAttribute;
 import ch.rweiss.jmx.client.MBean;
 import ch.rweiss.jmx.client.cli.AbstractBeanCommand;
 import ch.rweiss.jmx.client.cli.Styles;
-import ch.rweiss.jmx.client.cli.info.InfoAttribute;
+import ch.rweiss.jmx.client.cli.list.ListAttributes;
 import ch.rweiss.terminal.StyledText;
 import ch.rweiss.terminal.table.AbbreviateStyle;
 import ch.rweiss.terminal.table.Table;
@@ -66,9 +66,9 @@ public class SetAttribute extends AbstractBeanCommand
   private void setValue(MAttribute attribute)
   {
     printEmptyLine();
-    attributeValues.addRow(Pair.of("Value (Before)", InfoAttribute.getValue(attribute)));
+    attributeValues.addRow(Pair.of("Value (Before)", ListAttributes.getValue(attribute)));
     attribute.value(value);
-    attributeValues.addRow(Pair.of("Value (Now)", InfoAttribute.getValue(attribute)));
+    attributeValues.addRow(Pair.of("Value (Now)", ListAttributes.getValue(attribute)));
     attributeValues.printWithoutHeader();
   }
   

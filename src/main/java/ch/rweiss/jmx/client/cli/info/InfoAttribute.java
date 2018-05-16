@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import ch.rweiss.jmx.client.JmxException;
 import ch.rweiss.jmx.client.MAttribute;
 import ch.rweiss.jmx.client.MBean;
 import ch.rweiss.jmx.client.cli.AbstractAttributeCommand;
 import ch.rweiss.jmx.client.cli.Styles;
+import ch.rweiss.jmx.client.cli.list.ListAttributes;
 import ch.rweiss.terminal.StyledText;
 import ch.rweiss.terminal.table.AbbreviateStyle;
 import ch.rweiss.terminal.table.Table;
@@ -63,7 +63,7 @@ public class InfoAttribute extends AbstractAttributeCommand
     properties.addRow(Pair.of("Type", new StyledText(attr.type(), Styles.VALUE)));
     properties.addRow(Pair.of("Readable", new StyledText(Boolean.toString(attr.isReadable()), Styles.VALUE)));
     properties.addRow(Pair.of("Writable", new StyledText(Boolean.toString(attr.isWritable()), Styles.VALUE)));
-    properties.addRow(Pair.of("Value", getValue(attr)));
+    properties.addRow(Pair.of("Value", ListAttributes.getValue(attr)));
     properties.printWithoutHeader();
   }
 
@@ -82,18 +82,6 @@ public class InfoAttribute extends AbstractAttributeCommand
     description.addRow(attr);
     description.printWithoutHeader();
     printEmptyLine();
-  }
-
-  public static StyledText getValue(MAttribute attr)
-  {
-    try
-    {
-      return new StyledText(attr.valueAsString(), Styles.VALUE);
-    }
-    catch(JmxException ex)
-    {
-      return new StyledText(toErrorMessage(ex), Styles.ERROR);
-    }
   }
   
   private static Table<MBean> declareBeanTitleTable()
