@@ -84,7 +84,7 @@ public class InfoAttribute extends AbstractAttributeCommand
     printEmptyLine();
   }
 
-  private static StyledText getValue(MAttribute attr)
+  public static StyledText getValue(MAttribute attr)
   {
     try
     {

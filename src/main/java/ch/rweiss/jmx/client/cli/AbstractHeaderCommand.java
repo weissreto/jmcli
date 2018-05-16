@@ -56,29 +56,11 @@ public abstract class AbstractHeaderCommand extends AbstractCommand
     term.newLine();
   }
   
-  protected void printNameError(String name, JmxException error)
-  {
-    printNameError(0, name, error);
-  }
-
-  protected void printNameError(int indent, String name, JmxException error)
-  {
-    printName(indent, name);
-    printSecondColumn(Styles.ERROR, toErrorMessage(error));
-    term.clear().lineToEnd();
-    term.newLine();
-  }
-
   protected static String toErrorMessage(JmxException error)
   {
     String message;
     message = error.getShortDisplayMessage();
     return "<" + message + ">";
-  }
-
-  protected void printName(String text)
-  {
-    printFirstColumn(0, Styles.NAME, text);
   }
 
   protected void printNameTitle(String text)
