@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import ch.rweiss.jmx.client.cli.AbstractBeanCommand;
-import ch.rweiss.jmx.client.cli.Styles;
-import ch.rweiss.jmx.client.cli.WildcardFilters;
+import org.apache.commons.lang3.tuple.Pair;
+
 import ch.rweiss.jmx.client.MBean;
 import ch.rweiss.jmx.client.MOperation;
 import ch.rweiss.jmx.client.MParameter;
+import ch.rweiss.jmx.client.cli.AbstractBeanCommand;
+import ch.rweiss.jmx.client.cli.Styles;
+import ch.rweiss.jmx.client.cli.WildcardFilters;
+import ch.rweiss.terminal.table.AbbreviateStyle;
+import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
@@ -19,6 +23,12 @@ public class InfoOperation extends AbstractBeanCommand
   @Parameters(index="1..*", paramLabel="OPERATION", description="Operation name or filter with wildcards. E.g gc, getThread*")
   private List<String> operationFilters = new ArrayList<>();
   private WildcardFilters filters;
+  
+  private Table<MBean> beanTitle = declareBeanTitleTable();
+  private Table<MOperation> operationTitle = declareOperationTitleTable();
+  private Table<MOperation> description = declareDescriptionTable();
+  private Table<Pair<String, String>> properties = declarePropertiesTable();
+  private Table<MParameter> parameters = declareParameterTable();
 
   @Override
   public void run()
@@ -61,77 +71,139 @@ public class InfoOperation extends AbstractBeanCommand
   
   private void printBeanNameTitle(MBean bean)
   {
-    term.newLine();
-    printNameTitle(bean.name().fullQualifiedName());
-    term.newLine();
+    printEmptyLine();
+    beanTitle.clear();
+    beanTitle.addRow(bean);
+    beanTitle.printWithoutHeader();    
   }
 
   private void print(MOperation op)
   {
     printNameTitle(op);
     printDescription(op);
-    printName(op);
-    printSignature(op);
-    printImpact(op);
-    printReturnType(op);
+    
+    properties.clear();
+    properties.addRow(Pair.of("Name", op.name()));
+    properties.addRow(Pair.of("Signature", op.signature()));
+    properties.addRow(Pair.of("Impact", op.impact().toString()));
+    properties.addRow(Pair.of("Return Type", op.returnType()));
+    properties.printWithoutHeader();
+
     printParameters(op);
   }
 
   private void printNameTitle(MOperation op)
   {
-    term.newLine();
-    printNameTitle(2, op.signature());
-    term.newLine();
+    printEmptyLine();
+    operationTitle.clear();
+    operationTitle.addRow(op);
+    operationTitle.printWithoutHeader();
   }
   
   private void printDescription(MOperation op)
   {
-    printFirstColumn(2, Styles.DESCRIPTION, op.description());
-    term.newLine();
-    term.newLine();
+    printEmptyLine();
+    description.clear();
+    description.addRow(op);
+    description.printWithoutHeader();
+    printEmptyLine();
   }
   
-  private void printName(MOperation op)
-  {
-    printNameValue(2, "Name", op.name());
-  }
-
-  private void printSignature(MOperation op)
-  {
-    printNameValue(2, "Signature", op.signature());
-  }
-
-  private void printImpact(MOperation op)
-  {
-    printNameValue(2, "Impact", op.impact().toString());
-  }
-
-  private void printReturnType(MOperation op)
-  {
-    printNameValue(2, "ReturnType", op.returnType());
-  }
-
   private void printParameters(MOperation op)
   {
     if (!op.parameters().isEmpty())
     {
-      term.newLine();
-      printFirstColumn(2, Styles.SUB_TITLE, "Parameters:");
-      term.newLine();
+      printEmptyLine();
+      
+      parameters.clear();
       for (MParameter param : op.parameters())
       {
-        printParameter(param);
+        parameters.addRow(param);
       }
+      parameters.print();
     }
   }
-
-  private void printParameter(MParameter param)
+  
+  private static Table<MBean> declareBeanTitleTable()
   {
-    printName(4, param.name());
-    term.newLine();
-    printNameValue(6, "Type", param.type());
-    printNameValue(6, "Description", param.description());
-    term.newLine();
+    Table<MBean> table = new Table<>();
+    table.addColumn(
+        table.createColumn("", 40, b -> b.name())
+          .withAbbreviateStyle(AbbreviateStyle.LEFT_WITH_DOTS)
+          .withCellStyle(Styles.NAME_TITLE)
+          .withMinWidth(8)
+          .toColumn());
+    return table;
   }
+  
+  private static Table<MOperation> declareOperationTitleTable()
+  {
+    Table<MOperation> table = new Table<>();
+    table.addColumn(
+        table.createColumn("", 40, operation -> operation.name())
+          .withAbbreviateStyle(AbbreviateStyle.LEFT_WITH_DOTS)
+          .withCellStyle(Styles.SUB_TITLE)
+          .withMinWidth(8)
+          .toColumn());
+    return table;
+  }
+
+  private static Table<MOperation> declareDescriptionTable()
+  {
+    Table<MOperation> table = new Table<>();
+    table.addColumn(
+        table.createColumn("", 40, operation -> operation.description())
+          .multiLine()
+          .withCellStyle(Styles.DESCRIPTION)
+          .withMinWidth(8)
+          .toColumn());
+    return table;
+  }
+
+  private static Table<Pair<String,String>> declarePropertiesTable()
+  {
+    Table<Pair<String, String>> table = new Table<>();
+    table.addColumn(
+        table.createColumn("Name", 20, pair -> pair.getKey())
+          .withAbbreviateStyle(AbbreviateStyle.LEFT)
+          .withCellStyle(Styles.NAME)
+          .withMinWidth(8)
+          .toColumn());
+    table.addColumn(
+        table.createColumn("Value", 60, pair -> pair.getValue())
+          .withCellStyle(Styles.VALUE)
+          .multiLine()
+          .withMinWidth(8)
+          .toColumn());
+    return table;
+  }
+  
+  private static Table<MParameter> declareParameterTable()
+  {
+    Table<MParameter> table = new Table<>();
+    table.addColumn(
+        table.createColumn("Parameter", 20, parameter -> parameter.name())
+          .withAbbreviateStyle(AbbreviateStyle.RIGHT_WITH_DOTS)
+          .withTitleStyle(Styles.NAME)
+          .withCellStyle(Styles.VALUE)
+          .withMinWidth(8)
+          .toColumn());
+    table.addColumn(
+        table.createColumn("Type", 30, parameter -> parameter.type())
+          .withAbbreviateStyle(AbbreviateStyle.RIGHT_WITH_DOTS)
+          .withTitleStyle(Styles.NAME)
+          .withCellStyle(Styles.VALUE)
+          .withMinWidth(8)
+          .toColumn());
+    table.addColumn(
+        table.createColumn("Description", 30, parameter -> parameter.description())
+          .withTitleStyle(Styles.NAME)
+          .withCellStyle(Styles.DESCRIPTION)
+          .multiLine()
+          .withMinWidth(8)
+          .toColumn());
+    return table;
+  }
+
 }
 

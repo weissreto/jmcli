@@ -1,14 +1,22 @@
 package ch.rweiss.jmx.client.cli.info;
 
-import ch.rweiss.jmx.client.cli.AbstractJmxClientCommand;
+import java.io.File;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+
 import ch.rweiss.jmx.client.MAttribute;
 import ch.rweiss.jmx.client.MBean;
 import ch.rweiss.jmx.client.MBeanName;
+import ch.rweiss.jmx.client.cli.AbstractJmxClientCommand;
+import ch.rweiss.jmx.client.cli.Styles;
+import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
 
 @Command(name="vm", description="Prints information about a virtual machine")
 public class InfoVirtualMachine extends AbstractJmxClientCommand
 {
+  private final Table<Pair<String, String>> table = declareTable();
 
   @Override
   protected void printTitle()
@@ -16,38 +24,51 @@ public class InfoVirtualMachine extends AbstractJmxClientCommand
     term.write("Virtual Machine Info");
   }
 
+  private static Table<Pair<String, String>> declareTable()
+  {
+    Table<Pair<String, String>> table = new Table<>();
+    table.addColumn(
+        table.createColumn("Name", 16, pair -> pair.getKey())
+          .withCellStyle(Styles.NAME)
+          .toColumn());
+
+    table.addColumn(
+        table.createColumn("Value", 40, pair -> pair.getValue())
+          .withCellStyle(Styles.VALUE)
+          .multiLine()
+          .withMinWidth(10)
+          .toColumn());
+    return table;
+  }
+
   @Override
   protected void execute()
   {
-    MBean runtime = getJmxClient().bean(MBeanName.RUNTIME);
-    MBean jmImpl = getJmxClient().bean(MBeanName.createFor("JMImplementation:type=MBeanServerDelegate"));
-    term.newLine();
-    printName(runtime.attribute("VmName").valueAsString());
-    term.newLine();
-    printName(runtime.attribute("SpecVersion").valueAsString()+" ("+jmImpl.attribute("ImplementationVersion").valueAsString()+")");
-    term.newLine();
-    term.newLine();
+    printEmptyLine();
+    
+    table.clear();
 
-    printNameValue("Up since", toDisplayString(runtime.attribute("Uptime").value()));
-    printName("Input Arguments");
+    MBean runtime = getJmxClient().bean(MBeanName.RUNTIME);    
+    MBean jmImpl = getJmxClient().bean(MBeanName.createFor("JMImplementation:type=MBeanServerDelegate"));
+    
+    table.addRow(Pair.of("Name", runtime.attribute("VmName").valueAsString()));
+    
+    table.addRow(Pair.of("Version", 
+        runtime.attribute("SpecVersion").valueAsString()+
+        " ("+jmImpl.attribute("ImplementationVersion").valueAsString()+")"));
+    
+    table.addRow(Pair.of("Up since", toDisplayString(runtime.attribute("Uptime").value())));
+    
     MAttribute attribute = runtime.attribute("InputArguments");
     String[] arguments = (String[])attribute.value();
-    for (String argument : arguments)
-    {
-      printSecondColumn(argument);
-      term.newLine();
-    }
-        
-    term.newLine();
-    printName("Classpath");
+    table.addRow(Pair.of("Input Arguments", StringUtils.join(arguments, "\n")));
+    
     attribute = runtime.attribute("ClassPath");
     String classPath = attribute.valueAsString();
-    for (String classPathEntry : classPath.split(";"))
-    {
-      printSecondColumn(classPathEntry);
-      term.newLine();
-    }
-
+    classPath = StringUtils.replace(classPath, File.pathSeparator, "\n");
+    table.addRow(Pair.of("Classpath", classPath));
+    
+    table.printWithoutHeader();
   }
 
   private static String toDisplayString(Object value)
