@@ -29,13 +29,13 @@ public class ListVirtualMachines extends AbstractHeaderCommand
     table.addColumn(
         table.createColumn("Id", 10, jvm -> jvm.id())
           .withTitleStyle(Styles.NAME_TITLE)
-          .withCellStyle(Styles.ID)
+          .withCellStyle(Styles.NAME)
           .toColumn());
 
     table.addColumn(
         table.createColumn("Display Name", 20, jvm -> jvm.displayName())
           .withTitleStyle(Styles.NAME_TITLE)
-          .withCellStyle(Styles.NAME)
+          .withCellStyle(Styles.VALUE)
           .multiLine()
           .withMinWidth(10)
           .toColumn());
