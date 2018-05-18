@@ -14,17 +14,14 @@ import picocli.CommandLine.Command;
 @Command(name="bean", description="Prints information about managment beans")
 public class InfoBean extends AbstractBeanCommand
 {
-  private Table<MBean> nameTitle = declareNameTitleTable();
   private Table<MBean> description = declareDescriptionTable();
   private Table<Pair<String, String>> properties = declarePropertiesTable();
-  private Table<String> attribAndOpTitle = declareAttribsAndOpsTable();
   private Table<MAttribute> attributes = declareAttributesTable();
   private Table<MOperation> operations = declareOperationsTable();
 
-  @Override
-  protected void printTitle()
+  public InfoBean()
   {
-    term.write("Bean Info");
+    super("Bean Info");
   }
 
   @Override
@@ -38,23 +35,16 @@ public class InfoBean extends AbstractBeanCommand
 
   private void print(MBean bean)
   {
-    printNameTitle(bean);
+    printBeanNameTitle(bean);
     printDescription(bean);
     printNameAndType(bean);
     printAttributes(bean);
     printOperations(bean);
   }
 
-  private void printNameTitle(MBean bean)
-  {
-    printEmptyLine();
-    nameTitle.setSingleRow(bean);
-    nameTitle.printWithoutHeader();
-    printEmptyLine();
-  }
-
   private void printDescription(MBean bean)
   {
+    printEmptyLine();
     description.setSingleRow(bean);
     description.printWithoutHeader();
     printEmptyLine();
@@ -73,8 +63,7 @@ public class InfoBean extends AbstractBeanCommand
   {
     if (!bean.attributes().isEmpty())
     {
-      attribAndOpTitle.setSingleRow("Attributes:");
-      attribAndOpTitle.printWithoutHeader();
+      printSubTitle("Attributes:");
 
       attributes.setRows(bean.attributes());
       attributes.printWithoutHeader();
@@ -86,25 +75,12 @@ public class InfoBean extends AbstractBeanCommand
   {
     if (!bean.operations().isEmpty())
     {
-      attribAndOpTitle.setSingleRow("Operations:");
-      attribAndOpTitle.printWithoutHeader();
+      printSubTitle("Operations:");
       operations.setRows(bean.operations());
       operations.printWithoutHeader();
     }
   }
-  
-  private static Table<MBean> declareNameTitleTable()
-  {
-    Table<MBean> table = new Table<>();
-    table.addColumn(
-        table.createColumn("", 40, b -> b.name())
-          .withAbbreviateStyle(AbbreviateStyle.LEFT_WITH_DOTS)
-          .withCellStyle(Styles.NAME_TITLE)
-          .withMinWidth(8)
-          .toColumn());
-    return table;
-  }
-  
+    
   private static Table<MBean> declareDescriptionTable()
   {
     Table<MBean> table = new Table<>();
@@ -135,18 +111,6 @@ public class InfoBean extends AbstractBeanCommand
     return table;
   }
   
-  private static Table<String> declareAttribsAndOpsTable()
-  {
-    Table<String> table = new Table<>();
-    table.addColumn(
-        table.createColumn("Title", 20, title -> title)
-          .withAbbreviateStyle(AbbreviateStyle.RIGHT)
-          .withCellStyle(Styles.SUB_TITLE)
-          .withMinWidth(8)
-          .toColumn());
-    return table;
-  }
-
   private static Table<MAttribute> declareAttributesTable()
   {
     Table<MAttribute> table = new Table<>();

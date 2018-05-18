@@ -1,11 +1,31 @@
 package ch.rweiss.jmx.client.cli;
 
-import ch.rweiss.jmx.client.JmxException;
+import ch.rweiss.check.Check;
 import ch.rweiss.terminal.AnsiTerminal;
+import ch.rweiss.terminal.table.AbbreviateStyle;
+import ch.rweiss.terminal.table.Table;
 
 public abstract class AbstractHeaderCommand extends AbstractCommand
 {
   protected AnsiTerminal term = AnsiTerminal.get();
+  
+  private String name;
+  private static Table<String> header = declareHeaderTable(); 
+  private static Table<String> subTitle = declareSubTitleTable();
+
+  
+  protected AbstractHeaderCommand(String name)
+  {
+    setName(name);
+  }
+  
+  abstract protected void execute();
+
+  protected void setName(String name)
+  {
+    Check.parameter("name").withValue(name).isNotBlank();
+    this.name = name;
+  }
   
   @Override
   public void run()
@@ -24,26 +44,47 @@ public abstract class AbstractHeaderCommand extends AbstractCommand
   protected void printHeader()
   {
     printEmptyLine();
-    term.style(Styles.TITLE);
-    printTitle();
-    term.clear().lineToEnd();
+    header.setSingleRow(name);
+    header.printWithoutHeader();
     term.reset();
     printEmptyLine();
   }  
   
-  abstract protected void printTitle();
-  abstract protected void execute();
-
+  protected void printSubTitle(String title)
+  {
+    subTitle.setSingleRow(title);
+    subTitle.printWithoutHeader();
+  }
+  
   protected void printEmptyLine()
   {
     term.clear().lineToEnd();
     term.newLine();
   }
   
-  protected static String toErrorMessage(JmxException error)
+  private static Table<String> declareHeaderTable()
   {
-    String message;
-    message = error.getShortDisplayMessage();
-    return "<" + message + ">";
+    Table<String> table = new Table<>();
+    table.addColumn(
+        table.createColumn("", 40, title -> title)
+          .withAbbreviateStyle(AbbreviateStyle.RIGHT)
+          .withCellStyle(Styles.TITLE)
+          .withMinWidth(8)
+          .toColumn());
+    return table;
   }
+  
+  private static Table<String> declareSubTitleTable()
+  {
+    Table<String> table = new Table<>();
+    table.addColumn(
+        table.createColumn("Title", 20, title -> title)
+          .withAbbreviateStyle(AbbreviateStyle.RIGHT)
+          .withCellStyle(Styles.SUB_TITLE)
+          .withMinWidth(8)
+          .toColumn());
+    return table;
+  }
+
+
 }

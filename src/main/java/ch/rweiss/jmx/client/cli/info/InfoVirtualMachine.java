@@ -18,10 +18,9 @@ public class InfoVirtualMachine extends AbstractJmxClientCommand
 {
   private final Table<Pair<String, String>> table = declareTable();
 
-  @Override
-  protected void printTitle()
+  public InfoVirtualMachine()
   {
-    term.write("Virtual Machine Info");
+    super("Java Virtual Machine Info");
   }
 
   private static Table<Pair<String, String>> declareTable()

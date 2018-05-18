@@ -26,14 +26,11 @@ public class InvokeOperation extends AbstractBeanCommand
   @Parameters(index="2..*", paramLabel="PARAMETER", description="Operation parameters")
   private List<String> parameters = new ArrayList<>();
   
-  private Table<MBean> beanTitle = declareBeanTitleTable();
   private Table<Pair<String, String>> operationTable = declareOperationTable();
 
-
-  @Override
-  protected void printTitle()
+  public InvokeOperation()
   {
-    term.write("Invoke Operation");
+    super("Invoke Operation");
   }
 
   @Override
@@ -44,7 +41,7 @@ public class InvokeOperation extends AbstractBeanCommand
       MOperation operation = findOperation(bean);
       if (operation != null)
       {
-        printBeanName(bean);
+        printBeanNameTitle(bean);
         invoke(operation);
       }
     }
@@ -98,13 +95,6 @@ public class InvokeOperation extends AbstractBeanCommand
     throw new CommandException("More than one operation {0} with {1} parameters found for bean {2}. Please specify operation signature.", operationName, parameters.size(), bean.name().fullQualifiedName());
   }
   
-  private void printBeanName(MBean bean)
-  {
-    printEmptyLine();
-    beanTitle.setSingleRow(bean);
-    beanTitle.printWithoutHeader();
-  }
-
   private void invoke(MOperation operation)
   {
     printEmptyLine();
@@ -116,19 +106,6 @@ public class InvokeOperation extends AbstractBeanCommand
     operationTable.addRow(Pair.of("", ""));
     operationTable.addRow(Pair.of("Result", result));
     operationTable.printWithoutHeader();
-  }
-  
-  
-  private static Table<MBean> declareBeanTitleTable()
-  {
-    Table<MBean> table = new Table<>();
-    table.addColumn(
-        table.createColumn("", 40, b -> b.name())
-          .withAbbreviateStyle(AbbreviateStyle.LEFT_WITH_DOTS)
-          .withCellStyle(Styles.NAME_TITLE)
-          .withMinWidth(8)
-          .toColumn());
-    return table;
   }
   
   private static Table<Pair<String,String>> declareOperationTable()

@@ -24,12 +24,15 @@ public class InfoOperation extends AbstractBeanCommand
   private List<String> operationFilters = new ArrayList<>();
   private WildcardFilters filters;
   
-  private Table<MBean> beanTitle = declareBeanTitleTable();
-  private Table<MOperation> operationTitle = declareOperationTitleTable();
   private Table<MOperation> description = declareDescriptionTable();
   private Table<Pair<String, String>> properties = declarePropertiesTable();
   private Table<MParameter> parameters = declareParameterTable();
 
+  public InfoOperation()
+  {
+    super("Operation Info"); 
+  }
+  
   @Override
   public void run()
   {
@@ -37,12 +40,6 @@ public class InfoOperation extends AbstractBeanCommand
     super.run();
   }
   
-  @Override
-  protected void printTitle()
-  {
-    term.write("Operation Info");
-  }
-
   @Override
   protected void execute()
   {
@@ -69,13 +66,6 @@ public class InfoOperation extends AbstractBeanCommand
       .collect(Collectors.toList());
   }
   
-  private void printBeanNameTitle(MBean bean)
-  {
-    printEmptyLine();
-    beanTitle.setSingleRow(bean);
-    beanTitle.printWithoutHeader();    
-  }
-
   private void print(MOperation op)
   {
     printNameTitle(op);
@@ -94,8 +84,7 @@ public class InfoOperation extends AbstractBeanCommand
   private void printNameTitle(MOperation op)
   {
     printEmptyLine();
-    operationTitle.setSingleRow(op);
-    operationTitle.printWithoutHeader();
+    printSubTitle(op.name());
   }
   
   private void printDescription(MOperation op)
@@ -117,30 +106,6 @@ public class InfoOperation extends AbstractBeanCommand
     }
   }
   
-  private static Table<MBean> declareBeanTitleTable()
-  {
-    Table<MBean> table = new Table<>();
-    table.addColumn(
-        table.createColumn("", 40, b -> b.name())
-          .withAbbreviateStyle(AbbreviateStyle.LEFT_WITH_DOTS)
-          .withCellStyle(Styles.NAME_TITLE)
-          .withMinWidth(8)
-          .toColumn());
-    return table;
-  }
-  
-  private static Table<MOperation> declareOperationTitleTable()
-  {
-    Table<MOperation> table = new Table<>();
-    table.addColumn(
-        table.createColumn("", 40, operation -> operation.name())
-          .withAbbreviateStyle(AbbreviateStyle.LEFT_WITH_DOTS)
-          .withCellStyle(Styles.SUB_TITLE)
-          .withMinWidth(8)
-          .toColumn());
-    return table;
-  }
-
   private static Table<MOperation> declareDescriptionTable()
   {
     Table<MOperation> table = new Table<>();

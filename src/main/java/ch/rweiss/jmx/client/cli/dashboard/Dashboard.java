@@ -41,13 +41,17 @@ public class Dashboard extends AbstractJmxClientCommand
   private List<DataChannelSerie> dataChannelSeries = new ArrayList<>();
   private ColorGenerator colorGenerator = new ColorGenerator();
 
-
-  @Override
-  protected void printTitle()
+  Dashboard()
   {
-    term.write("Dashboard");
+    super("Dashboard");
   }
-
+  
+  @Override
+  protected void printHeader()
+  {
+    // Do not print header
+  }
+  
   @Override
   protected void execute()
   {

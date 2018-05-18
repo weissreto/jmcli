@@ -19,6 +19,11 @@ public abstract class AbstractJmxClientCommand extends AbstractHeaderCommand
 
   protected JmxClient jmxClient;
   
+  protected AbstractJmxClientCommand(String name)
+  {
+    super(name);
+  }
+  
   @Override
   public void run()
   {
@@ -112,5 +117,12 @@ public abstract class AbstractJmxClientCommand extends AbstractHeaderCommand
     {
       throw new JmxException("Interrupted", ex);
     }
+  }
+  
+  protected static String toErrorMessage(JmxException error)
+  {
+    String message;
+    message = error.getShortDisplayMessage();
+    return "<" + message + ">";
   }
 }

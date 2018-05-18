@@ -62,10 +62,15 @@ public class Chart extends AbstractJmxClientCommand
   private List<DataChannelSerie> dataChannelSeries = new ArrayList<>();
   private ColorGenerator colorGenerator = new ColorGenerator();
 
-  @Override
-  protected void printTitle()
+  public Chart()
   {
-    term.write(title);
+    super("Chart");
+  }
+  
+  @Override
+  protected void printHeader()
+  {
+    // Do not print header
   }
   
   @Override

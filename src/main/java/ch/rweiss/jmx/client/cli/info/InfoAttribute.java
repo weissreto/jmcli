@@ -17,15 +17,12 @@ import picocli.CommandLine.Command;
 @Command(name="attribute", description="Prints information about attributes")
 public class InfoAttribute extends AbstractAttributeCommand
 {
-  private Table<MBean> beanTitle = declareBeanTitleTable();
-  private Table<MAttribute> attributeTitle = declareAttributeTitleTable();
   private Table<MAttribute> description = declareDescriptionTable();
   private Table<Pair<String, StyledText>> properties = declarePropertiesTable();
   
-  @Override
-  protected void printTitle()
+  public InfoAttribute()
   {
-    term.write("Attribute Info");
+    super("Attribute Info");
   }
 
   @Override
@@ -45,13 +42,6 @@ public class InfoAttribute extends AbstractAttributeCommand
     }
   }
 
-  private void printBeanNameTitle(MBean bean)
-  {
-    printEmptyLine();
-    beanTitle.setSingleRow(bean);
-    beanTitle.printWithoutHeader();
-  }
-
   private void print(MAttribute attr)
   {
     printNameTitle(attr);
@@ -69,8 +59,7 @@ public class InfoAttribute extends AbstractAttributeCommand
   private void printNameTitle(MAttribute attr)
   {
     printEmptyLine();
-    attributeTitle.setSingleRow(attr);
-    attributeTitle.printWithoutHeader();
+    printSubTitle(attr.name());
   }
   
   private void printDescription(MAttribute attr)
@@ -80,31 +69,7 @@ public class InfoAttribute extends AbstractAttributeCommand
     description.printWithoutHeader();
     printEmptyLine();
   }
-  
-  private static Table<MBean> declareBeanTitleTable()
-  {
-    Table<MBean> table = new Table<>();
-    table.addColumn(
-        table.createColumn("", 40, b -> b.name())
-          .withAbbreviateStyle(AbbreviateStyle.LEFT_WITH_DOTS)
-          .withCellStyle(Styles.NAME_TITLE)
-          .withMinWidth(8)
-          .toColumn());
-    return table;
-  }
-  
-  private static Table<MAttribute> declareAttributeTitleTable()
-  {
-    Table<MAttribute> table = new Table<>();
-    table.addColumn(
-        table.createColumn("", 40, attribute -> attribute.name())
-          .withAbbreviateStyle(AbbreviateStyle.LEFT_WITH_DOTS)
-          .withCellStyle(Styles.SUB_TITLE)
-          .withMinWidth(8)
-          .toColumn());
-    return table;
-  }
-
+    
   private static Table<MAttribute> declareDescriptionTable()
   {
     Table<MAttribute> table = new Table<>();

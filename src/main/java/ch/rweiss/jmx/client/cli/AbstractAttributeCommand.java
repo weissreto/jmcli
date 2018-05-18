@@ -12,6 +12,11 @@ import picocli.CommandLine.Parameters;
 @Command(name="attribute", description="Prints information about attributes")
 public abstract class AbstractAttributeCommand extends AbstractBeanCommand
 {
+  protected AbstractAttributeCommand(String name)
+  {
+    super(name);
+  }
+
   @Parameters(index="1..*", paramLabel="ATTRIBUTE", description="Attribute name or filter with wildcards. E.g Count, Total*")
   private List<String> attributeFilters = new ArrayList<>();
   private WildcardFilters filters;
