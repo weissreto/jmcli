@@ -65,6 +65,7 @@ public class Chart extends AbstractJmxClientCommand
   public Chart()
   {
     super("Chart");
+    interval = 1;
   }
   
   @Override

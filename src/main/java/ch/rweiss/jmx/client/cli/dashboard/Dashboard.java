@@ -44,6 +44,7 @@ public class Dashboard extends AbstractJmxClientCommand
   Dashboard()
   {
     super("Dashboard");
+    interval = 1;
   }
   
   @Override
