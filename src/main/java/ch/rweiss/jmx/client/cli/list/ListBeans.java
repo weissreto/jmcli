@@ -11,17 +11,14 @@ public class ListBeans extends AbstractJmxClientCommand
 {
   private Table<MBeanTreeNode> table = declareTable();
 
-  @Override
-  protected void printTitle()
+  ListBeans()
   {
-    term.write("Beans");
+    super("Beans");
   }
 
   @Override
   protected void execute()
   {
-    printEmptyLine();
-    
     table.clear();
 
     MBeanTreeNode beanTree = getJmxClient().beanTree();    

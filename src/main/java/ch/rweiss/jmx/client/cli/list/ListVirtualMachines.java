@@ -9,23 +9,21 @@ import picocli.CommandLine.Command;
 @Command(name="vm", description="Lists all available java virtual maschines")
 public class ListVirtualMachines extends AbstractHeaderCommand
 {
-  private Table<Jvm> table = declareTable();
+  private static Table<Jvm> jvms = declareJvmTable();
 
-  @Override
-  protected void printTitle()
+  public ListVirtualMachines()
   {
-    term.write("Available Java Virtual Machines");    
+    super("Java Virtual Maschines");
   }
   
   @Override
   public void execute()
   {
-    printEmptyLine();
-    table.setRows(Jvm.getAvailableRunningJvms());
-    table.print();
+    jvms.setRows(Jvm.getAvailableRunningJvms());
+    jvms.print();
   }
 
-  private static Table<Jvm> declareTable()
+  private static Table<Jvm> declareJvmTable()
   {
     Table<Jvm> table = new Table<>();
     table.addColumn(

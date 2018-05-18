@@ -28,31 +28,28 @@ public class ListThreadsStates extends AbstractJmxClientCommand
   private int valueCount = 0;
 
   private java.util.List<String> deadlockedThreadNames = new ArrayList<>();
-  private Table<ThreadData> table = declareTable();
+  private static Table<ThreadData> threadStates = declareTable();
 
   private static final Style GREEN = Style.create().withColor(Color.BRIGHT_GREEN).toStyle();
   private static final Style YELLOW = Style.create().withColor(Color.BRIGHT_YELLOW).toStyle();
   private static final Style RED = Style.create().withColor(Color.BRIGHT_RED).toStyle();
   private static final int MAX_STATES = 80;
   
-  @Override
-  protected void printTitle()
+  ListThreadsStates()
   {
-    term.write("Threads States");
+    super("Threads States");
   }
 
   @Override
   protected void execute()
   {
-    printEmptyLine();
-    
     MBean threadBean = jmxClient.bean(MBeanName.THREAD);
     threadBean.attribute("ThreadCpuTimeEnabled").value(true);
     threadBean.attribute("ThreadContentionMonitoringEnabled").value(true);
     long[] deadlockedThreads = (long[])threadBean.operation("findDeadlockedThreads").invoke(new Object[0]);
     deadlockedThreadNames.clear();
     CompositeData[] threadDump = (CompositeData[])threadBean.operation("dumpAllThreads", "boolean", "boolean").invoke(false, false);
-    table.clear();
+    threadStates.clear();
     for (CompositeData thread : threadDump)
     {        
       ThreadInfo info = ThreadInfo.from(thread);
@@ -62,10 +59,10 @@ public class ListThreadsStates extends AbstractJmxClientCommand
       {
         data.isDeadLocked = true;
       }
-      table.addRow(data);
+      threadStates.addRow(data);
     }
     valueCount++;
-    table.printWithoutHeader();
+    threadStates.printWithoutHeader();
   }
 
   private static Table<ThreadData> declareTable()

@@ -8,7 +8,6 @@ import ch.rweiss.jmx.client.MBean;
 import ch.rweiss.jmx.client.cli.AbstractAttributeCommand;
 import ch.rweiss.jmx.client.cli.Styles;
 import ch.rweiss.terminal.StyledText;
-import ch.rweiss.terminal.table.AbbreviateStyle;
 import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
 
@@ -16,12 +15,10 @@ import picocli.CommandLine.Command;
 public class ListAttributes extends AbstractAttributeCommand
 {  
   private final Table<MAttribute> table = declareTable();
-  private final Table<MBean> beanTitle = declareBeanTitleTable();
 
-  @Override
-  protected void printTitle()
+  public ListAttributes()
   {
-    term.write("Attributes");    
+    super("Attributes");    
   }
   
   @Override
@@ -52,19 +49,7 @@ public class ListAttributes extends AbstractAttributeCommand
           .toColumn());
     return table;
   }
-  
-  private static Table<MBean> declareBeanTitleTable()
-  {
-    Table<MBean> table = new Table<>();
-    table.addColumn(
-        table.createColumn("", 40, b -> b.name())
-          .withAbbreviateStyle(AbbreviateStyle.LEFT_WITH_DOTS)
-          .withCellStyle(Styles.NAME_TITLE)
-          .withMinWidth(8)
-          .toColumn());
-    return table;
-  }
-  
+    
   public static StyledText getValue(MAttribute attribute)
   {
     try
@@ -82,17 +67,9 @@ public class ListAttributes extends AbstractAttributeCommand
     List<MAttribute> attributes = getFilteredAttributes(bean);
     if (!attributes.isEmpty())
     {
-      printBean(bean);
+      printBeanNameTitle(bean);
       table.setRows(attributes);
       table.printWithoutHeader();
     }
   }
-
-  private void printBean(MBean bean)
-  {
-    printEmptyLine();
-    beanTitle.setSingleRow(bean);
-    beanTitle.printWithoutHeader();
-  }
-
 }

@@ -60,12 +60,9 @@ public class ListThreads extends AbstractJmxClientCommand
   private static final Style[] REDS_GRAPHICS = buildGradient(63, 0, 0, 24, 0, 0, 8);
   private static final Style[] REDS_PERCENTAGE = buildGradient(155, 0, 0, 1, 0, 0, 101);
 
-
-  
-  @Override
-  protected void printTitle()
+  public ListThreads()
   {
-    term.write("Threads");
+    super("Threads");
   }
 
   private static Style[] buildGradient(int startRed, int startGreen, int startBlue, int deltaRed, int deltaGreen, int deltaBlue, int count)
@@ -88,8 +85,6 @@ public class ListThreads extends AbstractJmxClientCommand
   @Override
   protected void execute()
   {
-    printEmptyLine();
-    
     if (StringUtils.isNotBlank(sortColumnName))
     {
       RowSorter<ThreadData> sorter = table.sortColumn(sortColumnName);

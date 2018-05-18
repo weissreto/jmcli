@@ -22,14 +22,11 @@ public class SetAttribute extends AbstractBeanCommand
   @Parameters(index="2", paramLabel="VALUE", description="The value to set")
   private String value;
   
-  private Table<MBean> beanTitle = declareBeanTitleTable();
   private Table<Pair<String, StyledText>> attributeValues = declareValueTable();
 
-
-  @Override
-  protected void printTitle()
+  public SetAttribute()
   {
-    term.write("Set Attribute");
+    super("Set Attribute");
   }
 
   @Override
@@ -40,19 +37,12 @@ public class SetAttribute extends AbstractBeanCommand
       MAttribute attribute = bean.attribute(attributeName);
       if (attribute != null)
       {
-        printBeanName(bean);
+        printBeanNameTitle(bean);
         setValue(attribute);
       }
     }
   }
-
-  private void printBeanName(MBean bean)
-  {
-    printEmptyLine();
-    beanTitle.setSingleRow(bean);
-    beanTitle.printWithoutHeader();
-  }
-
+  
   private void setValue(MAttribute attribute)
   {
     printEmptyLine();
@@ -62,19 +52,7 @@ public class SetAttribute extends AbstractBeanCommand
     attributeValues.addRow(Pair.of("Value (Now)", ListAttributes.getValue(attribute)));
     attributeValues.printWithoutHeader();
   }
-  
-  private static Table<MBean> declareBeanTitleTable()
-  {
-    Table<MBean> table = new Table<>();
-    table.addColumn(
-        table.createColumn("", 40, b -> b.name())
-          .withAbbreviateStyle(AbbreviateStyle.LEFT_WITH_DOTS)
-          .withCellStyle(Styles.NAME_TITLE)
-          .withMinWidth(8)
-          .toColumn());
-    return table;
-  }
-  
+    
   private static Table<Pair<String,StyledText>> declareValueTable()
   {
     Table<Pair<String, StyledText>> table = new Table<>();
