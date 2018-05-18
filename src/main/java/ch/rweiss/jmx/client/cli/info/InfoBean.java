@@ -45,8 +45,7 @@ public class InfoBean extends AbstractBeanCommand
   private void printDescription(MBean bean)
   {
     printEmptyLine();
-    description.setSingleRow(bean);
-    description.printWithoutHeader();
+    description.printSingleRow(bean);
     printEmptyLine();
   }
 

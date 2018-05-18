@@ -90,8 +90,7 @@ public class InfoOperation extends AbstractBeanCommand
   private void printDescription(MOperation op)
   {
     printEmptyLine();
-    description.setSingleRow(op);
-    description.printWithoutHeader();
+    description.printSingleRow(op);
     printEmptyLine();
   }
   

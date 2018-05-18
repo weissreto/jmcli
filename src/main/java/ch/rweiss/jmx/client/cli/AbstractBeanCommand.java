@@ -34,8 +34,7 @@ public abstract class AbstractBeanCommand extends AbstractJmxClientCommand
       printEmptyLine();
     }
     firstBean = false;
-    beanTitle.setSingleRow(bean);
-    beanTitle.printWithoutHeader();    
+    beanTitle.printSingleRow(bean);
   }
 
   

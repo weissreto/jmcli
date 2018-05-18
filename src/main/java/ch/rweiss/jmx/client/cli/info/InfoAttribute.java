@@ -65,8 +65,7 @@ public class InfoAttribute extends AbstractAttributeCommand
   private void printDescription(MAttribute attr)
   {
     printEmptyLine();
-    description.setSingleRow(attr);
-    description.printWithoutHeader();
+    description.printSingleRow(attr);
     printEmptyLine();
   }
     

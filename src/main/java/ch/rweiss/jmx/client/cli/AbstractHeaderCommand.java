@@ -44,16 +44,14 @@ public abstract class AbstractHeaderCommand extends AbstractCommand
   protected void printHeader()
   {
     printEmptyLine();
-    header.setSingleRow(name);
-    header.printWithoutHeader();
+    header.printSingleRow(name);
     term.reset();
     printEmptyLine();
   }  
   
   protected void printSubTitle(String title)
   {
-    subTitle.setSingleRow(title);
-    subTitle.printWithoutHeader();
+    subTitle.printSingleRow(title);
   }
   
   protected void printEmptyLine()
