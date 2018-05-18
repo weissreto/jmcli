@@ -45,7 +45,6 @@ public abstract class AbstractHeaderCommand extends AbstractCommand
   {
     printEmptyLine();
     header.printSingleRow(name);
-    term.reset();
     printEmptyLine();
   }  
   

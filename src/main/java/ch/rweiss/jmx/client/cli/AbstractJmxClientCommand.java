@@ -81,15 +81,16 @@ public abstract class AbstractJmxClientCommand extends AbstractHeaderCommand
 
   private void runPeriodically()
   {
-    term.clear().screen();
-    term.cursor().hide();
+    term.clear().screen();    
     try
     {
       while(System.in.available()==0)
       {
         term.cursor().position(1, 1);
+        term.cursor().hide();
         beforeRun();
         super.run();
+        term.clear().screenToEnd();
         afterRun();
         sleep();
       }
@@ -106,10 +107,12 @@ public abstract class AbstractJmxClientCommand extends AbstractHeaderCommand
 
   protected void afterRun()
   {
+    // does nothing here. Maybe used in sub classes to cleanup
   }
 
   protected void beforeRun()
   {
+    // Does nothing here. Maybe used in sub classes to initialize
   }
 
   private void sleep() throws IOException
