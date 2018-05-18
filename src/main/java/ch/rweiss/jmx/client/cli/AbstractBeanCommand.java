@@ -27,6 +27,12 @@ public abstract class AbstractBeanCommand extends AbstractJmxClientCommand
     return getJmxClient().beansThatMatch(MBeanFilter.with(beanNameOrFilter));
   }
   
+  @Override
+  protected void beforeRun()
+  {
+    firstBean = true;
+  }
+  
   protected void printBeanNameTitle(MBean bean)
   {
     if (!firstBean)
@@ -36,7 +42,6 @@ public abstract class AbstractBeanCommand extends AbstractJmxClientCommand
     firstBean = false;
     beanTitle.printSingleRow(bean);
   }
-
   
   private static Table<MBean> declareBeanTitleTable()
   {
