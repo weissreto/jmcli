@@ -23,7 +23,6 @@ public class SetAttribute extends AbstractBeanCommand
   private String value;
   
   private Table<MBean> beanTitle = declareBeanTitleTable();
-  private Table<MAttribute> attributeTitle = declareAttributeTitleTable();
   private Table<Pair<String, StyledText>> attributeValues = declareValueTable();
 
 
@@ -42,7 +41,6 @@ public class SetAttribute extends AbstractBeanCommand
       if (attribute != null)
       {
         printBeanName(bean);
-        printAttributeName(attribute);
         setValue(attribute);
       }
     }
@@ -51,21 +49,14 @@ public class SetAttribute extends AbstractBeanCommand
   private void printBeanName(MBean bean)
   {
     printEmptyLine();
-    beanTitle.addRow(bean);
+    beanTitle.setSingleRow(bean);
     beanTitle.printWithoutHeader();
   }
-
-  private void printAttributeName(MAttribute attribute)
-  {
-    printEmptyLine();
-    attributeTitle.addRow(attribute);
-    attributeTitle.printWithoutHeader();
-  }
-
 
   private void setValue(MAttribute attribute)
   {
     printEmptyLine();
+    attributeValues.addRow(Pair.of("Setting attribute", new StyledText(attribute.name(), Styles.VALUE)));
     attributeValues.addRow(Pair.of("Value (Before)", ListAttributes.getValue(attribute)));
     attribute.value(value);
     attributeValues.addRow(Pair.of("Value (Now)", ListAttributes.getValue(attribute)));
@@ -84,18 +75,6 @@ public class SetAttribute extends AbstractBeanCommand
     return table;
   }
   
-  private static Table<MAttribute> declareAttributeTitleTable()
-  {
-    Table<MAttribute> table = new Table<>();
-    table.addColumn(
-        table.createColumn("", 40, b -> "Setting attribute '"+b.name()+"' ...")
-          .withAbbreviateStyle(AbbreviateStyle.LEFT_WITH_DOTS)
-          .withCellStyle(Styles.SUB_TITLE)
-          .withMinWidth(8)
-          .toColumn());
-    return table;
-  }
-
   private static Table<Pair<String,StyledText>> declareValueTable()
   {
     Table<Pair<String, StyledText>> table = new Table<>();

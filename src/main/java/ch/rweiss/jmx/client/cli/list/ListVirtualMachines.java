@@ -21,12 +21,7 @@ public class ListVirtualMachines extends AbstractHeaderCommand
   public void execute()
   {
     printEmptyLine();
-    
-    table.clear();
-    for (Jvm jvm : Jvm.getAvailableRunningJvms())
-    {
-      table.addRow(jvm);
-    }
+    table.setRows(Jvm.getAvailableRunningJvms());
     table.print();
   }
 

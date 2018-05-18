@@ -48,8 +48,7 @@ public class InfoAttribute extends AbstractAttributeCommand
   private void printBeanNameTitle(MBean bean)
   {
     printEmptyLine();
-    beanTitle.clear();
-    beanTitle.addRow(bean);
+    beanTitle.setSingleRow(bean);
     beanTitle.printWithoutHeader();
   }
 
@@ -70,16 +69,14 @@ public class InfoAttribute extends AbstractAttributeCommand
   private void printNameTitle(MAttribute attr)
   {
     printEmptyLine();
-    attributeTitle.clear();
-    attributeTitle.addRow(attr);
+    attributeTitle.setSingleRow(attr);
     attributeTitle.printWithoutHeader();
   }
   
   private void printDescription(MAttribute attr)
   {
     printEmptyLine();
-    description.clear();
-    description.addRow(attr);
+    description.setSingleRow(attr);
     description.printWithoutHeader();
     printEmptyLine();
   }

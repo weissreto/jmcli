@@ -101,7 +101,7 @@ public class InvokeOperation extends AbstractBeanCommand
   private void printBeanName(MBean bean)
   {
     printEmptyLine();
-    beanTitle.addRow(bean);
+    beanTitle.setSingleRow(bean);
     beanTitle.printWithoutHeader();
   }
 
@@ -142,6 +142,7 @@ public class InvokeOperation extends AbstractBeanCommand
           .toColumn());
     table.addColumn(
         table.createColumn("Value", 60, pair -> pair.getValue())
+          .withCellStyle(Styles.VALUE)
           .multiLine()
           .withMinWidth(8)
           .toColumn());

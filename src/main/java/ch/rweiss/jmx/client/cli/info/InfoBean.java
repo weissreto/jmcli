@@ -48,18 +48,15 @@ public class InfoBean extends AbstractBeanCommand
   private void printNameTitle(MBean bean)
   {
     printEmptyLine();
-    nameTitle.clear();
-    nameTitle.addRow(bean);
+    nameTitle.setSingleRow(bean);
     nameTitle.printWithoutHeader();
     printEmptyLine();
   }
 
   private void printDescription(MBean bean)
   {
-    description.clear();
-    description.addRow(bean);
+    description.setSingleRow(bean);
     description.printWithoutHeader();
-//    printFirstColumn(Styles.DESCRIPTION, bean.description());
     printEmptyLine();
   }
 
@@ -76,15 +73,10 @@ public class InfoBean extends AbstractBeanCommand
   {
     if (!bean.attributes().isEmpty())
     {
-      attribAndOpTitle.clear();
-      attribAndOpTitle.addRow("Attributes:");
+      attribAndOpTitle.setSingleRow("Attributes:");
       attribAndOpTitle.printWithoutHeader();
-      printEmptyLine();
-      attributes.clear();
-      for (MAttribute attribute : bean.attributes())
-      {
-        attributes.addRow(attribute);        
-      }
+
+      attributes.setRows(bean.attributes());
       attributes.printWithoutHeader();
       printEmptyLine();
     }
@@ -94,17 +86,10 @@ public class InfoBean extends AbstractBeanCommand
   {
     if (!bean.operations().isEmpty())
     {
-      attribAndOpTitle.clear();
-      attribAndOpTitle.addRow("Operations:");
+      attribAndOpTitle.setSingleRow("Operations:");
       attribAndOpTitle.printWithoutHeader();
-      printEmptyLine();
-      operations.clear();
-      for (MOperation operation : bean.operations())
-      {
-        operations.addRow(operation);
-      }
+      operations.setRows(bean.operations());
       operations.printWithoutHeader();
-      printEmptyLine();
     }
   }
   

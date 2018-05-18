@@ -72,8 +72,7 @@ public class InfoOperation extends AbstractBeanCommand
   private void printBeanNameTitle(MBean bean)
   {
     printEmptyLine();
-    beanTitle.clear();
-    beanTitle.addRow(bean);
+    beanTitle.setSingleRow(bean);
     beanTitle.printWithoutHeader();    
   }
 
@@ -95,16 +94,14 @@ public class InfoOperation extends AbstractBeanCommand
   private void printNameTitle(MOperation op)
   {
     printEmptyLine();
-    operationTitle.clear();
-    operationTitle.addRow(op);
+    operationTitle.setSingleRow(op);
     operationTitle.printWithoutHeader();
   }
   
   private void printDescription(MOperation op)
   {
     printEmptyLine();
-    description.clear();
-    description.addRow(op);
+    description.setSingleRow(op);
     description.printWithoutHeader();
     printEmptyLine();
   }
@@ -115,11 +112,7 @@ public class InfoOperation extends AbstractBeanCommand
     {
       printEmptyLine();
       
-      parameters.clear();
-      for (MParameter param : op.parameters())
-      {
-        parameters.addRow(param);
-      }
+      parameters.setRows(op.parameters());
       parameters.print();
     }
   }

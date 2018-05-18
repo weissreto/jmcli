@@ -83,11 +83,7 @@ public class ListAttributes extends AbstractAttributeCommand
     if (!attributes.isEmpty())
     {
       printBean(bean);
-      table.clear();
-      for (MAttribute attribute : attributes)
-      {
-        table.addRow(attribute);
-      }
+      table.setRows(attributes);
       table.printWithoutHeader();
     }
   }
@@ -95,8 +91,7 @@ public class ListAttributes extends AbstractAttributeCommand
   private void printBean(MBean bean)
   {
     printEmptyLine();
-    beanTitle.clear();
-    beanTitle.addRow(bean);
+    beanTitle.setSingleRow(bean);
     beanTitle.printWithoutHeader();
   }
 
