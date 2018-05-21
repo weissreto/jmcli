@@ -1,0 +1,59 @@
+#!/bin/sh
+
+# -----------------------------------------------------------------------------
+# Description:
+# -----------------------------------------------------------------------------
+# Startet die Zeitmessung Grossnazeige Software
+# -----------------------------------------------------------------------------
+
+# resolve links - $0 may be a softlink
+PRG="$0"
+
+while [ -h "$PRG" ] ; do
+  ls=`ls -ld "$PRG"`
+  link=`expr "$ls" : '.*-> \(.*\)$'`
+  if expr "$link" : '.*/.*' > /dev/null; then
+    PRG="$link"
+  else
+    PRG=`dirname "$PRG"`/"$link"
+  fi
+done
+
+PRGDIR=`dirname "$PRG"`
+
+RUN_CONF="$PRGDIR"/"gaz.config"
+
+if [ ! -r "$RUN_CONF" ]; then
+  echo "Cannot found file $RUN_CONF!"
+  exit 1
+fi
+
+. "$RUN_CONF"
+#export JAVA_OPTS
+
+PRGDIR=`dirname "$PRG"`
+
+# change to parent dir
+cd "$PRGDIR/.."
+
+# set current directory as JmCliHome
+JmCliHome=`pwd`
+
+# Set standard commands for invoking Java.
+if [ -x "$JmCliHome/jre/bin/java" ]; then
+  JAVA="$JmCliHome/jre/bin/java"
+elif [ -x "$JAVA_HOME/bin/java" ]; then
+  JAVA="$JAVA_HOME/bin/java"
+else
+  JAVA=`which java`
+fi
+
+# Check Java binary exists
+if [ ! -x "$JAVA" ]; then
+  echo "Cannot find java program. Please install java and set the PATH to it or set the environment variable JAVA_HOME"
+  exit 1
+fi
+
+MainJar="$JmCliHome"/lib/jmx-cli-0.0.3-SNAPSHOT.jar
+
+exec $JAVA -cp lib/* -jar $MainJar $JAVA_OPTS @$
