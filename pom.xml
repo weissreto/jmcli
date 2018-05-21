@@ -36,14 +36,6 @@
           <descriptor>src/assembly/bin.xml</descriptor>
           <finalName>jmx-cli-${pom.version}</finalName>
         </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
     <extensions>
