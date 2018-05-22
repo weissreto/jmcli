@@ -1,6 +1,6 @@
-SET JmCliBinDir=%~dp0
-SET JmCliHome=%JmCliBinDir%..
-SET MainClass=ch.rweiss.jmx.client.cli.JmxClientCli
-SET ClassPath=%JmCliHome%\lib\*
+SET PROGRAM_BIN_DIR=%~dp0
+SET PROGRAM_HOME_DIR=%PROGRAM_BIN_DIR%..
+SET MAIN_CLASS=ch.rweiss.jmx.client.cli.JmxClientCli
+SET CLASS_PATH=%PROGRAM_HOME_DIR%\lib\*
 
-java.exe -cp %ClassPath% -Djava.library.path=%JmCliBinDir% %MainClass% %*
+java.exe -cp %CLASS_PATH% -Djava.library.path=%PROGRAM_BIN_DIR% %MAIN_CLASS% %*

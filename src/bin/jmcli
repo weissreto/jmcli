@@ -19,29 +19,17 @@ while [ -h "$PRG" ] ; do
   fi
 done
 
-PRGDIR=`dirname "$PRG"`
-
-RUN_CONF="$PRGDIR"/"gaz.config"
-
-if [ ! -r "$RUN_CONF" ]; then
-  echo "Cannot found file $RUN_CONF!"
-  exit 1
-fi
-
-. "$RUN_CONF"
-#export JAVA_OPTS
-
-PRGDIR=`dirname "$PRG"`
+PROGRAM_BIN_DIR=`dirname "$PRG"`
 
 # change to parent dir
-cd "$PRGDIR/.."
+cd "$PROGRAM_BIN_DIR/.."
 
-# set current directory as JmCliHome
-JmCliHome=`pwd`
+# set current directory as PROGRAM_HOME_DIR
+PROGRAM_HOME_DIR=`pwd`
 
 # Set standard commands for invoking Java.
-if [ -x "$JmCliHome/jre/bin/java" ]; then
-  JAVA="$JmCliHome/jre/bin/java"
+if [ -x "$PROGRAM_HOME_DIR/jre/bin/java" ]; then
+  JAVA="$PROGRAM_HOME_DIR/jre/bin/java"
 elif [ -x "$JAVA_HOME/bin/java" ]; then
   JAVA="$JAVA_HOME/bin/java"
 else
@@ -54,6 +42,7 @@ if [ ! -x "$JAVA" ]; then
   exit 1
 fi
 
-MainJar="$JmCliHome"/lib/jmx-cli-0.0.3-SNAPSHOT.jar
+CLASS_PATH=$PROGRAM_HOME_DIR/lib/*
+MAIN_CLASS=ch.rweiss.jmx.client.cli.JmxClientCli
 
-exec $JAVA -cp lib/* -jar $MainJar $JAVA_OPTS @$
+exec "$JAVA" -cp "$CLASS_PATH" -Djava.library.path="$PROGRAM_BIN_DIR" "$MAIN_CLASS" $@
