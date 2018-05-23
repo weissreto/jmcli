@@ -1,0 +1,48 @@
+#!/bin/sh
+
+# -----------------------------------------------------------------------------
+# Description:
+# -----------------------------------------------------------------------------
+# Startet die Zeitmessung Grossnazeige Software
+# -----------------------------------------------------------------------------
+
+# resolve links - $0 may be a softlink
+PRG="$0"
+
+while [ -h "$PRG" ] ; do
+  ls=`ls -ld "$PRG"`
+  link=`expr "$ls" : '.*-> \(.*\)$'`
+  if expr "$link" : '.*/.*' > /dev/null; then
+    PRG="$link"
+  else
+    PRG=`dirname "$PRG"`/"$link"
+  fi
+done
+
+PROGRAM_BIN_DIR=`dirname "$PRG"`
+
+# change to parent dir
+cd "$PROGRAM_BIN_DIR/.."
+
+# set current directory as PROGRAM_HOME_DIR
+PROGRAM_HOME_DIR=`pwd`
+
+# Set standard commands for invoking Java.
+if [ -x "$PROGRAM_HOME_DIR/jre/bin/java" ]; then
+  JAVA="$PROGRAM_HOME_DIR/jre/bin/java"
+elif [ -x "$JAVA_HOME/bin/java" ]; then
+  JAVA="$JAVA_HOME/bin/java"
+else
+  JAVA=`which java`
+fi
+
+# Check Java binary exists
+if [ ! -x "$JAVA" ]; then
+  echo "Cannot find java program. Please install java and set the PATH to it or set the environment variable JAVA_HOME"
+  exit 1
+fi
+
+CLASS_PATH=$PROGRAM_HOME_DIR/lib/*
+MAIN_CLASS=ch.rweiss.jmx.client.cli.JmxClientCli
+
+exec "$JAVA" -cp "$CLASS_PATH" -Djava.library.path="$PROGRAM_BIN_DIR" "$MAIN_CLASS" $@

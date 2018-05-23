@@ -33,9 +33,12 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
-          <descriptor>src/assembly/bin.xml</descriptor>
+          <descriptors>
+            <descriptor>src/assembly/windows.xml</descriptor>
+            <descriptor>src/assembly/linux.xml</descriptor>
+          </descriptors>
           <finalName>jmx-cli-${pom.version}</finalName>
-        </configuration>
+        </configuration>            
       </plugin>
     </plugins>
     <extensions>
