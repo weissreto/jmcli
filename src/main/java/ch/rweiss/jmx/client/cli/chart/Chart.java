@@ -79,14 +79,21 @@ public class Chart extends AbstractJmxClientCommand
   {
     ensureChart();
 
-    term.clear().screen();
-    
-    scanner.scanNow();
-    for (DataChannelSerie channel : dataChannelSeries)
+    term.offScreen().on();
+    try
     {
-      channel.addDataPoint();
+      scanner.scanNow();
+      for (DataChannelSerie channel : dataChannelSeries)
+      {
+        channel.addDataPoint();
+      }
+      chart.paint(term.graphics());
+      term.offScreen().syncToScreen();
     }
-    chart.paint(term.graphics());
+    finally
+    {
+      term.offScreen().off();
+    }
   }
   
   private void ensureChart()

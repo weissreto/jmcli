@@ -58,16 +58,24 @@ public class Dashboard extends AbstractJmxClientCommand
   {
     ensureGrid();
 
-    term.clear().screen();
-    
-    scanner.scanNow();
-    for (DataChannelSerie channel : dataChannelSeries)
+//    term.clear().screen();
+    term.offScreen().on();
+    try
     {
-      channel.addDataPoint();
+      scanner.scanNow();
+      for (DataChannelSerie channel : dataChannelSeries)
+      {
+        channel.addDataPoint();
+      }
+      
+      grid.bounds(windowBounds());
+      grid.paint(term.graphics());
+      term.offScreen().syncToScreen();
     }
-    
-    grid.bounds(windowBounds());
-    grid.paint(term.graphics()); 
+    finally
+    {
+      term.offScreen().off();
+    }
   }
 
   private void ensureGrid()
