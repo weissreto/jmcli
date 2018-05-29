@@ -3,11 +3,11 @@ series:
   - name: Used
     unit: B
     description: 
-    color: RED
+    color: BRIGHT_RED
     dataChannel: java.lang:type=Memory.HeapMemoryUsage.used
   - name: Committed
     unit: B
     description: 
-    color: YELLOW
+    color: BRIGHT_YELLOW
     dataChannel: java.lang:type=Memory.HeapMemoryUsage.committed  
    

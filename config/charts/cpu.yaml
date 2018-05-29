@@ -3,11 +3,11 @@ series:
   - name: System
     unit: '%'
     description: 
-    color: RED
+    color: BRIGHT_RED
     dataChannel: java.lang:type=OperatingSystem.SystemCpuLoad+PERCENTAGE
   - name: Process
     unit: '%'
     description: 
-    color: YELLOW
+    color: BRIGHT_YELLOW
     dataChannel: java.lang:type=OperatingSystem.ProcessCpuLoad+PERCENTAGE
    

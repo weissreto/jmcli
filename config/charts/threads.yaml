@@ -3,11 +3,11 @@ series:
   - name: Total
     unit: 
     description: 
-    color: RED
+    color: BRIGHT_RED
     dataChannel: java.lang:type=Threading.ThreadCount
   - name: Daemon
     unit: 
     description: 
-    color: YELLOW
+    color: BRIGHT_YELLOW
     dataChannel: java.lang:type=Threading.DaemonThreadCount  
    

@@ -3,15 +3,15 @@ series:
   - name: Loaded
     unit: 
     description: 
-    color: RED
+    color: BRIGHT_RED
     dataChannel: java.lang:type=ClassLoading.LoadedClassCount
   - name: Unloaded
     unit: 
     description: 
-    color: YELLOW
+    color: BRIGHT_YELLOW
     dataChannel: java.lang:type=ClassLoading.UnloadedClassCount
   - name: Total Loaded
     unit: 
     description: 
-    color: MAGENTA
+    color: BRIGHT_MAGENTA
     dataChannel: java.lang:type=ClassLoading.TotalLoadedClassCount        

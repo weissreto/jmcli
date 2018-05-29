@@ -1,11 +1,11 @@
 title: System Database Connections
 series:
   - name: Used
-    color: RED
+    color: BRIGHT_RED
     dataChannel: "ivy Engine:type=Database Persistency Service.usedConnections"
   - name: Open
-    color: YELLOW
+    color: BRIGHT_YELLOW
     dataChannel: "ivy Engine:type=Database Persistency Service.openConnections"
   - name: Max
-    color: MAGENTA
+    color: BRIGHT_MAGENTA
     dataChannel: "ivy Engine:type=Database Persistency Service.maxConnections"        
