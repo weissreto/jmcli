@@ -67,7 +67,14 @@ public class InfoVirtualMachine extends AbstractJmxClientCommand
     classPath = StringUtils.replace(classPath, File.pathSeparator, "\n");
     table.addRow(Pair.of("Classpath", classPath));
     
-    table.printWithoutHeader();
+    table.printWithoutHeader();   
+  }
+  
+  @Override
+  protected void afterRun()
+  {
+    super.afterRun();
+    term.clear().screenToEnd();
   }
 
   private static String toDisplayString(Object value)

@@ -120,7 +120,14 @@ public class ListThreads extends AbstractJmxClientCommand
       table .addRow(deltaOrAbsolute(data, lastData));
       lastValues.put(info.getThreadId(), data);
     }
-    table .print();
+    table.print();
+  }
+  
+  @Override
+  protected void afterRun()
+  {
+    super.afterRun();
+    term.clear().screenToEnd();
   }
 
   private void computeDeltaTime()

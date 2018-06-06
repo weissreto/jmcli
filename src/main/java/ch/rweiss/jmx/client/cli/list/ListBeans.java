@@ -24,7 +24,14 @@ public class ListBeans extends AbstractJmxClientCommand
     MBeanTreeNode beanTree = getJmxClient().beanTree();    
     addBeans(beanTree);
 
-    table.printWithoutHeader();
+    table.printWithoutHeader();   
+  }
+  
+  @Override
+  protected void afterRun()
+  {
+    super.afterRun();
+    term.clear().screenToEnd();
   }
 
   private static Table<MBeanTreeNode> declareTable()

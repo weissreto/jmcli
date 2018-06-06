@@ -28,9 +28,18 @@ public abstract class AbstractBeanCommand extends AbstractJmxClientCommand
   }
   
   @Override
+  
   protected void beforeRun()
   {
+    super.beforeRun();
     firstBean = true;
+  }
+  
+  @Override
+  protected void afterRun()
+  {
+    super.afterRun();
+    term.clear().screenToEnd();
   }
   
   protected void printBeanNameTitle(MBean bean)

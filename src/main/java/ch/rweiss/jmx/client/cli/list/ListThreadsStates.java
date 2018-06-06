@@ -64,6 +64,13 @@ public class ListThreadsStates extends AbstractJmxClientCommand
     valueCount++;
     threadStates.printWithoutHeader();
   }
+  
+  @Override
+  protected void afterRun()
+  {
+    super.afterRun();
+    term.clear().screenToEnd();
+  }
 
   private static Table<ThreadData> declareTable()
   {

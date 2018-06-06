@@ -90,7 +90,6 @@ public abstract class AbstractJmxClientCommand extends AbstractHeaderCommand
         term.cursor().hide();
         beforeRun();
         super.run();
-        term.clear().screenToEnd();
         afterRun();
         sleep();
       }
