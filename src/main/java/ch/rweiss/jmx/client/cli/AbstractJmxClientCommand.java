@@ -30,7 +30,7 @@ public abstract class AbstractJmxClientCommand extends AbstractHeaderCommand
     try(JmxClient client = connect())
     {
       this.jmxClient = client;
-      if (interval > 0)
+      if (isPeriodically())
       {
         runPeriodically();
       }
@@ -129,6 +129,11 @@ public abstract class AbstractJmxClientCommand extends AbstractHeaderCommand
     {
       throw new JmxException("Interrupted", ex);
     }
+  }
+  
+  protected boolean isPeriodically()
+  {
+    return interval > 0;
   }
   
   protected static String toErrorMessage(JmxException error)

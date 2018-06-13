@@ -1,6 +1,7 @@
 package ch.rweiss.jmx.client.cli;
 
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -10,7 +11,7 @@ public class WildcardFilters
 {
   private List<Pattern> filterPatterns;
 
-  public WildcardFilters(List<String> wildcardFilters)
+  private WildcardFilters(List<String> wildcardFilters)
   {
     this.filterPatterns = toPatterns(wildcardFilters);
   }
@@ -41,18 +42,51 @@ public class WildcardFilters
 
   private static Pattern toPattern(String wildcardFilter)
   {
-    if (hasWildcard(wildcardFilter))
+    StringBuilder pattern = new StringBuilder();
+    StringTokenizer tokenizer = new StringTokenizer(wildcardFilter, "*?", true);
+    while (tokenizer.hasMoreTokens())
     {
-      String regex = StringUtils.replace(wildcardFilter, "*", "\\w*");
-      regex = StringUtils.replace(regex, "?", "\\w");
-      return Pattern.compile(regex);
+      String token = tokenizer.nextToken();
+      if (token.equals("*"))
+      {
+        pattern.append(".*");
+      }
+      else if (token.equals("."))
+      {
+        pattern.append("\\w");
+      }
+      else 
+      {
+        pattern.append(Pattern.quote(token));
+      }      
     }
-    return Pattern.compile(Pattern.quote(wildcardFilter));
+    return Pattern.compile(pattern.toString());
   }
     
-  private static boolean hasWildcard(String attributeFilter)
+  public static WildcardFilters crateForFilters(List<String> filtersWithWildcards)
   {
-    return StringUtils.contains(attributeFilter, "*") || 
-           StringUtils.contains(attributeFilter, "?");
+    return new WildcardFilters(filtersWithWildcards);
+  }
+
+  public static WildcardFilters createForPrefixes(List<String> prefixesWithWildcards)
+  {
+    return new WildcardFilters(ensureStarAtEnd(prefixesWithWildcards));
+  }
+  
+  private static List<String> ensureStarAtEnd(List<String> prefixes)
+  {
+    return prefixes
+        .stream()
+        .map(WildcardFilters::ensureStarAtEnd)
+        .collect(Collectors.toList());
+  }
+  
+  private static String ensureStarAtEnd(String prefix)
+  {
+    if (StringUtils.endsWith(prefix, "*"))
+    {
+      return prefix;
+    }
+    return prefix+"*"; 
   }
 }

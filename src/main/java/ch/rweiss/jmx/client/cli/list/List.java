@@ -8,7 +8,8 @@ import picocli.CommandLine.Command;
     ListBeans.class,
     ListAttributes.class,
     ListThreads.class,
-    ListThreadsStates.class
+    ListThreadsStates.class,
+    ListClasses.class
     /*,
     ListOperations.class*/})
 public class List extends AbstractCommand

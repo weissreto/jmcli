@@ -36,7 +36,7 @@ public class InfoOperation extends AbstractBeanCommand
   @Override
   public void run()
   {
-    filters = new WildcardFilters(operationFilters);
+    filters = WildcardFilters.crateForFilters(operationFilters);
     super.run();
   }
   
