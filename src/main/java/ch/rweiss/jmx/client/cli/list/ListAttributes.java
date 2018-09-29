@@ -11,7 +11,7 @@ import ch.rweiss.terminal.StyledText;
 import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
 
-@Command(name="attributes", description="Lists attributes")
+@Command(name="attributes", description="Lists all threads and their states")
 public class ListAttributes extends AbstractAttributeCommand
 {  
   private final Table<MAttribute> table = declareTable();

@@ -16,7 +16,7 @@ import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
-@Command(name = "classes", description="Lists all classes")
+@Command(name = "classes", description="Lists all classes and the number of instances")
 public class ListClasses extends AbstractJmxClientCommand
 {
   @Parameters(index="0..*", paramLabel="PACKAGE", description="Package name or filter with wildcards. E.g java.util.*")
