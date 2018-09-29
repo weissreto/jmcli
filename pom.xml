@@ -42,6 +42,7 @@
           </execution>
         </executions>
         <configuration>
+          <attach>false</attach>
           <descriptors>
             <descriptor>src/assembly/windows.xml</descriptor>
             <descriptor>src/assembly/linux.xml</descriptor>
