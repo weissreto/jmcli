@@ -9,15 +9,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import ch.rweiss.jmx.client.cli.CommandException;
+import ch.rweiss.jmx.client.cli.config.ConfigDirectory;
 
 public class DashboardConfigLoader
 {
   private ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-  private static File dashboardConfigDirectory = new File("config"+File.separator+"dashboards"); 
+  private static final File DASHBOARD_CONFIG_DIRECTORY = ConfigDirectory.of("dashboards"); 
   
   public DashboardConfig load(String dashboardName)
   {
-    File configFile = new File(dashboardConfigDirectory, dashboardName+".yaml");
+    File configFile = new File(DASHBOARD_CONFIG_DIRECTORY, dashboardName+".yaml");
     try (Reader yamlSource = new FileReader(configFile))
     {
       DashboardConfig config = mapper.readValue(yamlSource, DashboardConfig.class);

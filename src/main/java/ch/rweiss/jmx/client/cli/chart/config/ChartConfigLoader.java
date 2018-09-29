@@ -11,15 +11,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import ch.rweiss.jmx.client.cli.CommandException;
+import ch.rweiss.jmx.client.cli.config.ConfigDirectory;
 
 public class ChartConfigLoader
 {
   private ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-  private static File chartConfigDirectory = new File("config"+File.separator+"charts"); 
+  private static final File CHART_CONFIG_DIRECTORY = ConfigDirectory.of("charts"); 
   
   public ChartConfig load(String chart)
   {
-    File dir = chartConfigDirectory;
+    File dir = CHART_CONFIG_DIRECTORY;
     String fileName = chart;
     if (StringUtils.contains(chart, "."))
     {
