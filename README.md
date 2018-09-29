@@ -36,3 +36,15 @@ This are the commands you can use:
 | -i=<interval> | --interval=<interval> | Refresh interval in seconds |
 | -v | --verbose | Displays detail messages |
 | -V | --version | Displays version information |
+
+## Requirements
+
+### Operating System
+
+The following Operating Systems are supported:
+* Windows 10
+* Linux
+
+### Java
+
+Currently only Java 8 is support to execute jmcli
