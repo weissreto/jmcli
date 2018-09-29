@@ -32,8 +32,8 @@ This are the commands you can use:
 | Short Option | Long Option | Description |
 | ------------ | ----------- | ----------- | 
 | -h | --help | Displays the help |
-| -j=<jvm> | --jvm=<jvm> | Process identifier or part of the main class of the virtual maschine to connect to |
-| -i=<interval> | --interval=<interval> | Refresh interval in seconds |
+| -j={jvm} | --jvm={jvm} | Process identifier or part of the main class of the virtual maschine to connect to |
+| -i={interval} | --interval={interval} | Refresh interval in seconds |
 | -v | --verbose | Displays detail messages |
 | -V | --version | Displays version information |
 
