@@ -2,6 +2,8 @@
 
 The jmcli is a command line tool that displays information about Java virtual maschines in your console.
 
+![dashboard](doc/dashboard.png)
+
 ## Download / Installation
 
 1. Download the zip file for your platform
@@ -21,19 +23,19 @@ This are the commands you can use:
 | Command | Description | Example |
 | ------- | ----------- | ------- |
 | list vm | Lists all available java virtual maschines | ![listvm](doc/listvm.png) |
-| list beans | Lists all available management beans | ![listvm](doc/listbeans.png) |
-| list attributes | List attributes | ![listvm](doc/listattributes.png) |
-| list threads | List all threads | ![listvm](doc/listthreads.png) |
-| list threads-states | List all threads and their states | ![listvm](doc/listthreadsstates.png) |
-| list classes | List all loaded classes and the number of instances | ![listvm](doc/listclasses.png) |
+| list beans | Lists all available management beans | ![listbeans](doc/listbeans.png) |
+| list attributes | List attributes | ![listattributes](doc/listattributes.png) |
+| list threads | List all threads | ![listthreads](doc/listthreads.png) |
+| list threads-states | List all threads and their states | ![listthreadsstates](doc/listthreadsstates.png) |
+| list classes | List all loaded classes and the number of instances | ![listclasses](doc/listclasses.png) |
 | info vm | Prints information about a virtual machine | |
 | info bean | Prints information about managment beans | |
 | info attribute | Prints information about attributes | |
 | info operation | Prints information about operations | |
 | set attribute | Sets the value of an attribute | |
 | invoke operation | Invokes an operation | |
-| chart | Draws a chart | ![listvm](doc/chart.png) |
-| dashboard | Draws a dashboard | ![listvm](doc/dashboard.png) |
+| chart | Draws a chart | ![chart](doc/chart.png) |
+| dashboard | Draws a dashboard | ![dashboard](doc/dashboard.png) |
 
 ## Important Options
 
