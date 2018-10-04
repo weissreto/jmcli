@@ -11,6 +11,16 @@ The jmcli is a command line tool that displays information about Java virtual ma
   * [Linux](../../releases/download/v0.1.0/jmx-cli-0.1.0-linux.zip)  
 2. Unzip the downloaded zip file to a new installation directory 
 3. Add the `bin` directory inside the installation directory to the system path
+
+## Docker
+
+You can use Docker to play with and learn about jmcli. 
+Of course, you can use jmcli inside your Docker container to monitor your Java service 
+
+```bash
+ docker run -it rweiw/jmcli:latest
+ jmcli -V
+```
  
 ## Help
 
