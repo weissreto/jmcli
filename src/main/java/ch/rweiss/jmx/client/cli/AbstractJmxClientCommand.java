@@ -59,7 +59,11 @@ public abstract class AbstractJmxClientCommand extends AbstractHeaderCommand
     Jvm attachableJvm = Jvm.runningJvm(jvm);
     if (attachableJvm == null)
     {
-      throw new CommandException("Java virtual machine {0} not found.\nPlease specify a correct Java process id or Java main class name or a host:port.", jvm);
+      if (StringUtils.isBlank(jvm))
+      {
+        throw new CommandException("No java virtual machine found");
+      }
+      throw new CommandException("Java virtual machine ''{0}'' not found.\nPlease specify a correct Java process id or main class name or a host:port.", jvm);
     }
     return attachableJvm.connect();
   }
