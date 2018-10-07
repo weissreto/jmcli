@@ -21,7 +21,7 @@ import picocli.CommandLine.Help;
 @Command(
   name="jmcli", 
   description="Java Management Command Line Interface",
-  version= {"Java Management Command Line Interface", "0.1", "(c) 2017"},
+  version= {"Java Management Command Line Interface", "0.1", "(c) 2018"},
   header="@|fg(yellow)"+
          "        _   __  __    _____   _   _ \r\n" + 
          "      | | |  \\/  |  / ____| | | (_)\r\n" + 
