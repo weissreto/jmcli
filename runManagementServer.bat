@@ -1,1 +1,1 @@
-"c:\program files\java\jdk-9.0.1\bin\java" -cp lib/mvn/*;target/classes;target/test-classes -Dcom.sun.management.jmxremote.port=9999 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false ch.weiss.jmx.client.cli.JmxClientCli list beans -j=Cli -i=1 
+"c:\program files\java\jdk-11\bin\java" -cp lib/mvn/*;target/classes;target/test-classes -Dcom.sun.management.jmxremote.port=9999 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false ch.weiss.jmx.client.cli.JmxClientCli list beans -j=Cli -i=1 
