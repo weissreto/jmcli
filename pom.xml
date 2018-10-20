@@ -39,6 +39,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
+        <version>3.1.0</version>
         <configuration>
           <archive>
             <manifestEntries>
@@ -66,8 +67,10 @@
         <configuration>
           <attach>false</attach>
           <descriptors>
-            <descriptor>src/assembly/windows.xml</descriptor>
-            <descriptor>src/assembly/linux.xml</descriptor>
+            <descriptor>src/assembly/classpath//windows.xml</descriptor>
+            <descriptor>src/assembly/classpath/linux.xml</descriptor>
+            <descriptor>src/assembly/module//windows.xml</descriptor>
+            <descriptor>src/assembly/module/linux.xml</descriptor>
           </descriptors>
           <finalName>jmx-cli-${pom.version}</finalName>
         </configuration>            

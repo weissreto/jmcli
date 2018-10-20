@@ -6,7 +6,7 @@
   </formats>
   <fileSets>
     <fileSet>
-      <directory>src/assembly/linux</directory>
+      <directory>src/assembly/module/linux</directory>
       <outputDirectory>.</outputDirectory>
       <fileMode>0755</fileMode>
       <excludes>
@@ -20,7 +20,7 @@
   </fileSets>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>lib</outputDirectory>    
+      <outputDirectory>jmods</outputDirectory>    
     </dependencySet>
   </dependencySets>
 </assembly>
