@@ -36,7 +36,7 @@ if [ ! -x "$JAVA" ]; then
   exit 1
 fi
 
-MODULE_PATH=$PROGRAM_HOME_DIR/jmod
+MODULE_PATH=$PROGRAM_HOME_DIR/jmods
 MAIN_MODULE=ch.rweiss.jmx.client.cli/ch.rweiss.jmx.client.cli.JmxClientCli
 
-exec "$JAVA" -p "$MODULE_PATH" -m "$MAIN_MODULE" --add-modules java.sql $@
+exec "$JAVA" -p "$MODULE_PATH" --add-modules java.sql -m "$MAIN_MODULE" $@
