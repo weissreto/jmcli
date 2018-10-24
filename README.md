@@ -7,8 +7,10 @@ The jmcli is a command line tool that displays information about Java virtual ma
 ## Download / Installation
 
 1. Download the zip file for your platform
-  * [Windows](../../releases/download/v0.1.0/jmx-cli-0.1.0-windows.zip) 
-  * [Linux](../../releases/download/v0.1.0/jmx-cli-0.1.0-linux.zip)  
+  * [Java 11 - Windows](../../releases/download/v0.2.0/jmx-cli-0.2.0-windows.zip) 
+  * [Java 11 - Linux](../../releases/download/v0.2.0/jmx-cli-0.2.0-linux.zip)
+  * [Java 8 - Windows](../../releases/download/v0.2.0/jmx-cli-0.2.0-java8-windows.zip) 
+  * [Java 8 - Linux](../../releases/download/v0.2.0/jmx-cli-0.2.0-java8-linux.zip)    
 2. Unzip the downloaded zip file to a new installation directory 
 3. Add the `bin` directory inside the installation directory to the system path
 
