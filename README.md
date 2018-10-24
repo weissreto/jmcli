@@ -67,4 +67,6 @@ The following Operating Systems are supported:
 
 ### Java
 
-Currently only Java 8 is support to execute jmcli
+The following Java versions are supported:
+* Java 8  (needs an installed JRE) 
+* Java 11 (needs a full JDK or at least a JRE and additionally the jdk.attach module)
