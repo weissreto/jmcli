@@ -37,6 +37,6 @@ if [ ! -x "$JAVA" ]; then
 fi
 
 MODULE_PATH=$PROGRAM_HOME_DIR/jmods
-MAIN_MODULE=ch.rweiss.jmx.client.cli/ch.rweiss.jmx.client.cli.JmxClientCli
+MAIN_MODULE=ch.rweiss.jmcli/ch.rweiss.jmcli.JmCli
 
 exec "$JAVA" -p "$MODULE_PATH" --add-modules java.sql -m "$MAIN_MODULE" $@

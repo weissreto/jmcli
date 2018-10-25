@@ -2,7 +2,7 @@
 
 SET PROGRAM_BIN_DIR=%~dp0
 SET PROGRAM_HOME_DIR=%PROGRAM_BIN_DIR%..
-SET MAIN_MODULE=ch.rweiss.jmx.client.cli/ch.rweiss.jmx.client.cli.JmxClientCli
+SET MAIN_MODULE=ch.rweiss.jmcli/ch.rweiss.jmcli.JmCli
 SET MODULE_PATH=%PROGRAM_HOME_DIR%\jmods
 
 IF NOT DEFINED JAVA_HOME (

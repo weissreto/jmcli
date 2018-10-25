@@ -1,4 +1,4 @@
-module ch.rweiss.jmx.client.cli
+module ch.rweiss.jmcli
 {
   requires ch.rweiss.terminal.chart;
   requires ch.rweiss.terminal.nativ;
@@ -13,14 +13,14 @@ module ch.rweiss.jmx.client.cli
   requires jackson.annotations;
   requires snakeyaml;
   
-  opens ch.rweiss.jmx.client.cli to info.picocli;
-  opens ch.rweiss.jmx.client.cli.chart to info.picocli;
-  opens ch.rweiss.jmx.client.cli.dashboard to info.picocli;
-  opens ch.rweiss.jmx.client.cli.info to info.picocli;
-  opens ch.rweiss.jmx.client.cli.invoke to info.picocli;
-  opens ch.rweiss.jmx.client.cli.list to info.picocli;
-  opens ch.rweiss.jmx.client.cli.set to info.picocli;
+  opens ch.rweiss.jmcli to info.picocli;
+  opens ch.rweiss.jmcli.chart to info.picocli;
+  opens ch.rweiss.jmcli.dashboard to info.picocli;
+  opens ch.rweiss.jmcli.info to info.picocli;
+  opens ch.rweiss.jmcli.invoke to info.picocli;
+  opens ch.rweiss.jmcli.list to info.picocli;
+  opens ch.rweiss.jmcli.set to info.picocli;
   
-  opens ch.rweiss.jmx.client.cli.dashboard.config to com.fasterxml.jackson.databind;
-  opens ch.rweiss.jmx.client.cli.chart.config to com.fasterxml.jackson.databind;
+  opens ch.rweiss.jmcli.dashboard.config to com.fasterxml.jackson.databind;
+  opens ch.rweiss.jmcli.chart.config to com.fasterxml.jackson.databind;
 }
