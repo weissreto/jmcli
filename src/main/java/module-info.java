@@ -7,8 +7,8 @@ module ch.rweiss.jmcli
   
   requires info.picocli;
   requires org.apache.commons.lang3;
-  requires jackson.dataformat.yaml;
-  requires jackson.core;
+  requires com.fasterxml.jackson.dataformat.yaml;
+  requires com.fasterxml.jackson.core;
   requires com.fasterxml.jackson.databind;
   requires jackson.annotations;
   requires snakeyaml;
