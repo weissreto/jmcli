@@ -10,11 +10,14 @@ import javax.management.openmbean.CompositeData;
 
 import org.apache.commons.lang3.StringUtils;
 
-import ch.rweiss.jmcli.AbstractJmxClientCommand;
+import ch.rweiss.jmcli.AbstractDataJmxClientCommand;
 import ch.rweiss.jmcli.Styles;
+import ch.rweiss.jmx.client.JmxClient;
 import ch.rweiss.jmx.client.MBean;
 import ch.rweiss.jmx.client.MBeanName;
+import ch.rweiss.terminal.AnsiTerminal;
 import ch.rweiss.terminal.Color;
+import ch.rweiss.terminal.Key;
 import ch.rweiss.terminal.Style;
 import ch.rweiss.terminal.StyledText;
 import ch.rweiss.terminal.chart.unit.Unit;
@@ -26,7 +29,7 @@ import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
 @Command(name = "threads", description="Lists all treads")
-public class ListThreads extends AbstractJmxClientCommand
+public class ListThreads extends AbstractDataJmxClientCommand
 {
   private static final int MILLIS_TO_NANOS = 1000*1000;
 
@@ -83,7 +86,7 @@ public class ListThreads extends AbstractJmxClientCommand
   }
 
   @Override
-  protected void execute()
+  protected void gatherDataFrom(JmxClient jmxClient)
   {
     if (StringUtils.isNotBlank(sortColumnName))
     {
@@ -94,7 +97,7 @@ public class ListThreads extends AbstractJmxClientCommand
       }
     }
         
-    MBean threadBean = jmxClient().bean(MBeanName.THREAD);
+    MBean threadBean = jmxClient.bean(MBeanName.THREAD);
     threadBean.attribute("ThreadCpuTimeEnabled").value(true);
     threadBean.attribute("ThreadContentionMonitoringEnabled").value(true);
     long[] deadlockedThreads = (long[])threadBean.operation("findDeadlockedThreads").invoke(new Object[0]);
@@ -120,16 +123,33 @@ public class ListThreads extends AbstractJmxClientCommand
       table .addRow(deltaOrAbsolute(data, lastData));
       lastValues.put(info.getThreadId(), data);
     }
-    table.print();
+    triggerUiUpdate();
   }
   
   @Override
-  protected void afterRun()
+  protected void writeDataToUi(AnsiTerminal terminal, boolean isPeriodical)
   {
-    super.afterRun();
-    term.clear().screenToEnd();
+    if (isPeriodical)
+    {
+      table.printTop();
+    }
+    else
+    {
+      table.print();
+    }
+  }
+  
+  @Override
+  protected void keyPressed(Key key)
+  {
+    boolean processed = table.keyPressed(key);
+    if (processed)
+    {
+      triggerUiUpdate();
+    }
   }
 
+  
   private void computeDeltaTime()
   {
     long currentExecutionTime = System.nanoTime();

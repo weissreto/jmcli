@@ -117,26 +117,11 @@ public class ListClasses extends AbstractDataJmxClientCommand
 
   private void navigateKey(Key key)
   {
-    if (key == Key.UP)
+    boolean processed = table.keyPressed(key);
+    if (processed)
     {
-      table.scrollUp();
       triggerUiUpdate();
-    }
-    else if (key == Key.DOWN)
-    {
-      table.scrollDown();
-      triggerUiUpdate();
-    }
-    else if (key == Key.PAGE_UP)
-    {
-      table.scrollPageUp();
-      triggerUiUpdate();
-    }
-    else if (key == Key.PAGE_DOWN)
-    {
-      table.srollPageDown();
-      triggerUiUpdate();
-    }
+    }    
   }
 
   private static Table<ClassInfo> declareTable()

@@ -12,7 +12,7 @@ import picocli.CommandLine.Mixin;
 public abstract class AbstractDataCommand extends AbstractCommand
 {
   @Mixin
-  private IntervalOption intervalOption = new IntervalOption();
+  protected IntervalOption intervalOption = new IntervalOption();
 
   private String name;
 
