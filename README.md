@@ -1,4 +1,4 @@
-# Java Management Command Line Interface (jmcli) [![Build Status](https://travis-ci.org/weissreto/jmx-cli.svg?branch=master)](https://travis-ci.org/weissreto/jmx-cli)
+# Java Management Command Line Interface (jmcli) [![Build Status](https://travis-ci.org/weissreto/jmcli.svg?branch=master)](https://travis-ci.org/weissreto/jmcli)
 
 The jmcli is a command line tool that displays information about Java virtual maschines in your console.
 
