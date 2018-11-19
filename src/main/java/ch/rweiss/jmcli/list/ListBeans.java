@@ -21,7 +21,7 @@ public class ListBeans extends AbstractJmxClientCommand
   {
     table.clear();
 
-    MBeanTreeNode beanTree = getJmxClient().beanTree();    
+    MBeanTreeNode beanTree = jmxClient().beanTree();    
     addBeans(beanTree);
 
     table.printWithoutHeader();   

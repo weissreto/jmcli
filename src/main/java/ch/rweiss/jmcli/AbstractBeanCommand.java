@@ -24,7 +24,7 @@ public abstract class AbstractBeanCommand extends AbstractJmxClientCommand
   
   protected List<MBean> getBeans()
   {
-    return getJmxClient().beansThatMatch(MBeanFilter.with(beanNameOrFilter));
+    return jmxClient().beansThatMatch(MBeanFilter.with(beanNameOrFilter));
   }
   
   @Override

@@ -1,7 +1,6 @@
 module ch.rweiss.jmcli
 {
   requires ch.rweiss.terminal.chart;
-  requires ch.rweiss.terminal.nativ;
   requires ch.rweiss.jmx.client;
   requires ch.rweiss.check;
   

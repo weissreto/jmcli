@@ -94,7 +94,7 @@ public class ListThreads extends AbstractJmxClientCommand
       }
     }
         
-    MBean threadBean = jmxClient.bean(MBeanName.THREAD);
+    MBean threadBean = jmxClient().bean(MBeanName.THREAD);
     threadBean.attribute("ThreadCpuTimeEnabled").value(true);
     threadBean.attribute("ThreadContentionMonitoringEnabled").value(true);
     long[] deadlockedThreads = (long[])threadBean.operation("findDeadlockedThreads").invoke(new Object[0]);
@@ -364,7 +364,7 @@ public class ListThreads extends AbstractJmxClientCommand
 
   private boolean isDelta()
   {
-    return interval > 0 && 
+    return intervalOption.isPeriodical() && 
            delta;
   }
 

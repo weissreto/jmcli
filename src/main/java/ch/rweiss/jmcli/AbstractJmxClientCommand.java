@@ -1,23 +1,21 @@
 package ch.rweiss.jmcli;
 
-import java.io.IOException;
-
-import org.apache.commons.lang3.StringUtils;
+import java.util.Optional;
 
 import ch.rweiss.jmx.client.JmxClient;
 import ch.rweiss.jmx.client.JmxException;
-import ch.rweiss.jmx.client.Jvm;
-import picocli.CommandLine.Option;
+import ch.rweiss.terminal.Key;
+import picocli.CommandLine.Mixin;
 
 public abstract class AbstractJmxClientCommand extends AbstractHeaderCommand
 {
-  @Option(names = {"-j", "--jvm"}, description = "Process id or a part of the main class name or the host:port of the Java virtual machine")
-  protected String jvm;
-  
-  @Option(names = {"-i", "--interval"}, description = "Refresh interval in seconds")
-  protected int interval=0;
+  @Mixin
+  private JvmOption jvmOption = new JvmOption();
 
-  protected JmxClient jmxClient;
+  @Mixin
+  protected IntervalOption intervalOption = new IntervalOption();
+  
+  private boolean quit;
   
   protected AbstractJmxClientCommand(String name)
   {
@@ -27,68 +25,32 @@ public abstract class AbstractJmxClientCommand extends AbstractHeaderCommand
   @Override
   public void run()
   {
-    try(JmxClient client = connect())
+    jvmOption.connectAndRun(this::runPeriodicalOrOnce);
+  }
+  
+  private void runPeriodicalOrOnce()
+  {
+    if (isPeriodical())
     {
-      this.jmxClient = client;
-      if (isPeriodically())
-      {
-        runPeriodically();
-      }
-      else
-      {
-        super.run();
-      }
+      runPeriodical();
     }
-    catch(IOException ex)
+    else
     {
-      throw new JmxException("Cannot close jmx client", ex);
+      super.run();
     }
   }
   
-  protected JmxClient getJmxClient()
+  protected JmxClient jmxClient()
   {
-    return jmxClient;
-  }
-  
-  private JmxClient connect()
-  {
-    if (isHostAndPort())
-    {
-      return JmxClient.connectTo(getHost(), getPort());
-    }
-    Jvm attachableJvm = Jvm.runningJvm(jvm);
-    if (attachableJvm == null)
-    {
-      if (StringUtils.isBlank(jvm))
-      {
-        throw new CommandException("No java virtual machine found");
-      }
-      throw new CommandException("Java virtual machine ''{0}'' not found.\nPlease specify a correct Java process id or main class name or a host:port.", jvm);
-    }
-    return attachableJvm.connect();
+    return jvmOption.jmxClient();
   }
 
-  private boolean isHostAndPort()
+  private void runPeriodical()
   {
-    return StringUtils.contains(jvm, ":");
-  }
-
-  private String getHost()
-  {
-    return StringUtils.substringBefore(jvm, ":");
-  }
-  
-  private int getPort()
-  {
-    return Integer.parseInt(StringUtils.substringAfter(jvm, ":"));
-  }
-
-  private void runPeriodically()
-  {
-    term.clear().screen();    
+    term.clear().screen();
     try
     {
-      while(System.in.available()==0)
+      while(isNotQuit())
       {
         term.cursor().position(1, 1);
         term.cursor().hide();
@@ -98,15 +60,12 @@ public abstract class AbstractJmxClientCommand extends AbstractHeaderCommand
         sleep();
       }
     }
-    catch(IOException ex)
-    {
-      throw new JmxException("Input stream error", ex);
-    }
     finally
     {
       term.cursor().show();
     }    
   }
+  
 
   protected void afterRun()
   {
@@ -118,26 +77,26 @@ public abstract class AbstractJmxClientCommand extends AbstractHeaderCommand
     // Does nothing here. Maybe used in sub classes to initialize
   }
 
-  private void sleep() throws IOException
+  private void sleep() 
   {
-    try
-    {
-      int wait = interval*1000;
-      while (wait > 0 && System.in.available() == 0)
-      {
-        Thread.sleep(100);
-        wait = wait - 100;
-      }
-    }
-    catch (InterruptedException ex)
-    {
-      throw new JmxException("Interrupted", ex);
-    }
+    long wait = intervalOption.waitTime();
+    Optional<Key> key = term.input().waitForKey(wait);
+    key.ifPresent(k -> quit());      
   }
   
-  protected boolean isPeriodically()
+  private boolean isNotQuit()
   {
-    return interval > 0;
+    return !quit;
+  }
+
+  private void quit()
+  {
+    quit = true;
+  }
+  
+  protected boolean isPeriodical()
+  {
+    return intervalOption.isPeriodical();
   }
   
   protected static String toErrorMessage(JmxException error)

@@ -65,7 +65,7 @@ public class Chart extends AbstractJmxClientCommand
   public Chart()
   {
     super("Chart");
-    interval = 1;
+    intervalOption.setDefault(1);
   }
   
   @Override
@@ -101,7 +101,7 @@ public class Chart extends AbstractJmxClientCommand
     if (chart == null)
     {
       ChartConfig config = loadOrDefineChartConfig();
-      DataChannelFactory factory = new DataChannelFactory(jmxClient);
+      DataChannelFactory factory = new DataChannelFactory(jmxClient());
       for (Serie serieConfig : config.getSeries())
       {        
         DataChannelSpecification specification = new DataChannelSpecification(serieConfig.getDataChannel());

@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import ch.rweiss.jmcli.AbstractJmxClientCommand;
-import ch.rweiss.jmcli.chart.ColorGenerator;
 import ch.rweiss.jmcli.chart.Chart.DataChannelSerie;
+import ch.rweiss.jmcli.chart.ColorGenerator;
 import ch.rweiss.jmcli.chart.config.ChartConfig;
 import ch.rweiss.jmcli.chart.config.ChartConfigLoader;
 import ch.rweiss.jmcli.chart.config.Serie;
@@ -44,7 +44,7 @@ public class Dashboard extends AbstractJmxClientCommand
   Dashboard()
   {
     super("Dashboard");
-    interval = 1;
+    intervalOption.setDefault(1);
   }
   
   @Override
@@ -113,7 +113,7 @@ public class Dashboard extends AbstractJmxClientCommand
   private XYChart createChart(String chartName)
   {
     ChartConfig config = new ChartConfigLoader().load(chartName);
-    DataChannelFactory factory = new DataChannelFactory(jmxClient);
+    DataChannelFactory factory = new DataChannelFactory(jmxClient());
     List<DataChannelSerie> chartSeries = new ArrayList<>();
     for (Serie serieConfig : config.getSeries())
     {        

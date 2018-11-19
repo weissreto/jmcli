@@ -1,13 +1,14 @@
 package ch.rweiss.jmcli.list;
 
-import ch.rweiss.jmcli.AbstractHeaderCommand;
+import ch.rweiss.jmcli.AbstractDataCommand;
 import ch.rweiss.jmcli.Styles;
 import ch.rweiss.jmx.client.Jvm;
+import ch.rweiss.terminal.AnsiTerminal;
 import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
 
 @Command(name="vm", description="Lists all available java virtual maschines")
-public class ListVirtualMachines extends AbstractHeaderCommand
+public class ListVirtualMachines extends AbstractDataCommand
 {
   private static Table<Jvm> jvms = declareJvmTable();
 
@@ -17,10 +18,23 @@ public class ListVirtualMachines extends AbstractHeaderCommand
   }
   
   @Override
-  public void execute()
+  protected void gatherData()
   {
     jvms.setRows(Jvm.getAvailableRunningJvms());
-    jvms.print();
+    triggerUiUpdate();
+  }
+  
+  @Override
+  protected void writeDataToUi(AnsiTerminal terminal, boolean isPeriodical)
+  {
+    if (isPeriodical)
+    {
+      jvms.printTop();
+    }
+    else
+    {
+      jvms.print();
+    }
   }
 
   private static Table<Jvm> declareJvmTable()
