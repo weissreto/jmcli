@@ -105,12 +105,13 @@ public class InvokeOperation extends AbstractBeanCommand
     
     operationTable.addRow(Pair.of("", ""));
     operationTable.addRow(Pair.of("Result", result));
-    operationTable.printWithoutHeader();
+    operationTable.print();
   }
   
   private static Table<Pair<String,String>> declareOperationTable()
   {
     Table<Pair<String, String>> table = new Table<>();
+    table.hideHeader();
     table.addColumn(
         table.createColumn("Name", 20, pair -> pair.getKey())
           .withAbbreviateStyle(AbbreviateStyle.LEFT_WITH_DOTS)
