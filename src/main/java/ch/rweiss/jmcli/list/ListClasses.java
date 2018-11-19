@@ -108,7 +108,7 @@ public class ListClasses extends AbstractDataJmxClientCommand
         filter = null;
       }
     }
-    else
+    else if (!Character.isISOControl(key.toChar()))
     {
       filter += key.toString();
     }
