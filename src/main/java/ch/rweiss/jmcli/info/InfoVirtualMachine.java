@@ -26,6 +26,7 @@ public class InfoVirtualMachine extends AbstractJmxClientCommand
   private static Table<Pair<String, String>> declareTable()
   {
     Table<Pair<String, String>> table = new Table<>();
+    table.hideHeader();
     table.addColumn(
         table.createColumn("Name", 16, pair -> pair.getKey())
           .withCellStyle(Styles.NAME)
@@ -67,7 +68,7 @@ public class InfoVirtualMachine extends AbstractJmxClientCommand
     classPath = StringUtils.replace(classPath, File.pathSeparator, "\n");
     table.addRow(Pair.of("Classpath", classPath));
     
-    table.printWithoutHeader();   
+    table.print();   
   }
   
   @Override

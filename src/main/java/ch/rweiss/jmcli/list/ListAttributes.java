@@ -33,6 +33,7 @@ public class ListAttributes extends AbstractAttributeCommand
   private static Table<MAttribute> declareTable()
   {
     Table<MAttribute> table = new Table<>();
+    table.hideHeader();
     table.addColumn(
         table.createColumn("Name", 20, attribute -> attribute.name())
           .withTitleStyle(Styles.NAME_TITLE)
@@ -69,7 +70,7 @@ public class ListAttributes extends AbstractAttributeCommand
     {
       printBeanNameTitle(bean);
       table.setRows(attributes);
-      table.printWithoutHeader();
+      table.print();
     }
   }
 }

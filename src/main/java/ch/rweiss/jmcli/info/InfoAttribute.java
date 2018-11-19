@@ -53,7 +53,7 @@ public class InfoAttribute extends AbstractAttributeCommand
     properties.addRow(Pair.of("Readable", new StyledText(Boolean.toString(attr.isReadable()), Styles.VALUE)));
     properties.addRow(Pair.of("Writable", new StyledText(Boolean.toString(attr.isWritable()), Styles.VALUE)));
     properties.addRow(Pair.of("Value", ListAttributes.getValue(attr)));
-    properties.printWithoutHeader();
+    properties.print();
   }
 
   private void printNameTitle(MAttribute attr)
@@ -84,6 +84,7 @@ public class InfoAttribute extends AbstractAttributeCommand
   private static Table<Pair<String,StyledText>> declarePropertiesTable()
   {
     Table<Pair<String, StyledText>> table = new Table<>();
+    table.hideHeader();
     table.addColumn(
         table.createColumn("Name", 20, pair -> pair.getKey())
           .withAbbreviateStyle(AbbreviateStyle.LEFT)

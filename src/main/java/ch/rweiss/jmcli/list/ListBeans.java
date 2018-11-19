@@ -24,7 +24,7 @@ public class ListBeans extends AbstractJmxClientCommand
     MBeanTreeNode beanTree = jmxClient().beanTree();    
     addBeans(beanTree);
 
-    table.printWithoutHeader();   
+    table.print();   
   }
   
   @Override
@@ -37,6 +37,7 @@ public class ListBeans extends AbstractJmxClientCommand
   private static Table<MBeanTreeNode> declareTable()
   {
     Table<MBeanTreeNode> table = new Table<>();
+    table.hideHeader();
     table.addColumn(
         table.createColumn("Name", 30, node -> simpleNameWithIndent(node))
           .withTitleStyle(Styles.NAME_TITLE)

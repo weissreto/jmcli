@@ -76,7 +76,7 @@ public class InfoOperation extends AbstractBeanCommand
     properties.addRow(Pair.of("Signature", op.signature()));
     properties.addRow(Pair.of("Impact", op.impact().toString()));
     properties.addRow(Pair.of("Return Type", op.returnType()));
-    properties.printWithoutHeader();
+    properties.print();
 
     printParameters(op);
   }
@@ -120,6 +120,7 @@ public class InfoOperation extends AbstractBeanCommand
   private static Table<Pair<String,String>> declarePropertiesTable()
   {
     Table<Pair<String, String>> table = new Table<>();
+    table.hideHeader();
     table.addColumn(
         table.createColumn("Name", 20, pair -> pair.getKey())
           .withAbbreviateStyle(AbbreviateStyle.LEFT)

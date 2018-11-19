@@ -54,7 +54,7 @@ public class InfoBean extends AbstractBeanCommand
     properties.clear();
     properties.addRow(Pair.of("Name", bean.name().fullQualifiedName()));
     properties.addRow(Pair.of("Type", bean.type()));
-    properties.printWithoutHeader();
+    properties.print();
     printEmptyLine();
   }
 
@@ -65,7 +65,7 @@ public class InfoBean extends AbstractBeanCommand
       printSubTitle("Attributes:");
 
       attributes.setRows(bean.attributes());
-      attributes.printWithoutHeader();
+      attributes.print();
       printEmptyLine();
     }
   }
@@ -76,7 +76,7 @@ public class InfoBean extends AbstractBeanCommand
     {
       printSubTitle("Operations:");
       operations.setRows(bean.operations());
-      operations.printWithoutHeader();
+      operations.print();
     }
   }
     
@@ -95,6 +95,7 @@ public class InfoBean extends AbstractBeanCommand
   private static Table<Pair<String,String>> declarePropertiesTable()
   {
     Table<Pair<String, String>> table = new Table<>();
+    table.hideHeader();
     table.addColumn(
         table.createColumn("Name", 20, pair -> pair.getKey())
           .withAbbreviateStyle(AbbreviateStyle.LEFT)
@@ -113,6 +114,7 @@ public class InfoBean extends AbstractBeanCommand
   private static Table<MAttribute> declareAttributesTable()
   {
     Table<MAttribute> table = new Table<>();
+    table.hideHeader();
     table.addColumn(
         table.createColumn("Name", 20, attribute -> attribute.name())
           .withAbbreviateStyle(AbbreviateStyle.RIGHT_WITH_DOTS)
@@ -131,6 +133,7 @@ public class InfoBean extends AbstractBeanCommand
   private static Table<MOperation> declareOperationsTable()
   {
     Table<MOperation> table = new Table<>();
+    table.hideHeader();
     table.addColumn(
         table.createColumn("Name", 20, operation -> operation.name())
           .withAbbreviateStyle(AbbreviateStyle.RIGHT_WITH_DOTS)

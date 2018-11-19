@@ -10,11 +10,14 @@ import java.util.stream.LongStream;
 
 import javax.management.openmbean.CompositeData;
 
-import ch.rweiss.jmcli.AbstractJmxClientCommand;
+import ch.rweiss.jmcli.AbstractDataJmxClientCommand;
 import ch.rweiss.jmcli.Styles;
+import ch.rweiss.jmx.client.JmxClient;
 import ch.rweiss.jmx.client.MBean;
 import ch.rweiss.jmx.client.MBeanName;
+import ch.rweiss.terminal.AnsiTerminal;
 import ch.rweiss.terminal.Color;
+import ch.rweiss.terminal.Key;
 import ch.rweiss.terminal.Style;
 import ch.rweiss.terminal.StyledText;
 import ch.rweiss.terminal.table.AbbreviateStyle;
@@ -22,7 +25,7 @@ import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
 
 @Command(name = "threads-states", description="Lists all treads stated")
-public class ListThreadsStates extends AbstractJmxClientCommand
+public class ListThreadsStates extends AbstractDataJmxClientCommand
 {
   private Map<Long, ThreadData> threads = new HashMap<>();
   private int valueCount = 0;
@@ -41,9 +44,9 @@ public class ListThreadsStates extends AbstractJmxClientCommand
   }
 
   @Override
-  protected void execute()
+  protected void gatherDataFrom(JmxClient jmxClient)
   {
-    MBean threadBean = jmxClient().bean(MBeanName.THREAD);
+    MBean threadBean = jmxClient.bean(MBeanName.THREAD);
     threadBean.attribute("ThreadCpuTimeEnabled").value(true);
     threadBean.attribute("ThreadContentionMonitoringEnabled").value(true);
     long[] deadlockedThreads = (long[])threadBean.operation("findDeadlockedThreads").invoke(new Object[0]);
@@ -62,19 +65,32 @@ public class ListThreadsStates extends AbstractJmxClientCommand
       threadStates.addRow(data);
     }
     valueCount++;
-    threadStates.printWithoutHeader();
+    triggerUiUpdate();
   }
   
   @Override
-  protected void afterRun()
+  protected void writeDataToUi(AnsiTerminal terminal, boolean isPeriodical)
   {
-    super.afterRun();
-    term.clear().screenToEnd();
+    if (isPeriodical)
+    {
+      threadStates.printTop();
+    }
+    else
+    {
+      threadStates.print();
+    }
   }
-
+  
+  @Override
+  protected void keyPressed(Key key)
+  {
+    threadStates.keyPressed(key);
+  }
+  
   private static Table<ThreadData> declareTable()
   {
     Table<ThreadData> table = new Table<>();
+    table.hideHeader();
     table.addColumn(
         table.createColumn("Name", 40)
           .withTitleStyle(Styles.NAME_TITLE)

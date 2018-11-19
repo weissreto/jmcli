@@ -50,12 +50,13 @@ public class SetAttribute extends AbstractBeanCommand
     attributeValues.addRow(Pair.of("Value (Before)", ListAttributes.getValue(attribute)));
     attribute.value(value);
     attributeValues.addRow(Pair.of("Value (Now)", ListAttributes.getValue(attribute)));
-    attributeValues.printWithoutHeader();
+    attributeValues.print();
   }
     
   private static Table<Pair<String,StyledText>> declareValueTable()
   {
     Table<Pair<String, StyledText>> table = new Table<>();
+    table.hideHeader();
     table.addColumn(
         table.createColumn("Name", 20, pair -> pair.getKey())
           .withAbbreviateStyle(AbbreviateStyle.LEFT_WITH_DOTS)
