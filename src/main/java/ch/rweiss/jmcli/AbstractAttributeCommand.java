@@ -24,7 +24,7 @@ public abstract class AbstractAttributeCommand extends AbstractBeanCommand
   @Override
   public void run()
   {
-    filters = WildcardFilters.crateForFilters(attributeFilters);
+    filters = WildcardFilters.createForFilters(attributeFilters);
     super.run();
   }
 

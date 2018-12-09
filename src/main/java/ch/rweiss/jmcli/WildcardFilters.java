@@ -63,7 +63,7 @@ public class WildcardFilters
     return Pattern.compile(pattern.toString());
   }
     
-  public static WildcardFilters crateForFilters(List<String> filtersWithWildcards)
+  public static WildcardFilters createForFilters(List<String> filtersWithWildcards)
   {
     return new WildcardFilters(filtersWithWildcards);
   }
