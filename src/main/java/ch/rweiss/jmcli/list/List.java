@@ -9,7 +9,8 @@ import picocli.CommandLine.Command;
     ListAttributes.Cmd.class,
     ListThreads.Cmd.class,
     ListThreadsStates.Cmd.class,
-    ListClasses.Cmd.class
+    ListClasses.Cmd.class,
+    ListMethods.Cmd.class
     /*,
     ListOperations.class*/})
 public class List extends AbstractCommand

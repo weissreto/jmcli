@@ -52,9 +52,9 @@ public class ListThreadsStates extends AbstractJmxDataExecutor
   private java.util.List<String> deadlockedThreadNames = new ArrayList<>();
   private static Table<ThreadData> threadStates = declareTable();
 
-  private static final Style GREEN = Style.create().withColor(Color.BRIGHT_GREEN).toStyle();
-  private static final Style YELLOW = Style.create().withColor(Color.BRIGHT_YELLOW).toStyle();
-  private static final Style RED = Style.create().withColor(Color.BRIGHT_RED).toStyle();
+  static final Style GREEN = Style.create().withColor(Color.BRIGHT_GREEN).toStyle();
+  static final Style YELLOW = Style.create().withColor(Color.BRIGHT_YELLOW).toStyle();
+  static final Style RED = Style.create().withColor(Color.BRIGHT_RED).toStyle();
   private static final int MAX_STATES = 80;
   
   ListThreadsStates(Cmd command)
