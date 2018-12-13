@@ -26,6 +26,11 @@ import picocli.CommandLine.Mixin;
 
 public class ListMethods extends AbstractJmxDataExecutor
 {
+  private static final Comparator<MethodData> RUNNABLE_DESC = Comparator
+      .comparingInt(MethodData::runnableSelfSamples)
+      .thenComparingInt(MethodData::waitingSelfSamples)
+      .thenComparingInt(MethodData::blockedSelfSamples)
+      .reversed();
   private static final String SELF_SAMPLES_COLUMN = "Self";
 
   @Command(name = "methods", description="Lists all executed methods")
@@ -125,7 +130,7 @@ public class ListMethods extends AbstractJmxDataExecutor
         methodTable.createColumn(SELF_SAMPLES_COLUMN, 10)
           .withTitleStyle(Styles.NAME_TITLE)
           .withStyledTextProvider(MethodData::runnableSelfSamplesText)
-          .withSorter(Comparator.comparingInt(MethodData::runnableSelfSamples).reversed())
+          .withSorter(RUNNABLE_DESC)
           .toColumn());
 
     methodTable.addColumn(
