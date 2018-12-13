@@ -1,11 +1,10 @@
 package ch.rweiss.jmcli.info;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import ch.rweiss.jmcli.AbstractBeanCommand;
+import ch.rweiss.jmcli.AbstractOperationCommand;
 import ch.rweiss.jmcli.IntervalOption;
 import ch.rweiss.jmcli.JvmOption;
 import ch.rweiss.jmcli.Styles;
@@ -22,16 +21,12 @@ import ch.rweiss.terminal.table.AbbreviateStyle;
 import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
-import picocli.CommandLine.Parameters;
 
 public final class InfoOperation extends AbstractJmxExecutor
 {
   @Command(name="operation", description="Prints information about operations")
-  public static final class Cmd extends AbstractBeanCommand
+  public static final class Cmd extends AbstractOperationCommand
   {
-    @Parameters(index="1..*", paramLabel="OPERATION", description="Operation name or filter with wildcards. E.g gc, getThread*")
-    private List<String> operationFilters = new ArrayList<>();
-    
     @Mixin
     private IntervalOption intervalOption = new IntervalOption();
     
@@ -56,7 +51,7 @@ public final class InfoOperation extends AbstractJmxExecutor
   public InfoOperation(Cmd command)
   {
     super("Operation Info", command.intervalOption, command.jvmOption); 
-    operationFilters = WildcardFilters.createForFilters(command.operationFilters);
+    operationFilters = command.operationFilters();
     beanFilters = command.beanFilter();
   }
 

@@ -7,12 +7,12 @@ import picocli.CommandLine.Command;
     ListVirtualMachines.Cmd.class,
     ListBeans.Cmd.class,
     ListAttributes.Cmd.class,
+    ListOperations.Cmd.class,
     ListThreads.Cmd.class,
     ListThreadsStates.Cmd.class,
     ListClasses.Cmd.class,
     ListMethods.Cmd.class
-    /*,
-    ListOperations.class*/})
+  })
 public class List extends AbstractCommand
 {
 

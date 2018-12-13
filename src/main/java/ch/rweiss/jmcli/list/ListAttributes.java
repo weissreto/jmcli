@@ -22,7 +22,7 @@ import picocli.CommandLine.Mixin;
 
 public final class ListAttributes extends AbstractJmxExecutor
 {  
-  @Command(name="attributes", description="Lists all threads and their states")
+  @Command(name="attributes", description="Lists all attributes")
   public static final class Cmd extends AbstractAttributeCommand
   {
     @Mixin
