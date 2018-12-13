@@ -3,31 +3,58 @@ package ch.rweiss.jmcli.info;
 import org.apache.commons.lang3.tuple.Pair;
 
 import ch.rweiss.jmcli.AbstractBeanCommand;
+import ch.rweiss.jmcli.IntervalOption;
+import ch.rweiss.jmcli.JvmOption;
 import ch.rweiss.jmcli.Styles;
+import ch.rweiss.jmcli.executor.AbstractJmxExecutor;
+import ch.rweiss.jmcli.ui.BeanTitle;
+import ch.rweiss.jmcli.ui.CommandUi;
+import ch.rweiss.jmx.client.JmxClient;
 import ch.rweiss.jmx.client.MAttribute;
 import ch.rweiss.jmx.client.MBean;
+import ch.rweiss.jmx.client.MBeanFilter;
 import ch.rweiss.jmx.client.MOperation;
 import ch.rweiss.terminal.table.AbbreviateStyle;
 import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 
-@Command(name="bean", description="Prints information about managment beans")
-public class InfoBean extends AbstractBeanCommand
+public class InfoBean extends AbstractJmxExecutor
 {
+  @Command(name="bean", description="Prints information about managment beans")
+  public static final class Cmd extends AbstractBeanCommand
+  {
+    @Mixin
+    private IntervalOption intervalOption = new IntervalOption();
+    
+    @Mixin
+    private JvmOption jvmOption = new JvmOption();
+
+    @Override
+    public void run()
+    {
+      new InfoBean(this).execute();
+    }
+  }
+  
   private Table<MBean> description = declareDescriptionTable();
   private Table<Pair<String, String>> properties = declarePropertiesTable();
   private Table<MAttribute> attributes = declareAttributesTable();
   private Table<MOperation> operations = declareOperationsTable();
+  private MBeanFilter beanFilter;
+  private BeanTitle beanTitle = new BeanTitle(ui());
 
-  public InfoBean()
+  public InfoBean(Cmd command)
   {
-    super("Bean Info");
+    super("Bean Info", command.intervalOption, command.jvmOption);
+    beanFilter = command.beanFilter();
   }
 
   @Override
-  protected void execute()
+  protected void execute(CommandUi ui, JmxClient jmxClient)
   {
-    for (MBean bean : getBeans())
+    beanTitle.reset();
+    for (MBean bean : jmxClient.beansThatMatch(beanFilter))
     {
       print(bean);
     }
@@ -35,7 +62,7 @@ public class InfoBean extends AbstractBeanCommand
 
   private void print(MBean bean)
   {
-    printBeanNameTitle(bean);
+    beanTitle.printBeanNameTitle(bean);
     printDescription(bean);
     printNameAndType(bean);
     printAttributes(bean);
@@ -44,9 +71,9 @@ public class InfoBean extends AbstractBeanCommand
 
   private void printDescription(MBean bean)
   {
-    printEmptyLine();
+    ui().printEmptyLine();
     description.printSingleRow(bean);
-    printEmptyLine();
+    ui().printEmptyLine();
   }
 
   private void printNameAndType(MBean bean)
@@ -55,18 +82,18 @@ public class InfoBean extends AbstractBeanCommand
     properties.addRow(Pair.of("Name", bean.name().fullQualifiedName()));
     properties.addRow(Pair.of("Type", bean.type()));
     properties.print();
-    printEmptyLine();
+    ui().printEmptyLine();
   }
 
   private void printAttributes(MBean bean)
   {
     if (!bean.attributes().isEmpty())
     {
-      printSubTitle("Attributes:");
+      ui().printSubTitle("Attributes:");
 
       attributes.setRows(bean.attributes());
       attributes.print();
-      printEmptyLine();
+      ui().printEmptyLine();
     }
   }
 
@@ -74,7 +101,7 @@ public class InfoBean extends AbstractBeanCommand
   {
     if (!bean.operations().isEmpty())
     {
-      printSubTitle("Operations:");
+      ui().printSubTitle("Operations:");
       operations.setRows(bean.operations());
       operations.print();
     }

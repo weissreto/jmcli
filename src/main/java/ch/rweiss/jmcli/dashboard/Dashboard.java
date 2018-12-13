@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import ch.rweiss.jmcli.AbstractJmxClientCommand;
+import ch.rweiss.jmcli.AbstractCommand;
+import ch.rweiss.jmcli.IntervalOption;
+import ch.rweiss.jmcli.JvmOption;
 import ch.rweiss.jmcli.chart.Chart.DataChannelSerie;
 import ch.rweiss.jmcli.chart.ColorGenerator;
 import ch.rweiss.jmcli.chart.config.ChartConfig;
@@ -17,6 +19,9 @@ import ch.rweiss.jmcli.chart.data.channel.DataChannelSpecification;
 import ch.rweiss.jmcli.dashboard.config.DashboardConfig;
 import ch.rweiss.jmcli.dashboard.config.DashboardConfigLoader;
 import ch.rweiss.jmcli.dashboard.config.Section;
+import ch.rweiss.jmcli.executor.AbstractJmxExecutor;
+import ch.rweiss.jmcli.ui.CommandUi;
+import ch.rweiss.jmx.client.JmxClient;
 import ch.rweiss.terminal.Color;
 import ch.rweiss.terminal.Position;
 import ch.rweiss.terminal.chart.XYChart;
@@ -27,24 +32,43 @@ import ch.rweiss.terminal.graphics.Point;
 import ch.rweiss.terminal.graphics.Rectangle;
 import ch.rweiss.terminal.widget.Grid;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Parameters;
 
-@Command(name = "dashboard", description="Draws a dashboard")
-public class Dashboard extends AbstractJmxClientCommand
+public class Dashboard extends AbstractJmxExecutor
 {
-  @Parameters(index="0", arity="1", paramLabel="DASHBOARD", 
+  @Command(name = "dashboard", description="Draws a dashboard")
+  public static final class Cmd extends AbstractCommand
+  {
+    @Parameters(index="0", arity="1", paramLabel="DASHBOARD", 
       description="Name of the dashboard that should be displayed")
-  private String dashboardName;
+    private String dashboardName;
+    
+    @Mixin
+    private IntervalOption intervalOption = new IntervalOption(1);
+    
+    @Mixin
+    private JvmOption jvmOption = new JvmOption();
+
+    @Override
+    public void run()
+    {
+      new Dashboard(this).execute();
+    }
+  }
+  
   private Grid grid;
   
   private DataChannelScanner scanner = new DataChannelScanner();
   private List<DataChannelSerie> dataChannelSeries = new ArrayList<>();
   private ColorGenerator colorGenerator = new ColorGenerator();
 
-  Dashboard()
+  private Cmd command;
+
+  public Dashboard(Cmd command)
   {
-    super("Dashboard");
-    intervalOption.setDefault(1);
+    super("Dashboard", command.intervalOption, command.jvmOption);
+    this.command = command;
   }
   
   @Override
@@ -54,12 +78,12 @@ public class Dashboard extends AbstractJmxClientCommand
   }
   
   @Override
-  protected void execute()
+  protected void execute(CommandUi ui, JmxClient jmxClient)
   {
     ensureGrid();
 
 //    term.clear().screen();
-    term.offScreen().on();
+    ui.terminal().offScreen().on();
     try
     {
       scanner.scanNow();
@@ -69,12 +93,12 @@ public class Dashboard extends AbstractJmxClientCommand
       }
       
       grid.bounds(windowBounds());
-      grid.paint(term.graphics());
-      term.offScreen().syncToScreen();
+      grid.paint(ui.terminal().graphics());
+      ui.terminal().offScreen().syncToScreen();
     }
     finally
     {
-      term.offScreen().off();
+      ui.terminal().offScreen().off();
     }
   }
 
@@ -82,7 +106,7 @@ public class Dashboard extends AbstractJmxClientCommand
   {
     if (grid == null)
     {
-      DashboardConfig config = new DashboardConfigLoader().load(dashboardName);
+      DashboardConfig config = new DashboardConfigLoader().load(command.dashboardName);
       List<XYChart> charts = new ArrayList<>(config.getSections().size());
       int rows=0;
       int columns=0;
@@ -144,7 +168,7 @@ public class Dashboard extends AbstractJmxClientCommand
 
   private Rectangle windowBounds()
   {
-    Position maxPosition = term.cursor().maxPosition();
+    Position maxPosition = ui().terminal().cursor().maxPosition();
     int w = maxPosition.column();
     int h = maxPosition.line();
     return new Rectangle(Point.ORIGIN, w, h);

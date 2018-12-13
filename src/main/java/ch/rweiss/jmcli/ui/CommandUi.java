@@ -1,64 +1,39 @@
-package ch.rweiss.jmcli;
+package ch.rweiss.jmcli.ui;
 
-import ch.rweiss.check.Check;
+import ch.rweiss.jmcli.Styles;
 import ch.rweiss.terminal.AnsiTerminal;
 import ch.rweiss.terminal.table.AbbreviateStyle;
 import ch.rweiss.terminal.table.Table;
 
-public abstract class AbstractHeaderCommand extends AbstractCommand
+public class CommandUi
 {
-  protected AnsiTerminal term = AnsiTerminal.get();
-  
-  private String name;
+  protected AnsiTerminal terminal = AnsiTerminal.get();
   private static Table<String> header = declareHeaderTable(); 
   private static Table<String> subTitle = declareSubTitleTable();
 
-  
-  protected AbstractHeaderCommand(String name)
+  public AnsiTerminal terminal()
   {
-    setName(name);
+    return terminal;
   }
-  
-  abstract protected void execute();
 
-  protected void setName(String name)
-  {
-    Check.parameter("name").withValue(name).isNotBlank();
-    this.name = name;
-  }
-  
-  @Override
-  public void run()
-  {
-    try
-    {
-      printHeader();
-      execute();
-    }
-    finally
-    {
-      term.reset();
-    }
-  }
-  
-  protected void printHeader()
+  public void printHeader(String name)
   {
     printEmptyLine();
     header.printSingleRow(name);
     printEmptyLine();
   }  
   
-  protected void printSubTitle(String title)
+  public void printSubTitle(String title)
   {
     subTitle.printSingleRow(title);
   }
   
-  protected void printEmptyLine()
+  public void printEmptyLine()
   {
-    term.clear().lineToEnd();
-    term.newLine();
+    terminal.clear().lineToEnd();
+    terminal.newLine();
   }
-  
+
   private static Table<String> declareHeaderTable()
   {
     Table<String> table = new Table<>();
@@ -82,6 +57,4 @@ public abstract class AbstractHeaderCommand extends AbstractCommand
           .toColumn());
     return table;
   }
-
-
 }

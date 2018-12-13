@@ -2,68 +2,80 @@ package ch.rweiss.jmcli.info;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 
 import ch.rweiss.jmcli.AbstractBeanCommand;
+import ch.rweiss.jmcli.IntervalOption;
+import ch.rweiss.jmcli.JvmOption;
 import ch.rweiss.jmcli.Styles;
 import ch.rweiss.jmcli.WildcardFilters;
+import ch.rweiss.jmcli.executor.AbstractJmxExecutor;
+import ch.rweiss.jmcli.ui.BeanTitle;
+import ch.rweiss.jmcli.ui.CommandUi;
+import ch.rweiss.jmx.client.JmxClient;
 import ch.rweiss.jmx.client.MBean;
+import ch.rweiss.jmx.client.MBeanFilter;
 import ch.rweiss.jmx.client.MOperation;
 import ch.rweiss.jmx.client.MParameter;
 import ch.rweiss.terminal.table.AbbreviateStyle;
 import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Parameters;
 
-@Command(name="operation", description="Prints information about operations")
-public class InfoOperation extends AbstractBeanCommand
+public final class InfoOperation extends AbstractJmxExecutor
 {
-  @Parameters(index="1..*", paramLabel="OPERATION", description="Operation name or filter with wildcards. E.g gc, getThread*")
-  private List<String> operationFilters = new ArrayList<>();
-  private WildcardFilters filters;
+  @Command(name="operation", description="Prints information about operations")
+  public static final class Cmd extends AbstractBeanCommand
+  {
+    @Parameters(index="1..*", paramLabel="OPERATION", description="Operation name or filter with wildcards. E.g gc, getThread*")
+    private List<String> operationFilters = new ArrayList<>();
+    
+    @Mixin
+    private IntervalOption intervalOption = new IntervalOption();
+    
+    @Mixin
+    private JvmOption jvmOption = new JvmOption();
+    
+    @Override
+    public void run()
+    {
+      new InfoOperation(this).execute();
+    }
+  }
+  
+  private WildcardFilters operationFilters;
+  private MBeanFilter beanFilters;
+  private BeanTitle beanTitle = new BeanTitle(ui());
   
   private Table<MOperation> description = declareDescriptionTable();
   private Table<Pair<String, String>> properties = declarePropertiesTable();
   private Table<MParameter> parameters = declareParameterTable();
 
-  public InfoOperation()
+  public InfoOperation(Cmd command)
   {
-    super("Operation Info"); 
+    super("Operation Info", command.intervalOption, command.jvmOption); 
+    operationFilters = WildcardFilters.createForFilters(command.operationFilters);
+    beanFilters = command.beanFilter();
   }
-  
+
   @Override
-  public void run()
+  protected void execute(CommandUi ui, JmxClient jmxClient)
   {
-    filters = WildcardFilters.createForFilters(operationFilters);
-    super.run();
-  }
-  
-  @Override
-  protected void execute()
-  {
-    for (MBean bean : getBeans())
+    beanTitle.reset();
+    for (MBean bean : jmxClient.beansThatMatch(beanFilters))
     {
-      List<MOperation> operations = getFilteredOperations(bean);
+      List<MOperation> operations = operationFilters.filter(bean.operations(), MOperation::name);
       if (!operations.isEmpty())
       {
-        printBeanNameTitle(bean);
+        beanTitle.printBeanNameTitle(bean);
         for (MOperation op : operations)
         {
           print(op);
         }
       }
     }
-  }
-
-  private List<MOperation> getFilteredOperations(MBean bean)
-  {
-    return bean
-      .operations()
-      .stream()
-      .filter(operation -> filters.matches(operation.name()))
-      .collect(Collectors.toList());
   }
   
   private void print(MOperation op)
@@ -83,22 +95,22 @@ public class InfoOperation extends AbstractBeanCommand
 
   private void printNameTitle(MOperation op)
   {
-    printEmptyLine();
-    printSubTitle(op.name());
+    ui().printEmptyLine();
+    ui().printSubTitle(op.name());
   }
   
   private void printDescription(MOperation op)
   {
-    printEmptyLine();
+    ui().printEmptyLine();
     description.printSingleRow(op);
-    printEmptyLine();
+    ui().printEmptyLine();
   }
   
   private void printParameters(MOperation op)
   {
     if (!op.parameters().isEmpty())
     {
-      printEmptyLine();
+      ui().printEmptyLine();
       
       parameters.setRows(op.parameters());
       parameters.print();

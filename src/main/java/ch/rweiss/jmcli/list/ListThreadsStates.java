@@ -10,12 +10,15 @@ import java.util.stream.LongStream;
 
 import javax.management.openmbean.CompositeData;
 
-import ch.rweiss.jmcli.AbstractDataJmxClientCommand;
+import ch.rweiss.jmcli.AbstractCommand;
+import ch.rweiss.jmcli.IntervalOption;
+import ch.rweiss.jmcli.JvmOption;
 import ch.rweiss.jmcli.Styles;
+import ch.rweiss.jmcli.executor.AbstractJmxDataExecutor;
+import ch.rweiss.jmcli.ui.CommandUi;
 import ch.rweiss.jmx.client.JmxClient;
 import ch.rweiss.jmx.client.MBean;
 import ch.rweiss.jmx.client.MBeanName;
-import ch.rweiss.terminal.AnsiTerminal;
 import ch.rweiss.terminal.Color;
 import ch.rweiss.terminal.Key;
 import ch.rweiss.terminal.Style;
@@ -23,10 +26,26 @@ import ch.rweiss.terminal.StyledText;
 import ch.rweiss.terminal.table.AbbreviateStyle;
 import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 
-@Command(name = "threads-states", description="Lists all treads stated")
-public class ListThreadsStates extends AbstractDataJmxClientCommand
+public class ListThreadsStates extends AbstractJmxDataExecutor
 {
+  @Command(name = "threads-states", description="Lists all treads stated")
+  public static final class Cmd extends AbstractCommand
+  {
+    @Mixin
+    private IntervalOption intervalOption = new IntervalOption();
+    
+    @Mixin
+    private JvmOption jvmOption = new JvmOption();
+    
+    @Override
+    public void run()
+    {
+      new ListThreadsStates(this).execute();
+    }
+  }
+  
   private Map<Long, ThreadData> threads = new HashMap<>();
   private int valueCount = 0;
 
@@ -38,9 +57,9 @@ public class ListThreadsStates extends AbstractDataJmxClientCommand
   private static final Style RED = Style.create().withColor(Color.BRIGHT_RED).toStyle();
   private static final int MAX_STATES = 80;
   
-  ListThreadsStates()
+  ListThreadsStates(Cmd command)
   {
-    super("Threads States");
+    super("Threads States", command.intervalOption, command.jvmOption);
   }
 
   @Override
@@ -69,7 +88,7 @@ public class ListThreadsStates extends AbstractDataJmxClientCommand
   }
   
   @Override
-  protected void writeDataToUi(AnsiTerminal terminal, boolean isPeriodical)
+  protected void writeDataToUi(CommandUi ui, boolean isPeriodical)
   {
     if (isPeriodical)
     {

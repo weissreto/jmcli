@@ -5,22 +5,43 @@ import java.io.File;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import ch.rweiss.jmcli.AbstractJmxClientCommand;
+import ch.rweiss.jmcli.AbstractCommand;
+import ch.rweiss.jmcli.IntervalOption;
+import ch.rweiss.jmcli.JvmOption;
 import ch.rweiss.jmcli.Styles;
+import ch.rweiss.jmcli.executor.AbstractJmxExecutor;
+import ch.rweiss.jmcli.ui.CommandUi;
+import ch.rweiss.jmx.client.JmxClient;
 import ch.rweiss.jmx.client.MAttribute;
 import ch.rweiss.jmx.client.MBean;
 import ch.rweiss.jmx.client.MBeanName;
 import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 
-@Command(name="vm", description="Prints information about a virtual machine")
-public class InfoVirtualMachine extends AbstractJmxClientCommand
+public class InfoVirtualMachine extends AbstractJmxExecutor
 {
-  private final Table<Pair<String, String>> table = declareTable();
-
-  public InfoVirtualMachine()
+  @Command(name="vm", description="Prints information about a virtual machine")
+  public static final class Cmd extends AbstractCommand
   {
-    super("Java Virtual Machine Info");
+    @Mixin
+    private IntervalOption intervalOption = new IntervalOption();
+    
+    @Mixin
+    private JvmOption jvmOption = new JvmOption();
+    
+    @Override
+    public void run()
+    {
+      new InfoVirtualMachine(this).execute();
+    }
+  }
+  
+  private final Table<Pair<String, String>> table = declareTable();
+  
+  public InfoVirtualMachine(Cmd command)
+  {
+    super("Java Virtual Machine Info", command.intervalOption, command.jvmOption);
   }
 
   private static Table<Pair<String, String>> declareTable()
@@ -42,14 +63,14 @@ public class InfoVirtualMachine extends AbstractJmxClientCommand
   }
 
   @Override
-  protected void execute()
+  protected void execute(CommandUi ui, JmxClient jmxClient)
   {
-    printEmptyLine();
+    ui.printEmptyLine();
     
     table.clear();
 
-    MBean runtime = jmxClient().bean(MBeanName.RUNTIME);    
-    MBean jmImpl = jmxClient().bean(MBeanName.createFor("JMImplementation:type=MBeanServerDelegate"));
+    MBean runtime = jmxClient.bean(MBeanName.RUNTIME);    
+    MBean jmImpl = jmxClient.bean(MBeanName.createFor("JMImplementation:type=MBeanServerDelegate"));
     
     table.addRow(Pair.of("Name", runtime.attribute("VmName").valueAsString()));
     
@@ -71,13 +92,6 @@ public class InfoVirtualMachine extends AbstractJmxClientCommand
     table.print();   
   }
   
-  @Override
-  protected void afterRun()
-  {
-    super.afterRun();
-    term.clear().screenToEnd();
-  }
-
   private static String toDisplayString(Object value)
   {
     long upTime = (long)value;

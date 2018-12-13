@@ -35,8 +35,8 @@ import picocli.CommandLine.Help;
     Info.class,
     Set.class,
     Invoke.class,
-    Chart.class,
-    Dashboard.class
+    Chart.Cmd.class,
+    Dashboard.Cmd.class
 })
 public class JmCli extends AbstractCommand
 {
@@ -90,6 +90,6 @@ public class JmCli extends AbstractCommand
   @Override
   public void run()
   {
-    new ListVirtualMachines().run();
+    new ListVirtualMachines.Cmd().run();
   }
 }

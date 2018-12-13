@@ -2,6 +2,7 @@ package ch.rweiss.jmcli;
 
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,14 @@ public class WildcardFilters
       }
     }
     return false;
+  }
+  
+  public <T> List<T> filter(List<T> list, Function<T,String> filterStringFunction)
+  {
+    return list
+        .stream()
+        .filter(item -> matches(filterStringFunction.apply(item)))
+        .collect(Collectors.toList());
   }
   
   private static List<Pattern> toPatterns(List<String> wildcardFilters)

@@ -4,12 +4,12 @@ import ch.rweiss.jmcli.AbstractCommand;
 import picocli.CommandLine.Command;
 
 @Command(name = "set", description="Sets values", subcommands = {
-    SetAttribute.class})
+    SetAttribute.Cmd.class})
 public class Set extends AbstractCommand
 {
   @Override
   public void run()
   {    
-    new SetAttribute().run();
+    new SetAttribute.Cmd().run();
   }
 }

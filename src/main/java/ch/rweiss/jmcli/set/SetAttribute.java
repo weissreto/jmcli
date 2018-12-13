@@ -3,41 +3,70 @@ package ch.rweiss.jmcli.set;
 import org.apache.commons.lang3.tuple.Pair;
 
 import ch.rweiss.jmcli.AbstractBeanCommand;
+import ch.rweiss.jmcli.IntervalOption;
+import ch.rweiss.jmcli.JvmOption;
 import ch.rweiss.jmcli.Styles;
+import ch.rweiss.jmcli.executor.AbstractJmxExecutor;
 import ch.rweiss.jmcli.list.ListAttributes;
+import ch.rweiss.jmcli.ui.BeanTitle;
+import ch.rweiss.jmcli.ui.CommandUi;
+import ch.rweiss.jmx.client.JmxClient;
 import ch.rweiss.jmx.client.MAttribute;
 import ch.rweiss.jmx.client.MBean;
+import ch.rweiss.jmx.client.MBeanFilter;
 import ch.rweiss.terminal.StyledText;
 import ch.rweiss.terminal.table.AbbreviateStyle;
 import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Parameters;
 
-@Command(name="attribute", description="Sets the value of an attribute")
-public class SetAttribute extends AbstractBeanCommand
+public final class SetAttribute extends AbstractJmxExecutor
 {
-  @Parameters(index="1", paramLabel="ATTRIBUTE", description="The name of the attribute to set")
-  private String attributeName;
+  @Command(name="attribute", description="Sets the value of an attribute")
+  public static final class Cmd extends AbstractBeanCommand
+  {
+    @Parameters(index="1", paramLabel="ATTRIBUTE", description="The name of the attribute to set")
+    private String attributeName;
+  
+    @Parameters(index="2", paramLabel="VALUE", description="The value to set")
+    private String value;
+    
+    @Mixin
+    private IntervalOption intervalOption = new IntervalOption();
+    
+    @Mixin
+    private JvmOption jvmOption = new JvmOption();
 
-  @Parameters(index="2", paramLabel="VALUE", description="The value to set")
-  private String value;
+    @Override
+    public void run()
+    {
+      new SetAttribute(this).execute();
+    }
+  }
   
   private Table<Pair<String, StyledText>> attributeValues = declareValueTable();
+  private MBeanFilter beanFilter;
+  private Cmd command;
+  private BeanTitle beanTitle = new BeanTitle(ui());
 
-  public SetAttribute()
+  public SetAttribute(Cmd command)
   {
-    super("Set Attribute");
+    super("Set Attribute", command.intervalOption, command.jvmOption);
+    beanFilter = command.beanFilter();
+    this.command = command;
   }
-
+  
   @Override
-  protected void execute()
+  protected void execute(CommandUi ui, JmxClient jmxClient)
   {
-    for (MBean bean : getBeans())
+    beanTitle.reset();
+    for (MBean bean : jmxClient.beansThatMatch(beanFilter))
     {
-      MAttribute attribute = bean.attribute(attributeName);
+      MAttribute attribute = bean.attribute(command.attributeName);
       if (attribute != null)
       {
-        printBeanNameTitle(bean);
+        beanTitle.printBeanNameTitle(bean);
         setValue(attribute);
       }
     }
@@ -45,10 +74,10 @@ public class SetAttribute extends AbstractBeanCommand
   
   private void setValue(MAttribute attribute)
   {
-    printEmptyLine();
+    ui().printEmptyLine();
     attributeValues.addRow(Pair.of("Setting attribute", new StyledText(attribute.name(), Styles.VALUE)));
     attributeValues.addRow(Pair.of("Value (Before)", ListAttributes.getValue(attribute)));
-    attribute.value(value);
+    attribute.value(command.value);
     attributeValues.addRow(Pair.of("Value (Now)", ListAttributes.getValue(attribute)));
     attributeValues.print();
   }
@@ -71,5 +100,4 @@ public class SetAttribute extends AbstractBeanCommand
           .toColumn());
     return table;
   }
-
 }

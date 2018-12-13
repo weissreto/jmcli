@@ -1,68 +1,15 @@
 package ch.rweiss.jmcli;
 
-import java.util.List;
-
-import ch.rweiss.jmx.client.MBean;
 import ch.rweiss.jmx.client.MBeanFilter;
-import ch.rweiss.terminal.table.AbbreviateStyle;
-import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Parameters;
 
-public abstract class AbstractBeanCommand extends AbstractJmxClientCommand
+public abstract class AbstractBeanCommand extends AbstractCommand
 {
-  private static Table<MBean> beanTitle = declareBeanTitleTable();
-
   @Parameters(index="0", arity="0..1", paramLabel="BEAN", description="Bean name or filter with wildcards. E.g *:*, java.lang:*, java.lang:type=Memory")
   private String beanNameOrFilter = "*:*";
 
-  private boolean firstBean = true;
-  
-  protected AbstractBeanCommand(String name)
+  public MBeanFilter beanFilter() 
   {
-    super(name);
+    return MBeanFilter.with(beanNameOrFilter);
   }
-  
-  protected List<MBean> getBeans()
-  {
-    return jmxClient().beansThatMatch(MBeanFilter.with(beanNameOrFilter));
-  }
-  
-  @Override
-  
-  protected void beforeRun()
-  {
-    super.beforeRun();
-    firstBean = true;
-  }
-  
-  @Override
-  protected void afterRun()
-  {
-    super.afterRun();
-    term.clear().screenToEnd();
-  }
-  
-  protected void printBeanNameTitle(MBean bean)
-  {
-    if (!firstBean)
-    {
-      printEmptyLine();
-    }
-    firstBean = false;
-    beanTitle.printSingleRow(bean);
-  }
-  
-  private static Table<MBean> declareBeanTitleTable()
-  {
-    Table<MBean> table = new Table<>();
-    table.addColumn(
-        table.createColumn("", 40, b -> b.name())
-          .withAbbreviateStyle(AbbreviateStyle.LEFT_WITH_DOTS)
-          .withCellStyle(Styles.NAME_TITLE)
-          .withMinWidth(8)
-          .toColumn());
-    return table;
-  }
-
-  
 }

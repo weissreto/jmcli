@@ -10,12 +10,15 @@ import javax.management.openmbean.CompositeData;
 
 import org.apache.commons.lang3.StringUtils;
 
-import ch.rweiss.jmcli.AbstractDataJmxClientCommand;
+import ch.rweiss.jmcli.AbstractCommand;
+import ch.rweiss.jmcli.IntervalOption;
+import ch.rweiss.jmcli.JvmOption;
 import ch.rweiss.jmcli.Styles;
+import ch.rweiss.jmcli.executor.AbstractJmxDataExecutor;
+import ch.rweiss.jmcli.ui.CommandUi;
 import ch.rweiss.jmx.client.JmxClient;
 import ch.rweiss.jmx.client.MBean;
 import ch.rweiss.jmx.client.MBeanName;
-import ch.rweiss.terminal.AnsiTerminal;
 import ch.rweiss.terminal.Color;
 import ch.rweiss.terminal.Key;
 import ch.rweiss.terminal.Style;
@@ -25,25 +28,41 @@ import ch.rweiss.terminal.table.AbbreviateStyle;
 import ch.rweiss.terminal.table.RowSorter;
 import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
-@Command(name = "threads", description="Lists all treads")
-public class ListThreads extends AbstractDataJmxClientCommand
+public class ListThreads extends AbstractJmxDataExecutor
 {
-  private static final int MILLIS_TO_NANOS = 1000*1000;
-
-  @Parameters(index="0", arity="0..1", paramLabel="COLUMN", description="Column name to sort")
-  private String sortColumnName;
-
-  @Parameters(index="1", arity="0..1", paramLabel="DIRECTION", description="ASC or DESC")
-  private String direction;
+  @Command(name = "threads", description="Lists all treads")
+  public static class Cmd extends AbstractCommand
+  {
+    @Parameters(index="0", arity="0..1", paramLabel="COLUMN", description="Column name to sort")
+    private String sortColumnName;
   
-  @Option(names = {"-d", "--delta"}, description = "Displays delta instead of absolute values")
-  protected boolean delta;
-
-  @Option(names = {"-f", "--format"}, description = "Format of the values (s)econds, (p)ercentage, (g)raphics)")
-  protected String format;
+    @Parameters(index="1", arity="0..1", paramLabel="DIRECTION", description="ASC or DESC")
+    private String direction;
+    
+    @Mixin
+    private IntervalOption intervalOption = new IntervalOption();
+    
+    @Mixin
+    private JvmOption jvmOption = new JvmOption();
+    
+    @Option(names = {"-d", "--delta"}, description = "Displays delta instead of absolute values")
+    protected boolean delta;
+  
+    @Option(names = {"-f", "--format"}, description = "Format of the values (s)econds, (p)ercentage, (g)raphics)")
+    protected String format;
+  
+    @Override
+    public void run()
+    {
+      new ListThreads(this).execute();
+    }
+  }
+  
+  private static final int MILLIS_TO_NANOS = 1000*1000;
 
   private Map<Long, ThreadData> lastValues = new HashMap<>();
   private long lastExecutionTimeInNanoSeconds = -1;
@@ -52,6 +71,8 @@ public class ListThreads extends AbstractDataJmxClientCommand
   private java.util.List<String> deadlockedThreadNames = new ArrayList<>();
 
   private Table<ThreadData> table = declareTable();
+
+  private final Cmd command;
   
   private static final Style GREEN = Style.create().withColor(Color.BRIGHT_GREEN).toStyle();
   private static final Style[] GREENS_GRAPHICS = buildGradient(0, 63, 0, 0, 24, 0, 8);
@@ -63,9 +84,10 @@ public class ListThreads extends AbstractDataJmxClientCommand
   private static final Style[] REDS_GRAPHICS = buildGradient(63, 0, 0, 24, 0, 0, 8);
   private static final Style[] REDS_PERCENTAGE = buildGradient(155, 0, 0, 1, 0, 0, 101);
 
-  public ListThreads()
+  public ListThreads(Cmd command)
   {
-    super("Threads");
+    super("Threads", command.intervalOption, command.jvmOption);
+    this.command = command;
   }
 
   private static Style[] buildGradient(int startRed, int startGreen, int startBlue, int deltaRed, int deltaGreen, int deltaBlue, int count)
@@ -88,10 +110,10 @@ public class ListThreads extends AbstractDataJmxClientCommand
   @Override
   protected void gatherDataFrom(JmxClient jmxClient)
   {
-    if (StringUtils.isNotBlank(sortColumnName))
+    if (StringUtils.isNotBlank(command.sortColumnName))
     {
-      RowSorter<ThreadData> sorter = table.sortColumn(sortColumnName);
-      if ("DESC".equalsIgnoreCase(direction))
+      RowSorter<ThreadData> sorter = table.sortColumn(command.sortColumnName);
+      if ("DESC".equalsIgnoreCase(command.direction))
       {
         sorter.descending();
       }
@@ -127,7 +149,7 @@ public class ListThreads extends AbstractDataJmxClientCommand
   }
   
   @Override
-  protected void writeDataToUi(AnsiTerminal terminal, boolean isPeriodical)
+  protected void writeDataToUi(CommandUi ui, boolean isPeriodical)
   {
     if (isPeriodical)
     {
@@ -163,7 +185,7 @@ public class ListThreads extends AbstractDataJmxClientCommand
 
   private ThreadData deltaOrAbsolute(ThreadData currentValue, ThreadData lastValue)
   {
-    if (delta)
+    if (command.delta)
     {
       return new ThreadData(currentValue, lastValue);
     }
@@ -371,21 +393,21 @@ public class ListThreads extends AbstractDataJmxClientCommand
   private boolean isFormatGraphics()
   {
     return isDelta() && 
-           format != null &&
-           format.startsWith("g");
+           command.format != null &&
+           command.format.startsWith("g");
   }
   
   private boolean isFormatPercentage()
   {
     return isDelta() &&
-           format != null &&
-           format.startsWith("p");
+           command.format != null &&
+           command.format.startsWith("p");
   }
 
   private boolean isDelta()
   {
-    return intervalOption.isPeriodical() && 
-           delta;
+    return command.intervalOption.isPeriodical() && 
+           command.delta;
   }
 
   private static class ThreadData

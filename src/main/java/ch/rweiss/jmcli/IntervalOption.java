@@ -5,36 +5,41 @@ import picocli.CommandLine.Option;
 public class IntervalOption
 {
   @Option(names = { "-i", "--interval" }, description = "Refresh interval in seconds")
-  private int interval = 0;
+  private int interval;
 
   private long lastTimeDataWasGathered = 0;
 
-  public void setDefault(int defaultInterval)
+  public IntervalOption()
+  {
+    this(0);
+  }
+  
+  public IntervalOption(int defaultInterval)
   {
     interval = defaultInterval;
   }
-
+  
   public boolean isPeriodical()
   {
     return interval > 0;
   }
 
-  boolean isNotPeriodical()
+  public boolean isNotPeriodical()
   {
     return !isPeriodical();
   }
 
-  long computeTimeUntilNextDataGathering()
+  public long computeTimeUntilNextDataGathering()
   {
     return lastTimeDataWasGathered + waitTime() - System.currentTimeMillis();
   }
 
-  void dataWasGathered()
+  public void dataWasGathered()
   {
     lastTimeDataWasGathered = System.currentTimeMillis();
   }
 
-  long waitTime()
+  public long waitTime()
   {
     return interval*1000l;
   }

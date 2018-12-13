@@ -1,20 +1,36 @@
 package ch.rweiss.jmcli.list;
 
-import ch.rweiss.jmcli.AbstractDataCommand;
+import ch.rweiss.jmcli.AbstractCommand;
+import ch.rweiss.jmcli.IntervalOption;
 import ch.rweiss.jmcli.Styles;
+import ch.rweiss.jmcli.executor.AbstractDataExecutor;
+import ch.rweiss.jmcli.ui.CommandUi;
 import ch.rweiss.jmx.client.Jvm;
-import ch.rweiss.terminal.AnsiTerminal;
 import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 
-@Command(name="vm", description="Lists all available java virtual maschines")
-public class ListVirtualMachines extends AbstractDataCommand
+public class ListVirtualMachines extends AbstractDataExecutor
 {
+  
+  @Command(name="vm", description="Lists all available java virtual maschines")
+  public static final class Cmd extends AbstractCommand
+  {
+    @Mixin 
+    private IntervalOption intervalOption = new IntervalOption();
+
+    @Override
+    public void run()
+    {
+      new ListVirtualMachines(intervalOption).execute(); 
+    }
+  }
+  
   private static Table<Jvm> jvms = declareJvmTable();
 
-  public ListVirtualMachines()
+  public ListVirtualMachines(IntervalOption intervalOption)
   {
-    super("Java Virtual Maschines");
+    super("Java Virtual Maschines", intervalOption);
   }
   
   @Override
@@ -25,7 +41,7 @@ public class ListVirtualMachines extends AbstractDataCommand
   }
   
   @Override
-  protected void writeDataToUi(AnsiTerminal terminal, boolean isPeriodical)
+  protected void writeDataToUi(CommandUi ui, boolean isPeriodical)
   {
     if (isPeriodical)
     {
@@ -55,5 +71,4 @@ public class ListVirtualMachines extends AbstractDataCommand
           .toColumn());
     return table;
   }
-
 }

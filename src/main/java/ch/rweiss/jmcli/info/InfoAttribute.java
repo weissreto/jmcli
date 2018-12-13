@@ -5,35 +5,65 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 
 import ch.rweiss.jmcli.AbstractAttributeCommand;
+import ch.rweiss.jmcli.IntervalOption;
+import ch.rweiss.jmcli.JvmOption;
 import ch.rweiss.jmcli.Styles;
+import ch.rweiss.jmcli.WildcardFilters;
+import ch.rweiss.jmcli.executor.AbstractJmxExecutor;
 import ch.rweiss.jmcli.list.ListAttributes;
+import ch.rweiss.jmcli.ui.BeanTitle;
+import ch.rweiss.jmcli.ui.CommandUi;
+import ch.rweiss.jmx.client.JmxClient;
 import ch.rweiss.jmx.client.MAttribute;
 import ch.rweiss.jmx.client.MBean;
+import ch.rweiss.jmx.client.MBeanFilter;
 import ch.rweiss.terminal.StyledText;
 import ch.rweiss.terminal.table.AbbreviateStyle;
 import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 
-@Command(name="attribute", description="Prints information about attributes")
-public class InfoAttribute extends AbstractAttributeCommand
+public class InfoAttribute extends AbstractJmxExecutor 
 {
+  @Command(name="attribute", description="Prints information about attributes")
+  public static final class Cmd extends AbstractAttributeCommand
+  {
+    @Mixin
+    private IntervalOption intervalOption = new IntervalOption();
+    
+    @Mixin
+    private JvmOption jvmOption = new JvmOption();
+
+    @Override
+    public void run()
+    {
+      new InfoAttribute(this).execute();
+    }
+ 
+  }
   private Table<MAttribute> description = declareDescriptionTable();
   private Table<Pair<String, StyledText>> properties = declarePropertiesTable();
+  private MBeanFilter beanFilter;
+  private WildcardFilters attributeFilters;
+  private BeanTitle beanTitle = new BeanTitle(ui());
   
-  public InfoAttribute()
+  public InfoAttribute(Cmd command)
   {
-    super("Attribute Info");
+    super("Attribute Info", command.intervalOption, command.jvmOption);
+    beanFilter = command.beanFilter();
+    attributeFilters = command.attributeFilters();
   }
 
   @Override
-  protected void execute()
+  protected void execute(CommandUi ui, JmxClient jmxClient)
   {
-    for (MBean bean : getBeans())
+    beanTitle.reset();
+    for (MBean bean : jmxClient.beansThatMatch(beanFilter))
     {
-      List<MAttribute> attributes = getFilteredAttributes(bean);
+      List<MAttribute> attributes = attributeFilters.filter(bean.attributes(), MAttribute::name);
       if (!attributes.isEmpty())
       {
-        printBeanNameTitle(bean);
+        beanTitle.printBeanNameTitle(bean);
         for (MAttribute attr : attributes)
         {
           print(attr);
@@ -58,15 +88,15 @@ public class InfoAttribute extends AbstractAttributeCommand
 
   private void printNameTitle(MAttribute attr)
   {
-    printEmptyLine();
-    printSubTitle(attr.name());
+    ui().printEmptyLine();
+    ui().printSubTitle(attr.name());
   }
   
   private void printDescription(MAttribute attr)
   {
-    printEmptyLine();
+    ui().printEmptyLine();
     description.printSingleRow(attr);
-    printEmptyLine();
+    ui().printEmptyLine();
   }
     
   private static Table<MAttribute> declareDescriptionTable()

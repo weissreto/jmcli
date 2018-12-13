@@ -6,13 +6,13 @@ import ch.rweiss.jmx.client.JmxClient;
 import ch.rweiss.jmx.client.Jvm;
 import picocli.CommandLine.Option;
 
-class JvmOption
+public class JvmOption
 {
   @Option(names = {"-j", "--jvm"}, description = "Process id or a part of the main class name or the host:port of the Java virtual machine")
   protected String jvm;
   private JmxClient client;
 
-  void connectAndRun(Runnable runnable)
+  public void connectAndRun(Runnable runnable)
   {
     try(JmxClient jmxClient = connect())
     {
@@ -21,7 +21,7 @@ class JvmOption
     }
   }
   
-  JmxClient jmxClient()
+  public JmxClient jmxClient()
   {
     return client;
   }

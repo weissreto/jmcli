@@ -1,39 +1,53 @@
 package ch.rweiss.jmcli.list;
 
-import ch.rweiss.jmcli.AbstractJmxClientCommand;
+import ch.rweiss.jmcli.AbstractCommand;
+import ch.rweiss.jmcli.IntervalOption;
+import ch.rweiss.jmcli.JvmOption;
 import ch.rweiss.jmcli.Styles;
+import ch.rweiss.jmcli.executor.AbstractJmxExecutor;
+import ch.rweiss.jmcli.ui.CommandUi;
+import ch.rweiss.jmx.client.JmxClient;
 import ch.rweiss.jmx.client.MBeanTreeNode;
 import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 
-@Command(name = "beans", description="Lists all available management beans")
-public class ListBeans extends AbstractJmxClientCommand
+public final class ListBeans extends AbstractJmxExecutor
 {
+  @Command(name = "beans", description="Lists all available management beans")
+  public static final class Cmd extends AbstractCommand
+  {
+    @Mixin
+    private IntervalOption intervalOption = new IntervalOption();
+    
+    @Mixin
+    private JvmOption jvmOption = new JvmOption();
+
+    @Override
+    public void run()
+    {
+      new ListBeans(this).execute();
+    }
+  }
+  
   private Table<MBeanTreeNode> table = declareTable();
 
-  ListBeans()
+  ListBeans(Cmd command)
   {
-    super("Beans");
+    super("Beans", command.intervalOption, command.jvmOption);
   }
 
   @Override
-  protected void execute()
+  protected void execute(CommandUi ui, JmxClient jmxClient)
   {
     table.clear();
 
-    MBeanTreeNode beanTree = jmxClient().beanTree();    
+    MBeanTreeNode beanTree = jmxClient.beanTree();    
     addBeans(beanTree);
 
     table.print();   
   }
   
-  @Override
-  protected void afterRun()
-  {
-    super.afterRun();
-    term.clear().screenToEnd();
-  }
-
   private static Table<MBeanTreeNode> declareTable()
   {
     Table<MBeanTreeNode> table = new Table<>();

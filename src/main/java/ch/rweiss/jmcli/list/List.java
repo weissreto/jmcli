@@ -4,12 +4,12 @@ import ch.rweiss.jmcli.AbstractCommand;
 import picocli.CommandLine.Command;
 
 @Command(name = "list", description="Lists objects", subcommands = {
-    ListVirtualMachines.class,
-    ListBeans.class,
-    ListAttributes.class,
-    ListThreads.class,
-    ListThreadsStates.class,
-    ListClasses.class
+    ListVirtualMachines.Cmd.class,
+    ListBeans.Cmd.class,
+    ListAttributes.Cmd.class,
+    ListThreads.Cmd.class,
+    ListThreadsStates.Cmd.class,
+    ListClasses.Cmd.class
     /*,
     ListOperations.class*/})
 public class List extends AbstractCommand
@@ -18,7 +18,7 @@ public class List extends AbstractCommand
   @Override
   public void run()
   {    
-    new ListVirtualMachines().run();
+    new ListVirtualMachines.Cmd().run();
   }
 
 }
