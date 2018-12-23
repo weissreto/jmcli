@@ -8,11 +8,11 @@ import java.util.stream.LongStream;
 
 import javax.management.openmbean.CompositeData;
 
-import org.apache.commons.lang3.StringUtils;
-
 import ch.rweiss.jmcli.AbstractCommand;
 import ch.rweiss.jmcli.IntervalOption;
 import ch.rweiss.jmcli.JvmOption;
+import ch.rweiss.jmcli.SortColumnOption;
+import ch.rweiss.jmcli.SortColumnOption.Direction;
 import ch.rweiss.jmcli.Styles;
 import ch.rweiss.jmcli.executor.AbstractJmxDataExecutor;
 import ch.rweiss.jmcli.ui.CommandUi;
@@ -25,23 +25,20 @@ import ch.rweiss.terminal.Style;
 import ch.rweiss.terminal.StyledText;
 import ch.rweiss.terminal.chart.unit.Unit;
 import ch.rweiss.terminal.table.AbbreviateStyle;
-import ch.rweiss.terminal.table.RowSorter;
 import ch.rweiss.terminal.table.Table;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
 
 public class ListThreads extends AbstractJmxDataExecutor
 {
+  private static final String CPU = "Cpu";
+
   @Command(name = "threads", description="Lists all treads")
   public static class Cmd extends AbstractCommand
   {
-    @Parameters(index="0", arity="0..1", paramLabel="COLUMN", description="Column name to sort")
-    private String sortColumnName;
-  
-    @Parameters(index="1", arity="0..1", paramLabel="DIRECTION", description="ASC or DESC")
-    private String direction;
+    @Mixin
+    private SortColumnOption sortOption = new SortColumnOption(CPU, Direction.DESCENDING);
     
     @Mixin
     private IntervalOption intervalOption = new IntervalOption();
@@ -88,6 +85,7 @@ public class ListThreads extends AbstractJmxDataExecutor
   {
     super("Threads", command.intervalOption, command.jvmOption);
     this.command = command;
+    command.sortOption.sort(table);
   }
 
   private static Style[] buildGradient(int startRed, int startGreen, int startBlue, int deltaRed, int deltaGreen, int deltaBlue, int count)
@@ -109,16 +107,7 @@ public class ListThreads extends AbstractJmxDataExecutor
 
   @Override
   protected void gatherDataFrom(JmxClient jmxClient)
-  {
-    if (StringUtils.isNotBlank(command.sortColumnName))
-    {
-      RowSorter<ThreadData> sorter = table.sortColumn(command.sortColumnName);
-      if ("DESC".equalsIgnoreCase(command.direction))
-      {
-        sorter.descending();
-      }
-    }
-        
+  {       
     MBean threadBean = jmxClient.bean(MBeanName.THREAD);
     threadBean.attribute("ThreadCpuTimeEnabled").value(true);
     threadBean.attribute("ThreadContentionMonitoringEnabled").value(true);
@@ -142,7 +131,7 @@ public class ListThreads extends AbstractJmxDataExecutor
       {
         data.isDeadLocked = true;
       }
-      table .addRow(deltaOrAbsolute(data, lastData));
+      table.addRow(deltaOrAbsolute(data, lastData));
       lastValues.put(info.getThreadId(), data);
     }
     triggerUiUpdate();
@@ -210,7 +199,7 @@ public class ListThreads extends AbstractJmxDataExecutor
           .toColumn());
     
     threadsTable.addColumn(
-        threadsTable.createColumn("Cpu", 9, data -> data.cpuTime)
+        threadsTable.createColumn(CPU, 9, data -> data.cpuTime)
           .withTitleStyle(Styles.NAME_TITLE)
           .withStyledTextProvider(this::cpuUsage)
           .toColumn());

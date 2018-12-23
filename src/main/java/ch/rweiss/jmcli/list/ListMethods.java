@@ -11,6 +11,8 @@ import javax.management.openmbean.CompositeData;
 import ch.rweiss.jmcli.AbstractCommand;
 import ch.rweiss.jmcli.IntervalOption;
 import ch.rweiss.jmcli.JvmOption;
+import ch.rweiss.jmcli.SortColumnOption;
+import ch.rweiss.jmcli.SortColumnOption.Direction;
 import ch.rweiss.jmcli.Styles;
 import ch.rweiss.jmcli.executor.AbstractJmxDataExecutor;
 import ch.rweiss.jmcli.ui.CommandUi;
@@ -29,8 +31,7 @@ public class ListMethods extends AbstractJmxDataExecutor
   private static final Comparator<MethodData> RUNNABLE_DESC = Comparator
       .comparingInt(MethodData::runnableSelfSamples)
       .thenComparingInt(MethodData::waitingSelfSamples)
-      .thenComparingInt(MethodData::blockedSelfSamples)
-      .reversed();
+      .thenComparingInt(MethodData::blockedSelfSamples);
   private static final String SELF_SAMPLES_COLUMN = "Self";
 
   @Command(name = "methods", description="Lists all executed methods")
@@ -41,6 +42,9 @@ public class ListMethods extends AbstractJmxDataExecutor
     
     @Mixin
     private JvmOption jvmOption = new JvmOption();
+    
+    @Mixin
+    private SortColumnOption sortOption = new SortColumnOption(SELF_SAMPLES_COLUMN, Direction.DESCENDING);
     
     @Override
     public void run()
@@ -55,6 +59,7 @@ public class ListMethods extends AbstractJmxDataExecutor
   public ListMethods(Cmd command)
   {
     super("Methods", command.intervalOption, command.jvmOption);
+    command.sortOption.sort(table);
   }
 
   @Override
@@ -68,7 +73,6 @@ public class ListMethods extends AbstractJmxDataExecutor
       analyzeThread(thread);
     }
     table.setRows(methods.values());
-    table.sortColumn(SELF_SAMPLES_COLUMN);
     triggerUiUpdate();
   }
 
@@ -137,14 +141,14 @@ public class ListMethods extends AbstractJmxDataExecutor
         methodTable.createColumn("Waiting", 10)
           .withTitleStyle(Styles.NAME_TITLE)
           .withStyledTextProvider(MethodData::waitingSelfSamplesText)
-          .withSorter(Comparator.comparingInt(MethodData::waitingSelfSamples).reversed())
+          .withSorter(Comparator.comparingInt(MethodData::waitingSelfSamples))
           .toColumn());
 
     methodTable.addColumn(
         methodTable.createColumn("Blocked", 10)
           .withTitleStyle(Styles.NAME_TITLE)
           .withStyledTextProvider(MethodData::blockedSelfSamplesText)
-          .withSorter(Comparator.comparingInt(MethodData::blockedSelfSamples).reversed())
+          .withSorter(Comparator.comparingInt(MethodData::blockedSelfSamples))
           .toColumn());
 
     methodTable.addColumn(
@@ -152,7 +156,7 @@ public class ListMethods extends AbstractJmxDataExecutor
           .withTitleStyle(Styles.NAME_TITLE)
           .withTextProvider(MethodData::totalSamplesStr)
           .withCellStyle(Styles.VALUE)
-          .withSorter(Comparator.comparingInt(MethodData::totalSamples).reversed())
+          .withSorter(Comparator.comparingInt(MethodData::totalSamples))
           .toColumn());
     return methodTable;
   }

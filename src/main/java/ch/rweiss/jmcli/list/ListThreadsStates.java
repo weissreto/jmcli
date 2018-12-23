@@ -34,7 +34,7 @@ public class ListThreadsStates extends AbstractJmxDataExecutor
   public static final class Cmd extends AbstractCommand
   {
     @Mixin
-    private IntervalOption intervalOption = new IntervalOption();
+    private IntervalOption intervalOption = new IntervalOption(1);
     
     @Mixin
     private JvmOption jvmOption = new JvmOption();
@@ -116,6 +116,7 @@ public class ListThreadsStates extends AbstractJmxDataExecutor
           .withStyledTextProvider(ListThreadsStates::threadName)
           .withAbbreviateStyle(AbbreviateStyle.LEFT_WITH_DOTS)
           .withMinWidth(10)
+          .withSorter((row1, row2) -> row1.name.compareToIgnoreCase(row2.name))
           .toColumn());
     
     table.addColumn(
@@ -125,7 +126,8 @@ public class ListThreadsStates extends AbstractJmxDataExecutor
           .withAbbreviateStyle(AbbreviateStyle.LEFT)
           .withMinWidth(10)
           .toColumn());
-      return table;
+    table.sortColumn("Name");
+    return table;
   }
   
   private static StyledText threadName(ThreadData data)

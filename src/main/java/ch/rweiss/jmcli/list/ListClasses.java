@@ -8,6 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 import ch.rweiss.jmcli.AbstractCommand;
 import ch.rweiss.jmcli.IntervalOption;
 import ch.rweiss.jmcli.JvmOption;
+import ch.rweiss.jmcli.SortColumnOption;
+import ch.rweiss.jmcli.SortColumnOption.Direction;
 import ch.rweiss.jmcli.Styles;
 import ch.rweiss.jmcli.WildcardFilters;
 import ch.rweiss.jmcli.executor.AbstractJmxDataExecutor;
@@ -27,6 +29,8 @@ import picocli.CommandLine.Parameters;
 
 public class ListClasses extends AbstractJmxDataExecutor
 {
+  private static final String BYTES_COLUMN_NAME = "Bytes";
+
   @Command(name = "classes", description="Lists all classes and the number of instances")
   public static final class Cmd extends AbstractCommand
   {
@@ -38,6 +42,9 @@ public class ListClasses extends AbstractJmxDataExecutor
     
     @Mixin
     private JvmOption jvmOption = new JvmOption();
+    
+    @Mixin
+    private SortColumnOption sortOption = new SortColumnOption(BYTES_COLUMN_NAME, Direction.DESCENDING);
     
     @Override
     public void run()
@@ -55,6 +62,7 @@ public class ListClasses extends AbstractJmxDataExecutor
   {
     super("Classes", command.intervalOption, command.jvmOption);
     this.command = command;
+    command.sortOption.sort(classesTable);
   }
 
   @Override
@@ -157,7 +165,7 @@ public class ListClasses extends AbstractJmxDataExecutor
     table.addColumn(table.createColumn("Instances", 10, info -> info.instances()).withTitleStyle(Styles.NAME_TITLE)
         .withCellStyle(Styles.VALUE).toColumn());
 
-    table.addColumn(table.createColumn("Bytes", 10, info -> info.bytes()).withTitleStyle(Styles.NAME_TITLE)
+    table.addColumn(table.createColumn(BYTES_COLUMN_NAME, 10, info -> info.bytes()).withTitleStyle(Styles.NAME_TITLE)
         .withCellStyle(Styles.VALUE).toColumn());
 
     return table;
