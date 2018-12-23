@@ -80,12 +80,10 @@ public class Dashboard extends AbstractJmxExecutor
   @Override
   protected void execute(CommandUi ui, JmxClient jmxClient)
   {
-    ensureGrid();
-
-//    term.clear().screen();
     ui.terminal().offScreen().on();
     try
     {
+      ensureGrid();
       scanner.scanNow();
       for (DataChannelSerie channel : dataChannelSeries)
       {

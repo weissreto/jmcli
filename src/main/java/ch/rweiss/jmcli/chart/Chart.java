@@ -99,11 +99,10 @@ public final class Chart extends AbstractJmxExecutor
   @Override
   protected void execute(CommandUi ui, JmxClient jmxClient)
   {
-    ensureChart();
-
     ui.terminal().offScreen().on();
     try
     {
+      ensureChart();
       scanner.scanNow();
       for (DataChannelSerie channel : dataChannelSeries)
       {

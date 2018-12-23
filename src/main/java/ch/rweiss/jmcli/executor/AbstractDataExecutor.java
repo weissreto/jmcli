@@ -83,9 +83,16 @@ public abstract class AbstractDataExecutor extends AbstractExecutor
 
   void processKeyUntil(long maximumTimeToProcessKey)
   {
-    Optional<Key> key = ui().terminal().input().waitForKey(maximumTimeToProcessKey);
-    key.ifPresent(this::keyPressed);
-    key.ifPresent(this::isQuitKey);
+    if (ui().terminal().isAnsi())
+    {
+      Optional<Key> key = ui().terminal().input().waitForKey(maximumTimeToProcessKey);
+      key.ifPresent(this::keyPressed);
+      key.ifPresent(this::isQuitKey);
+    }
+    else
+    {
+      quit();
+    }
   }
 
   private void doGatherData()

@@ -72,9 +72,16 @@ public abstract class AbstractJmxExecutor extends AbstractSimpleExecutor
   
   private void sleep() 
   {
-    long wait = intervalOption.waitTime();
-    Optional<Key> key = ui().terminal().input().waitForKey(wait);
-    key.ifPresent(k -> quit());      
+    if (ui().terminal().isAnsi())
+    {
+      long wait = intervalOption.waitTime();
+      Optional<Key> key = ui().terminal().input().waitForKey(wait);
+      key.ifPresent(k -> quit());
+    }
+    else
+    {
+      quit();
+    }
   }
   
   private boolean isNotQuit()
