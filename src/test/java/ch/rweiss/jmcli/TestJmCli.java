@@ -3,15 +3,12 @@ package ch.rweiss.jmcli;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import ch.rweiss.jmcli.list.TestListVirtualMaschine;
+
 public class TestJmCli
 {
   private static final String NEW_LINE = System.lineSeparator();
   
-  private static final String STANDARD_COMMAND_OUTPUT = "\n"+
-      "Java Virtual Maschines\n"+
-      "\n"+
-      "Id        Display Name\n";
-
   private static final String VERSION_TEXT = 
       "Java Management Command Line Interface" + NEW_LINE + 
       "0.3"  + NEW_LINE + 
@@ -46,7 +43,7 @@ public class TestJmCli
   {
     JmCli.main(new String[] {});
     
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertStdOut().startsWith(TestListVirtualMaschine.STANDARD_COMMAND_OUTPUT);
   }
   
   @Test
@@ -92,14 +89,14 @@ public class TestJmCli
   public void verboseShort()
   {
     JmCli.main(new String[] {"-v"});
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertStdOut().startsWith(TestListVirtualMaschine.STANDARD_COMMAND_OUTPUT);
   }
 
   @Test 
   public void verboseLong()
   {
     JmCli.main(new String[] {"--verbose"});
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertStdOut().startsWith(TestListVirtualMaschine.STANDARD_COMMAND_OUTPUT);
   }
 
 }

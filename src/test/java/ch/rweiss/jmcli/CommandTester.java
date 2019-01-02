@@ -40,16 +40,21 @@ public class CommandTester implements BeforeEachCallback, AfterEachCallback
 
   public AbstractStringAssert<?> assertStdOut()
   {
-    String dump = AnsiTerminalTester.dumpOffScreenBuffer();
-    String trimmedDump = Arrays
-        .stream(StringUtils.split(dump, '\n'))
-        .map(String::trim)
-        .collect(Collectors.joining("\n"));
-    return assertThat(trimmedDump);
+    return assertThat(stdOut());
   }
 
   public AbstractStringAssert<?> assertStdErr()
   {
     return assertThat(new String(stdErr.toByteArray(), StandardCharsets.UTF_16));
+  }
+
+  public String stdOut()
+  {
+    String dump = AnsiTerminalTester.dumpOffScreenBuffer();
+    String trimmedDump = Arrays
+        .stream(StringUtils.split(dump, '\n'))
+        .map(String::trim)
+        .collect(Collectors.joining("\n"));
+    return trimmedDump;
   }
 }
