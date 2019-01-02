@@ -5,8 +5,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.api.AbstractStringAssert;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -33,14 +35,14 @@ public class CommandTester implements BeforeEachCallback, AfterEachCallback
     AnsiTerminal.get().offScreen().on();
     originalStdErr = System.err;
     stdErr = new ByteArrayOutputStream();
-    System.setErr(new PrintStream(stdErr, true, StandardCharsets.UTF_16));
+    System.setErr(new PrintStream(stdErr, true, StandardCharsets.UTF_16.name()));
   }
 
   public AbstractStringAssert<?> assertStdOut()
   {
     String dump = AnsiTerminalTester.dumpOffScreenBuffer();
-    String trimmedDump = dump
-        .lines()
+    String trimmedDump = Arrays
+        .stream(StringUtils.split(dump, '\n'))
         .map(String::trim)
         .collect(Collectors.joining("\n"));
     return assertThat(trimmedDump);

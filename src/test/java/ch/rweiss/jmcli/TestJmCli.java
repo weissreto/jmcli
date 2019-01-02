@@ -37,15 +37,14 @@ public class TestJmCli
        "  \033[1mdashboard\033[21m\033[0m  Draws a dashboard\r\n";
   
   @RegisterExtension
-  CommandTester tester = new CommandTester();
+  public CommandTester tester = new CommandTester();
   
   @Test
   public void defaultCommandListVm()
   {
     JmCli.main(new String[] {});
     
-    tester.assertStdOut().startsWith(
-        STANDARD_COMMAND_OUTPUT);
+    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
   
   @Test
@@ -68,16 +67,14 @@ public class TestJmCli
   public void versionShort()
   {
     JmCli.main(new String[] {"-V"});
-    tester.assertStdErr().isEqualTo(
-        VERSION_TEXT);
+    tester.assertStdErr().isEqualTo(VERSION_TEXT);
   }
 
   @Test
   public void versionLong()
   {
     JmCli.main(new String[] {"--version"});
-    tester.assertStdErr().isEqualTo(
-        VERSION_TEXT);
+    tester.assertStdErr().isEqualTo(VERSION_TEXT);
   }
   
   @Test 
@@ -93,16 +90,14 @@ public class TestJmCli
   public void verboseShort()
   {
     JmCli.main(new String[] {"-v"});
-    tester.assertStdOut().startsWith(
-        STANDARD_COMMAND_OUTPUT);
+    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test 
   public void verboseLong()
   {
     JmCli.main(new String[] {"--verbose"});
-    tester.assertStdOut().startsWith(
-        STANDARD_COMMAND_OUTPUT);
+    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
 }
