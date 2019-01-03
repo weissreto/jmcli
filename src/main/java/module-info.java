@@ -1,5 +1,7 @@
 module ch.rweiss.jmcli
 {
+  requires ch.rweiss.terminal; // SEE https://bugs.eclipse.org/bugs/show_bug.cgi?id=525930
+  requires ch.rweiss.terminal.nativ; // SEE https://bugs.eclipse.org/bugs/show_bug.cgi?id=525930
   requires ch.rweiss.terminal.chart;
   requires ch.rweiss.jmx.client;
   requires ch.rweiss.check;
@@ -9,8 +11,6 @@ module ch.rweiss.jmcli
   requires com.fasterxml.jackson.dataformat.yaml;
   requires com.fasterxml.jackson.core;
   requires com.fasterxml.jackson.databind;
-  requires jackson.annotations;
-  requires snakeyaml;
   
   opens ch.rweiss.jmcli to info.picocli;
   opens ch.rweiss.jmcli.chart to info.picocli;

@@ -55,6 +55,6 @@ public class CommandTester implements BeforeEachCallback, AfterEachCallback
         .stream(StringUtils.split(dump, '\n'))
         .map(String::trim)
         .collect(Collectors.joining("\n"));
-    return trimmedDump;
+    return StringUtils.stripEnd(trimmedDump, null);
   }
 }
