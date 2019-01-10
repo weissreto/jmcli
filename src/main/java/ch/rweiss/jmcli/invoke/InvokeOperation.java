@@ -118,13 +118,13 @@ public final class InvokeOperation extends AbstractJmxExecutor
     {
       return operations.get(0);
     }
-    throw new CommandException("More than one operation {0} with {1} parameters found for bean {2}. Please specify operation signature.", command.operationName, command.parameters.size(), bean.name().fullQualifiedName());
+    throw new CommandException("More than one operation {0} with {1} parameters found for bean {2}.\nPlease specify operation signature.", command.operationName, command.parameters.size(), bean.name().fullQualifiedName());
   }
   
   private void invoke(MOperation operation)
   {
     ui().printEmptyLine();
-    operationTable.addRow(Pair.of("Invokeing operation", operation.signature()));
+    operationTable.addRow(Pair.of("Invoking operation", operation.signature()));
     operationTable.addRow(Pair.of("with parameters", command.parameters.toString()));
     
     String result = operation.invoke(command.parameters);
