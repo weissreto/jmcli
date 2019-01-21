@@ -7,6 +7,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +25,7 @@ public class TestChart
 {
   private static final int OUT_WIDTH = 120;
   private static final char[] BUFFER = new char[1024];
+  private static final Pattern TIME = Pattern.compile("\\d?\\d:\\d\\d:\\d\\d( (PM|AM))? ");
   @RegisterExtension
   public CommandTester tester = new CommandTester(new Position(20, OUT_WIDTH));
 
@@ -145,13 +149,13 @@ public class TestChart
   @Test
   public void time()
   {
-    assertThat(replaceTime("11:45:65 PM")).isEqualTo("??:??:??");
-    assertThat(replaceTime("2:45:65 PM")).isEqualTo("??:??:??");
-    assertThat(replaceTime("2:45:65 AM")).isEqualTo("??:??:??");
-    assertThat(replaceTime("11:45:65 AM")).isEqualTo("??:??:??");
-    assertThat(replaceTime("2:45:65")).isEqualTo("??:??:??");
-    assertThat(replaceTime("02:45:65")).isEqualTo("??:??:??");
-    assertThat(replaceTime("23:45:65")).isEqualTo("??:??:??");
+    assertThat(replaceTime(" 11:45:65 PM  ")).isEqualTo(" ??:??:??     ");
+    assertThat(replaceTime(" 2:45:65 PM  ")) .isEqualTo(" ??:??:??    ");
+    assertThat(replaceTime(" 2:45:65 AM  ")) .isEqualTo(" ??:??:??    ");
+    assertThat(replaceTime(" 11:45:65 AM  ")).isEqualTo(" ??:??:??     ");
+    assertThat(replaceTime(" 2:45:65  "))    .isEqualTo(" ??:??:?? ");
+    assertThat(replaceTime(" 02:45:65  "))   .isEqualTo(" ??:??:??  ");
+    assertThat(replaceTime(" 23:45:65  "))   .isEqualTo(" ??:??:??  ");
   }
   
   private void assertChart(String referenceFile) throws IOException
@@ -166,9 +170,15 @@ public class TestChart
 
   private static String replaceTime(String testee)
   {
-    return testee.replaceAll("\\d?\\d:\\d\\d:\\d\\d( (PM|AM))?", "??:??:??");
+    Matcher matcher = TIME.matcher(testee);
+    return matcher.replaceAll(TestChart::replaceTime);
   }
-
+  
+  private static String replaceTime(MatchResult result)
+  {
+    return "??:??:??" + StringUtils.repeat(' ', result.end()-result.start()-8);
+  }
+  
   private static String replaceValues(String testee)
   {
     return testee.replaceAll("=\\d*", "=???");
