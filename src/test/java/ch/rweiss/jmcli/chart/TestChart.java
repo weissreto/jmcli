@@ -142,6 +142,18 @@ public class TestChart
         "Please specify a correct Java process id or main class name or a host:port.");
   }
   
+  @Test
+  public void time()
+  {
+    assertThat(replaceTime("11:45:65 PM")).isEqualTo("??:??:??");
+    assertThat(replaceTime("2:45:65 PM")).isEqualTo("??:??:??");
+    assertThat(replaceTime("2:45:65 AM")).isEqualTo("??:??:??");
+    assertThat(replaceTime("11:45:65 AM")).isEqualTo("??:??:??");
+    assertThat(replaceTime("2:45:65")).isEqualTo("??:??:??");
+    assertThat(replaceTime("02:45:65")).isEqualTo("??:??:??");
+    assertThat(replaceTime("23:45:65")).isEqualTo("??:??:??");
+  }
+  
   private void assertChart(String referenceFile) throws IOException
   {
     String reference = readReference(referenceFile);
@@ -154,7 +166,7 @@ public class TestChart
 
   private static String replaceTime(String testee)
   {
-    return testee.replaceAll("\\d\\d:\\d\\d:\\d\\d", "??:??:??");
+    return testee.replaceAll("\\d?\\d:\\d\\d:\\d\\d( (PM|AM))?", "??:??:??");
   }
 
   private static String replaceValues(String testee)
