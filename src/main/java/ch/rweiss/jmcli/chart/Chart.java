@@ -49,7 +49,7 @@ public final class Chart extends AbstractJmxExecutor
     @Option(names = {"-W", "--width"}, description = "Width of the chart")
     private int width = -1;
      
-    @Option(names = {"-u", "--unit"}, description = "Unit of the values 'user' chart only")
+    @Option(names = {"-u", "--unit"}, description = "Unit of the values ('user' chart only)")
     private String unit = "";
     
     @Option(names = {"-t", "--title"}, description = "Chart title ('user' chart only)")

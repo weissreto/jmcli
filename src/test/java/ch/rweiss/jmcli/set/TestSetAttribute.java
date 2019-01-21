@@ -50,7 +50,7 @@ public class TestSetAttribute
   {
     JmCli.main(new String[] {"set", "attribute", MBeanName.THREAD.fullQualifiedName(), "ThreadCpuTimeEnabled", "false"});
 
-    tester.assertStdOut().isEqualTo(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().isEqualTo(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -58,7 +58,7 @@ public class TestSetAttribute
   {
     JmCli.main(new String[] {"set", "attribute", MBeanName.THREAD.fullQualifiedName(), "ThreadCpuTimeEnabled", "false", "-i", "1"});
 
-    tester.assertStdOut().isEqualTo(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().isEqualTo(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -66,7 +66,7 @@ public class TestSetAttribute
   {
     JmCli.main(new String[] {"set", "attribute", MBeanName.THREAD.fullQualifiedName(), "ThreadCpuTimeEnabled", "false", "--interval", "1"});
 
-    tester.assertStdOut().isEqualTo(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().isEqualTo(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -78,7 +78,7 @@ public class TestSetAttribute
 
     JmCli.main(new String[] {"set", "attribute", JMX.getName(), "TestAttr", "World", "-j", localJvm.id()});
     
-    tester.assertStdOut().isEqualTo(SET_TEST_ATTRIBUTE_OUTPUT);
+    tester.assertTrimmedStdOut().isEqualTo(SET_TEST_ATTRIBUTE_OUTPUT);
     assertThat(ATTRIBUTE_TESTER.getTestAttr()).isEqualTo("World");
   }
 
@@ -91,7 +91,7 @@ public class TestSetAttribute
     
     JmCli.main(new String[] {"set", "attribute", JMX.getName(), "TestAttr", "World", "--jvm", localJvm.id()});
     
-    tester.assertStdOut().isEqualTo(SET_TEST_ATTRIBUTE_OUTPUT);
+    tester.assertTrimmedStdOut().isEqualTo(SET_TEST_ATTRIBUTE_OUTPUT);
     assertThat(ATTRIBUTE_TESTER.getTestAttr()).isEqualTo("World");
   }
 
@@ -100,7 +100,7 @@ public class TestSetAttribute
   {
     JmCli.main(new String[] {"set", "attribute", "-j", "ThisJvmShouldNotBeFound", JMX.getName(), "TestAttr", "World"});
 
-    tester.assertStdOut().contains(
+    tester.assertTrimmedStdOut().contains(
         "Java virtual machine 'ThisJvmShouldNotBeFound' not found.\n"+
         "Please specify a correct Java process id or main class name or a host:port.");
   }

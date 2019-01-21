@@ -22,7 +22,7 @@ public class TestListThreadsStacks
   {
     JmCli.main(new String[] {"list", "threads-stacks"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -30,7 +30,7 @@ public class TestListThreadsStacks
   {
     JmCli.main(new String[] {"list", "threads-stacks", "-i", "1"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -38,7 +38,7 @@ public class TestListThreadsStacks
   {
     JmCli.main(new String[] {"list", "threads-stacks", "--interval", "1"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -47,7 +47,7 @@ public class TestListThreadsStacks
     Jvm localJvm = Jvm.localJvm();
     JmCli.main(new String[] {"list", "threads-stacks", "-j", localJvm.id()});
     
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -56,7 +56,7 @@ public class TestListThreadsStacks
     Jvm localJvm = Jvm.localJvm();
     JmCli.main(new String[] {"list", "threads-stacks", "--jvm", localJvm.id()});
     
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -64,7 +64,7 @@ public class TestListThreadsStacks
   {
     JmCli.main(new String[] {"list", "threads-stacks", "-j", "ThisJvmShouldNotBeFound"});
 
-    tester.assertStdOut().contains(
+    tester.assertTrimmedStdOut().contains(
         "Java virtual machine 'ThisJvmShouldNotBeFound' not found.\n"+
         "Please specify a correct Java process id or main class name or a host:port.");
   }

@@ -43,7 +43,7 @@ public class TestJmCli
   {
     JmCli.main(new String[] {});
     
-    tester.assertStdOut().startsWith(TestListVirtualMaschine.STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(TestListVirtualMaschine.STANDARD_COMMAND_OUTPUT);
   }
   
   @Test
@@ -89,14 +89,14 @@ public class TestJmCli
   public void verboseShort()
   {
     JmCli.main(new String[] {"-v"});
-    tester.assertStdOut().startsWith(TestListVirtualMaschine.STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(TestListVirtualMaschine.STANDARD_COMMAND_OUTPUT);
   }
 
   @Test 
   public void verboseLong()
   {
     JmCli.main(new String[] {"--verbose"});
-    tester.assertStdOut().startsWith(TestListVirtualMaschine.STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(TestListVirtualMaschine.STANDARD_COMMAND_OUTPUT);
   }
 
 }

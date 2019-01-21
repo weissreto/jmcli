@@ -33,11 +33,11 @@ public class TestListVirtualMaschine
 
     JmCli.main(new String[] {"list", "vm"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
     assertThat(jvms.size()).isGreaterThanOrEqualTo(2);
     for (Jvm jvm : jvms)
     {
-      tester.assertStdOut()
+      tester.assertTrimmedStdOut()
           .contains(jvm.id())
           .contains(StringUtils.substring(jvm.displayName(),0, 80));
     }
@@ -48,7 +48,7 @@ public class TestListVirtualMaschine
   {
     JmCli.main(new String[] {"list", "vm", "-i", "1"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -56,7 +56,7 @@ public class TestListVirtualMaschine
   {
     JmCli.main(new String[] {"list", "vm", "--interval", "1"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -64,7 +64,7 @@ public class TestListVirtualMaschine
   {
     JmCli.main(new String[] {"list", "vm", "-s", "Id"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
     assertSortedBy(JVM_ID_DESC);
   }
 
@@ -73,7 +73,7 @@ public class TestListVirtualMaschine
   {
     JmCli.main(new String[] {"list", "vm", "-s", "Id:a"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
     assertSortedBy(JVM_ID_ASC);
   }
 
@@ -82,7 +82,7 @@ public class TestListVirtualMaschine
   {
     JmCli.main(new String[] {"list", "vm", "-s", "Id:asc"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
     assertSortedBy(JVM_ID_ASC);
   }
 
@@ -91,7 +91,7 @@ public class TestListVirtualMaschine
   {
     JmCli.main(new String[] {"list", "vm", "-s", "Id:ascending"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
     assertSortedBy(JVM_ID_ASC);
   }
   
@@ -100,7 +100,7 @@ public class TestListVirtualMaschine
   {
     JmCli.main(new String[] {"list", "vm", "-s", "Id:ASC"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
     assertSortedBy(JVM_ID_ASC);
   }
 
@@ -109,7 +109,7 @@ public class TestListVirtualMaschine
   {
     JmCli.main(new String[] {"list", "vm", "-s", "Id:d"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
     assertSortedBy(JVM_ID_DESC);
   }
 
@@ -118,7 +118,7 @@ public class TestListVirtualMaschine
   {
     JmCli.main(new String[] {"list", "vm", "-s", "Id:desc"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
     assertSortedBy(JVM_ID_DESC);
   }
 
@@ -127,7 +127,7 @@ public class TestListVirtualMaschine
   {
     JmCli.main(new String[] {"list", "vm", "-s", "Id:descending"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
     assertSortedBy(JVM_ID_DESC);
   }
   
@@ -136,7 +136,7 @@ public class TestListVirtualMaschine
   {
     JmCli.main(new String[] {"list", "vm", "-s", "Id:DESC"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
     assertSortedBy(JVM_ID_DESC);
   }
 
@@ -145,7 +145,7 @@ public class TestListVirtualMaschine
   {
     JmCli.main(new String[] {"list", "vm", "--sort", "Id"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
     assertSortedBy(JVM_ID_DESC);
   }
 
@@ -154,7 +154,7 @@ public class TestListVirtualMaschine
     java.util.List<Jvm> jvms = Jvm.getAvailableRunningJvms();
     Collections.sort(jvms, sortBy);
     assertThat(jvms.size()).isGreaterThanOrEqualTo(2);
-    String stdOut = tester.stdOut();
+    String stdOut = tester.trimmedStdOut();
     int pos = 0;
     for (Jvm jvm : jvms)
     {

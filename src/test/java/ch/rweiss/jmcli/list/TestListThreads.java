@@ -22,7 +22,7 @@ public class TestListThreads
   {
     JmCli.main(new String[] {"list", "threads"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -30,7 +30,7 @@ public class TestListThreads
   {
     JmCli.main(new String[] {"list", "threads", "-i", "1"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -38,7 +38,7 @@ public class TestListThreads
   {
     JmCli.main(new String[] {"list", "threads", "--interval", "1"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -47,7 +47,7 @@ public class TestListThreads
     Jvm localJvm = Jvm.localJvm();
     JmCli.main(new String[] {"list", "threads", "-j", localJvm.id()});
     
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -56,7 +56,7 @@ public class TestListThreads
     Jvm localJvm = Jvm.localJvm();
     JmCli.main(new String[] {"list", "threads", "--jvm", localJvm.id()});
     
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -64,7 +64,7 @@ public class TestListThreads
   {
     JmCli.main(new String[] {"list", "threads", "-j", "ThisJvmShouldNotBeFound"});
 
-    tester.assertStdOut().contains(
+    tester.assertTrimmedStdOut().contains(
         "Java virtual machine 'ThisJvmShouldNotBeFound' not found.\n"+
         "Please specify a correct Java process id or main class name or a host:port.");
   }
@@ -74,7 +74,7 @@ public class TestListThreads
   {
     JmCli.main(new String[] {"list", "threads", "-s", "Name"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -82,7 +82,7 @@ public class TestListThreads
   {
     JmCli.main(new String[] {"list", "threads", "--sort", "Name"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -90,7 +90,7 @@ public class TestListThreads
   {
     JmCli.main(new String[] {"list", "threads", "--sort", "State"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -98,7 +98,7 @@ public class TestListThreads
   {
     JmCli.main(new String[] {"list", "threads", "--sort", "Cpu"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -106,7 +106,7 @@ public class TestListThreads
   {
     JmCli.main(new String[] {"list", "threads", "--sort", "User"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -114,7 +114,7 @@ public class TestListThreads
   {
     JmCli.main(new String[] {"list", "threads", "--sort", "Waited"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -122,7 +122,7 @@ public class TestListThreads
   {
     JmCli.main(new String[] {"list", "threads", "--sort", "Blocked"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
 }

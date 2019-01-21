@@ -39,7 +39,7 @@ public class TestInvokeOperation
   {
     JmCli.main(new String[] {"invoke", "operation", MBeanName.MEMORY.fullQualifiedName(), "gc"});
 
-    tester.assertStdOut().isEqualTo(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().isEqualTo(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -47,7 +47,7 @@ public class TestInvokeOperation
   {
     JmCli.main(new String[] {"invoke", "operation", MBeanName.MEMORY.fullQualifiedName(), "gc", "-i", "1"});
 
-    tester.assertStdOut().isEqualTo(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().isEqualTo(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -55,7 +55,7 @@ public class TestInvokeOperation
   {
     JmCli.main(new String[] {"invoke", "operation", MBeanName.MEMORY.fullQualifiedName(), "gc", "--interval", "1"});
 
-    tester.assertStdOut().isEqualTo(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().isEqualTo(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -65,7 +65,7 @@ public class TestInvokeOperation
 
     JmCli.main(new String[] {"invoke", "operation", MBeanName.MEMORY.fullQualifiedName(), "gc", "-j", localJvm.id()});
     
-    tester.assertStdOut().isEqualTo(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().isEqualTo(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -75,7 +75,7 @@ public class TestInvokeOperation
     
     JmCli.main(new String[] {"invoke", "operation", MBeanName.MEMORY.fullQualifiedName(), "gc", "--jvm", localJvm.id()});
     
-    tester.assertStdOut().isEqualTo(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().isEqualTo(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -83,7 +83,7 @@ public class TestInvokeOperation
   {
     JmCli.main(new String[] {"invoke", "operation", "-j", "ThisJvmShouldNotBeFound", MBeanName.MEMORY.fullQualifiedName(), "gc"});
 
-    tester.assertStdOut().contains(
+    tester.assertTrimmedStdOut().contains(
         "Java virtual machine 'ThisJvmShouldNotBeFound' not found.\n"+
         "Please specify a correct Java process id or main class name or a host:port.");
   }
@@ -163,7 +163,7 @@ public class TestInvokeOperation
   {
     invokeOperation("missing");
 
-    tester.assertStdOut().contains(
+    tester.assertTrimmedStdOut().contains(
         "Invoke Operation\n"+
         "\n"+
         "\n"+
@@ -176,7 +176,7 @@ public class TestInvokeOperation
   {
     invokeOperation("stringArg");
 
-    tester.assertStdOut().contains(
+    tester.assertTrimmedStdOut().contains(
         "Invoke Operation\n"+
         "\n"+
         JMX.getName()+"\n"+    
@@ -191,7 +191,7 @@ public class TestInvokeOperation
   {
     invokeOperation("oneArg");
 
-    tester.assertStdOut().contains(
+    tester.assertTrimmedStdOut().contains(
         "Invoke Operation\n"+
         "\n"+
         "\n"+
@@ -204,7 +204,7 @@ public class TestInvokeOperation
   {
     invokeOperation("oneArg", "Hi");
 
-    tester.assertStdOut().contains(
+    tester.assertTrimmedStdOut().contains(
         "Invoke Operation\n"+
         "\n"+
         "\n"+
@@ -228,7 +228,6 @@ public class TestInvokeOperation
     
     invokeOperation("oneArg(java.lang.String)", "Hello");
     assertResult("java.lang.String oneArg(java.lang.String p0)", "Hello", "Hello");
-
   }
 
   private static void invokeOperation(String operation, String... args)
@@ -248,7 +247,7 @@ public class TestInvokeOperation
 
   private void assertResult(String operationSignature, String result, String... parameters)
   {
-    tester.assertStdOut().contains(
+    tester.assertTrimmedStdOut().contains(
         "Invoke Operation\n"+
         "\n"+
         JMX.getName()+"\n"+

@@ -15,13 +15,26 @@ import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import ch.rweiss.terminal.AnsiTerminal;
+import ch.rweiss.terminal.AnsiTerminal.OffScreen;
 import ch.rweiss.terminal.AnsiTerminalTester;
+import ch.rweiss.terminal.Position;
 
 public class CommandTester implements BeforeEachCallback, AfterEachCallback
 {
   private PrintStream originalStdErr;
   private ByteArrayOutputStream stdErr;
+  private Position maxTerminalPosition;
 
+  public CommandTester()
+  {
+    this(null);
+  }
+
+  public CommandTester(Position maxTerminalPosition)
+  {
+    this.maxTerminalPosition = maxTerminalPosition;
+  }
+  
   @Override
   public void afterEach(ExtensionContext context) throws Exception
   {
@@ -32,15 +45,33 @@ public class CommandTester implements BeforeEachCallback, AfterEachCallback
   @Override
   public void beforeEach(ExtensionContext context) throws Exception
   {
-    AnsiTerminal.get().offScreen().on();
+    OffScreen offScreen = AnsiTerminal.get().offScreen();
+    if (maxTerminalPosition != null)
+    {
+      offScreen.on(maxTerminalPosition);
+    }
+    else
+    {
+      offScreen.on();
+    }
     originalStdErr = System.err;
     stdErr = new ByteArrayOutputStream();
     System.setErr(new PrintStream(stdErr, true, StandardCharsets.UTF_16.name()));
   }
 
+  public String stdOut()
+  {
+    return AnsiTerminalTester.dumpOffScreenBuffer();
+  }
+  
   public AbstractStringAssert<?> assertStdOut()
   {
     return assertThat(stdOut());
+  }
+
+  public AbstractStringAssert<?> assertTrimmedStdOut()
+  {
+    return assertThat(trimmedStdOut());
   }
 
   public AbstractStringAssert<?> assertStdErr()
@@ -48,9 +79,9 @@ public class CommandTester implements BeforeEachCallback, AfterEachCallback
     return assertThat(new String(stdErr.toByteArray(), StandardCharsets.UTF_16));
   }
 
-  public String stdOut()
+  public String trimmedStdOut()
   {
-    String dump = AnsiTerminalTester.dumpOffScreenBuffer();
+    String dump = stdOut();
     String trimmedDump = Arrays
         .stream(StringUtils.split(dump, '\n'))
         .map(String::trim)

@@ -22,7 +22,7 @@ public class TestListMethods
   {
     JmCli.main(new String[] {"list", "methods"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -30,7 +30,7 @@ public class TestListMethods
   {
     JmCli.main(new String[] {"list", "methods", "-i", "1"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -38,7 +38,7 @@ public class TestListMethods
   {
     JmCli.main(new String[] {"list", "methods", "--interval", "1"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -46,7 +46,7 @@ public class TestListMethods
   {
     JmCli.main(new String[] {"list", "methods", "-s", "Name"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -54,7 +54,7 @@ public class TestListMethods
   {
     JmCli.main(new String[] {"list", "methods", "--sort", "Name"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -62,7 +62,7 @@ public class TestListMethods
   {
     JmCli.main(new String[] {"list", "methods", "--sort", "Self"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -70,7 +70,7 @@ public class TestListMethods
   {
     JmCli.main(new String[] {"list", "methods", "--sort", "Waiting"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
   
   @Test
@@ -78,7 +78,7 @@ public class TestListMethods
   {
     JmCli.main(new String[] {"list", "methods", "--sort", "Blocked"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -86,7 +86,7 @@ public class TestListMethods
   {
     JmCli.main(new String[] {"list", "methods", "--sort", "Total"});
 
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -95,7 +95,7 @@ public class TestListMethods
     Jvm localJvm = Jvm.localJvm();
     JmCli.main(new String[] {"list", "methods", "-j", localJvm.id()});
     
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -104,7 +104,7 @@ public class TestListMethods
     Jvm localJvm = Jvm.localJvm();
     JmCli.main(new String[] {"list", "methods", "--jvm", localJvm.id()});
     
-    tester.assertStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
+    tester.assertTrimmedStdOut().startsWith(STANDARD_COMMAND_OUTPUT);
   }
 
   @Test
@@ -112,7 +112,7 @@ public class TestListMethods
   {
     JmCli.main(new String[] {"list", "methods", "-j", "ThisJvmShouldNotBeFound"});
 
-    tester.assertStdOut().contains(
+    tester.assertTrimmedStdOut().contains(
         "Java virtual machine 'ThisJvmShouldNotBeFound' not found.\n"+
         "Please specify a correct Java process id or main class name or a host:port.");
   }

@@ -1,0 +1,10 @@
+eclipse.preferences.version=1
+encoding//src/test/resources/ch/rweiss/jmcli/chart/classes.txt=UTF-8
+encoding//src/test/resources/ch/rweiss/jmcli/chart/cpu.txt=UTF-8
+encoding//src/test/resources/ch/rweiss/jmcli/chart/gc.txt=UTF-8
+encoding//src/test/resources/ch/rweiss/jmcli/chart/heapMemory.txt=UTF-8
+encoding//src/test/resources/ch/rweiss/jmcli/chart/nonHeapMemory.txt=UTF-8
+encoding//src/test/resources/ch/rweiss/jmcli/chart/threads.txt=UTF-8
+encoding//src/test/resources/ch/rweiss/jmcli/chart/user.txt=UTF-8
+encoding//src/test/resources/ch/rweiss/jmcli/chart/userWithTitle.txt=UTF-8
+encoding//src/test/resources/ch/rweiss/jmcli/chart/userWithUnit.txt=UTF-8
