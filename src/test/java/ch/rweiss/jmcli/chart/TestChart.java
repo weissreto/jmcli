@@ -171,7 +171,7 @@ public class TestChart
   private static String replaceTime(String testee)
   {
     Matcher matcher = TIME.matcher(testee);
-    StringBuilder sb = new StringBuilder();
+    StringBuffer sb = new StringBuffer(testee.length());
     while (matcher.find())
     {
       String replacement = replaceTime(matcher.toMatchResult());
