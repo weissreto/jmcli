@@ -3,6 +3,7 @@ package ch.rweiss.jmcli.chart;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
@@ -149,26 +150,26 @@ public class TestChart
   @Test
   public void time()
   {
-    assertThat(replaceTime(" 11:45:65 PM  ")).isEqualTo(" ??:??:??     ");
-    assertThat(replaceTime(" 2:45:65 PM  ")) .isEqualTo(" ??:??:??    ");
-    assertThat(replaceTime(" 2:45:65 AM  ")) .isEqualTo(" ??:??:??    ");
-    assertThat(replaceTime(" 11:45:65 AM  ")).isEqualTo(" ??:??:??     ");
-    assertThat(replaceTime(" 2:45:65  "))    .isEqualTo(" ??:??:?? ");
-    assertThat(replaceTime(" 02:45:65  "))   .isEqualTo(" ??:??:??  ");
-    assertThat(replaceTime(" 23:45:65  "))   .isEqualTo(" ??:??:??  ");
+    assertThat(normalizeTime(" 11:45:65 PM  ")).isEqualTo(" ??:??:??     ");
+    assertThat(normalizeTime(" 2:45:65 PM  ")) .isEqualTo(" ??:??:??    ");
+    assertThat(normalizeTime(" 2:45:65 AM  ")) .isEqualTo(" ??:??:??    ");
+    assertThat(normalizeTime(" 11:45:65 AM  ")).isEqualTo(" ??:??:??     ");
+    assertThat(normalizeTime(" 2:45:65  "))    .isEqualTo(" ??:??:?? ");
+    assertThat(normalizeTime(" 02:45:65  "))   .isEqualTo(" ??:??:??  ");
+    assertThat(normalizeTime(" 23:45:65  "))   .isEqualTo(" ??:??:??  ");
   }
   
   private void assertChart(String referenceFile) throws IOException
   {
     String reference = readReference(referenceFile);
     String testee = tester.stdOut();
-    testee = replaceTime(testee);
-    testee = replaceValues(testee);
+    testee = normalizeTime(testee);
+    testee = normalizeValues(testee);
     testee = adjustLineLengthOnChangedLines(testee);
     assertThat(testee).isEqualTo(reference);
   }
 
-  private static String replaceTime(String testee)
+  public static String normalizeTime(String testee)
   {
     Matcher matcher = TIME.matcher(testee);
     StringBuffer sb = new StringBuffer(testee.length());
@@ -186,19 +187,19 @@ public class TestChart
     return "??:??:??" + StringUtils.repeat(' ', result.end()-result.start()-8);
   }
   
-  private static String replaceValues(String testee)
+  public static String normalizeValues(String testee)
   {
     return testee.replaceAll("=\\d*", "=???");
   }
 
-  private String adjustLineLengthOnChangedLines(String testee)
+  public static String adjustLineLengthOnChangedLines(String testee)
   {
     return Arrays.stream(testee.split("\n"))
-      .map(this::adjustLine)
+      .map(TestChart::adjustLine)
       .collect(Collectors.joining("\n"));
   }
   
-  private String adjustLine(String line)
+  private static String adjustLine(String line)
   {
     if (!line.contains("?"))
     {
@@ -217,8 +218,16 @@ public class TestChart
 
   private static String readReference(String referenceFile) throws IOException
   {
+    try (InputStream is = TestChart.class.getResourceAsStream(referenceFile))
+    {
+      return readReference(is);
+    }
+  }
+
+  public static String readReference(InputStream inputStream) throws IOException
+  {
     StringBuilder builder = new StringBuilder();
-    try (Reader reader = new InputStreamReader(TestChart.class.getResourceAsStream(referenceFile), StandardCharsets.UTF_8))
+    try (Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8))
     {
       int characters = 0;
       while ((characters = reader.read(BUFFER, 0, BUFFER.length)) > 0) 
@@ -228,5 +237,6 @@ public class TestChart
     }
     String reference = builder.toString();
     return reference.replace("\r\n", "\n");
+    
   }
 }
