@@ -87,7 +87,7 @@ public class TestDashboard
   public static String normalizeValues(String testee)
   {
     Matcher matcher = Pattern.compile("([0-9a-zA-Z][0-9a-zA-Z ]*)=(\\d*)").matcher(testee);
-    StringBuilder stringBuilder = new StringBuilder();
+    StringBuffer stringBuilder = new StringBuffer();
     while(matcher.find())
     {
       String valueName = StringUtils.substring(matcher.group(1), 0, 3);
