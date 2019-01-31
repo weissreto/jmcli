@@ -1,0 +1,22 @@
+
+Operation Info
+
+java.lang:type=Threading
+
+findDeadlockedThreads
+
+findDeadlockedThreads
+
+Name                          findDeadlockedThreads
+Signature                     long[] findDeadlockedThreads()
+Impact                        UNKNOWN
+Return Type                   long[]
+
+findMonitorDeadlockedThreads
+
+findMonitorDeadlockedThreads
+
+Name                          findMonitorDeadlockedThreads
+Signature                     long[] findMonitorDeadlockedThreads()
+Impact                        UNKNOWN
+Return Type                   long[]

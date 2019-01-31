@@ -3,7 +3,6 @@ package ch.rweiss.jmcli.dashboard;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -74,7 +73,7 @@ public class TestDashboard
     
   private void assertDashboard(String referenceFile) throws IOException
   {
-    String reference = readReference(referenceFile);
+    String reference = CommandTester.readReference(TestDashboard.class, referenceFile);
     String testee = tester.stdOut();
     testee = TestChart.normalizeTime(testee);
     testee = normalizeValues(testee);
@@ -142,13 +141,5 @@ public class TestDashboard
       }
     }
     return -1;
-  }
-
-  private static String readReference(String referenceFile) throws IOException
-  {
-    try (InputStream is = TestDashboard.class.getResourceAsStream(referenceFile))
-    {
-      return TestChart.readReference(is);
-    }
   }
 }

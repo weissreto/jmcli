@@ -1,0 +1,14 @@
+
+Attribute Info
+
+java.lang:type=Threading
+
+ThreadCount
+
+ThreadCount
+
+Name                          ThreadCount
+Type                          int
+Readable                      true
+Writable                      false
+Value                         ???

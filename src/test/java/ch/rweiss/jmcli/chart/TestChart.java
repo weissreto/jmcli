@@ -3,10 +3,6 @@ package ch.rweiss.jmcli.chart;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
@@ -25,7 +21,6 @@ import ch.rweiss.terminal.Position;
 public class TestChart
 {
   private static final int OUT_WIDTH = 120;
-  private static final char[] BUFFER = new char[1024];
   private static final Pattern TIME = Pattern.compile("\\d?\\d:\\d\\d:\\d\\d( (PM|AM))? ");
   @RegisterExtension
   public CommandTester tester = new CommandTester(new Position(20, OUT_WIDTH));
@@ -161,7 +156,7 @@ public class TestChart
   
   private void assertChart(String referenceFile) throws IOException
   {
-    String reference = readReference(referenceFile);
+    String reference = CommandTester.readReference(TestChart.class, referenceFile);
     String testee = tester.stdOut();
     testee = normalizeTime(testee);
     testee = normalizeValues(testee);
@@ -214,29 +209,5 @@ public class TestChart
       return line.substring(0, OUT_WIDTH);
     }
     return line + StringUtils.repeat(' ', OUT_WIDTH-line.length());
-  }
-
-  private static String readReference(String referenceFile) throws IOException
-  {
-    try (InputStream is = TestChart.class.getResourceAsStream(referenceFile))
-    {
-      return readReference(is);
-    }
-  }
-
-  public static String readReference(InputStream inputStream) throws IOException
-  {
-    StringBuilder builder = new StringBuilder();
-    try (Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8))
-    {
-      int characters = 0;
-      while ((characters = reader.read(BUFFER, 0, BUFFER.length)) > 0) 
-      {
-        builder.append(BUFFER, 0, characters);
-      }
-    }
-    String reference = builder.toString();
-    return reference.replace("\r\n", "\n");
-    
   }
 }

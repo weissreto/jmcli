@@ -3,7 +3,11 @@ package ch.rweiss.jmcli;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -24,6 +28,9 @@ public class CommandTester implements BeforeEachCallback, AfterEachCallback
   private PrintStream originalStdErr;
   private ByteArrayOutputStream stdErr;
   private Position maxTerminalPosition;
+  
+  private static final char[] BUFFER = new char[1024];
+
 
   public CommandTester()
   {
@@ -87,5 +94,28 @@ public class CommandTester implements BeforeEachCallback, AfterEachCallback
         .map(String::trim)
         .collect(Collectors.joining("\n"));
     return StringUtils.stripEnd(trimmedDump, null);
+  }
+
+  public static String readReference(Class<?> source, String referenceFile) throws IOException
+  {
+    try (InputStream is = source.getResourceAsStream(referenceFile))
+    {
+      return readReference(is);
+    }
+  }
+
+  public static String readReference(InputStream inputStream) throws IOException
+  {
+    StringBuilder builder = new StringBuilder();
+    try (Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8))
+    {
+      int characters = 0;
+      while ((characters = reader.read(BUFFER, 0, BUFFER.length)) > 0) 
+      {
+        builder.append(BUFFER, 0, characters);
+      }
+    }
+    String reference = builder.toString();
+    return reference.replace("\r\n", "\n");    
   }
 }

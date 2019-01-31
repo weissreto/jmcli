@@ -1,5 +1,7 @@
 package ch.rweiss.jmcli.info;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -39,6 +41,11 @@ public final class InfoOperation extends AbstractJmxExecutor
       new InfoOperation(this).execute();
     }
   }
+
+  private static final Comparator<MOperation> COMPERATOR = Comparator
+      .comparing(MOperation::name)
+      .thenComparing(operation->operation.parameters().size())
+      .thenComparing(MOperation::signature);
   
   private WildcardFilters operationFilters;
   private MBeanFilter beanFilters;
@@ -65,6 +72,7 @@ public final class InfoOperation extends AbstractJmxExecutor
       if (!operations.isEmpty())
       {
         beanTitle.printBeanNameTitle(bean);
+        Collections.sort(operations, COMPERATOR);
         for (MOperation op : operations)
         {
           print(op);

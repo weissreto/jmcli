@@ -1,0 +1,249 @@
+
+Operation Info
+
+java.lang:type=Threading
+
+dumpAllThreads
+
+dumpAllThreads
+
+Name                          dumpAllThreads
+Signature                     javax.management.openmbean.CompositeData[] dumpAllThreads(boolean p0, boolean p1)
+Impact                        UNKNOWN
+Return Type                   javax.management.openmbean.CompositeData[]
+
+Parameter                     Type                                         Description
+
+p0                            boolean                                      p0
+
+p1                            boolean                                      p1
+
+
+dumpAllThreads
+
+dumpAllThreads
+
+Name                          dumpAllThreads
+Signature                     javax.management.openmbean.CompositeData[] dumpAllThreads(boolean p0, boolean p1, int p2)
+Impact                        UNKNOWN
+Return Type                   javax.management.openmbean.CompositeData[]
+
+Parameter                     Type                                         Description
+
+p0                            boolean                                      p0
+
+p1                            boolean                                      p1
+
+p2                            int                                          p2
+
+
+findDeadlockedThreads
+
+findDeadlockedThreads
+
+Name                          findDeadlockedThreads
+Signature                     long[] findDeadlockedThreads()
+Impact                        UNKNOWN
+Return Type                   long[]
+
+findMonitorDeadlockedThreads
+
+findMonitorDeadlockedThreads
+
+Name                          findMonitorDeadlockedThreads
+Signature                     long[] findMonitorDeadlockedThreads()
+Impact                        UNKNOWN
+Return Type                   long[]
+
+getThreadAllocatedBytes
+
+getThreadAllocatedBytes
+
+Name                          getThreadAllocatedBytes
+Signature                     long getThreadAllocatedBytes(long p0)
+Impact                        UNKNOWN
+Return Type                   long
+
+Parameter                     Type                                         Description
+
+p0                            long                                         p0
+
+
+getThreadAllocatedBytes
+
+getThreadAllocatedBytes
+
+Name                          getThreadAllocatedBytes
+Signature                     long[] getThreadAllocatedBytes(long[] p0)
+Impact                        UNKNOWN
+Return Type                   long[]
+
+Parameter                     Type                                         Description
+
+p0                            long[]                                       p0
+
+
+getThreadCpuTime
+
+getThreadCpuTime
+
+Name                          getThreadCpuTime
+Signature                     long getThreadCpuTime(long p0)
+Impact                        UNKNOWN
+Return Type                   long
+
+Parameter                     Type                                         Description
+
+p0                            long                                         p0
+
+
+getThreadCpuTime
+
+getThreadCpuTime
+
+Name                          getThreadCpuTime
+Signature                     long[] getThreadCpuTime(long[] p0)
+Impact                        UNKNOWN
+Return Type                   long[]
+
+Parameter                     Type                                         Description
+
+p0                            long[]                                       p0
+
+
+getThreadInfo
+
+getThreadInfo
+
+Name                          getThreadInfo
+Signature                     javax.management.openmbean.CompositeData getThreadInfo(long p0)
+Impact                        UNKNOWN
+Return Type                   javax.management.openmbean.CompositeData
+
+Parameter                     Type                                         Description
+
+p0                            long                                         p0
+
+
+getThreadInfo
+
+getThreadInfo
+
+Name                          getThreadInfo
+Signature                     javax.management.openmbean.CompositeData[] getThreadInfo(long[] p0)
+Impact                        UNKNOWN
+Return Type                   javax.management.openmbean.CompositeData[]
+
+Parameter                     Type                                         Description
+
+p0                            long[]                                       p0
+
+
+getThreadInfo
+
+getThreadInfo
+
+Name                          getThreadInfo
+Signature                     javax.management.openmbean.CompositeData getThreadInfo(long p0, int p1)
+Impact                        UNKNOWN
+Return Type                   javax.management.openmbean.CompositeData
+
+Parameter                     Type                                         Description
+
+p0                            long                                         p0
+
+p1                            int                                          p1
+
+
+getThreadInfo
+
+getThreadInfo
+
+Name                          getThreadInfo
+Signature                     javax.management.openmbean.CompositeData[] getThreadInfo(long[] p0, int p1)
+Impact                        UNKNOWN
+Return Type                   javax.management.openmbean.CompositeData[]
+
+Parameter                     Type                                         Description
+
+p0                            long[]                                       p0
+
+p1                            int                                          p1
+
+
+getThreadInfo
+
+getThreadInfo
+
+Name                          getThreadInfo
+Signature                     javax.management.openmbean.CompositeData[] getThreadInfo(long[] p0, boolean p1, boolean p
+2)
+Impact                        UNKNOWN
+Return Type                   javax.management.openmbean.CompositeData[]
+
+Parameter                     Type                                         Description
+
+p0                            long[]                                       p0
+
+p1                            boolean                                      p1
+
+p2                            boolean                                      p2
+
+
+getThreadInfo
+
+getThreadInfo
+
+Name                          getThreadInfo
+Signature                     javax.management.openmbean.CompositeData[] getThreadInfo(long[] p0, boolean p1, boolean p
+2, int p3)
+Impact                        UNKNOWN
+Return Type                   javax.management.openmbean.CompositeData[]
+
+Parameter                     Type                                         Description
+
+p0                            long[]                                       p0
+
+p1                            boolean                                      p1
+
+p2                            boolean                                      p2
+
+p3                            int                                          p3
+
+
+getThreadUserTime
+
+getThreadUserTime
+
+Name                          getThreadUserTime
+Signature                     long getThreadUserTime(long p0)
+Impact                        UNKNOWN
+Return Type                   long
+
+Parameter                     Type                                         Description
+
+p0                            long                                         p0
+
+
+getThreadUserTime
+
+getThreadUserTime
+
+Name                          getThreadUserTime
+Signature                     long[] getThreadUserTime(long[] p0)
+Impact                        UNKNOWN
+Return Type                   long[]
+
+Parameter                     Type                                         Description
+
+p0                            long[]                                       p0
+
+
+resetPeakThreadCount
+
+resetPeakThreadCount
+
+Name                          resetPeakThreadCount
+Signature                     void resetPeakThreadCount()
+Impact                        UNKNOWN
+Return Type                   void
