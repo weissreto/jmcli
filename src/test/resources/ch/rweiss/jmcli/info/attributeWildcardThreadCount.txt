@@ -3,21 +3,21 @@ Attribute Info
 
 java.lang:type=Threading
 
-PeakThreadCount
-
-PeakThreadCount
-
-Name                          PeakThreadCount
-Type                          int
-Readable                      true
-Writable                      false
-Value                         ???
-
 DaemonThreadCount
 
 DaemonThreadCount
 
 Name                          DaemonThreadCount
+Type                          int
+Readable                      true
+Writable                      false
+Value                         ???
+
+PeakThreadCount
+
+PeakThreadCount
+
+Name                          PeakThreadCount
 Type                          int
 Readable                      true
 Writable                      false

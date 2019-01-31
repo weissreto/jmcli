@@ -42,7 +42,7 @@ public final class InfoOperation extends AbstractJmxExecutor
     }
   }
 
-  private static final Comparator<MOperation> COMPERATOR = Comparator
+  static final Comparator<MOperation> COMPARATOR = Comparator
       .comparing(MOperation::name)
       .thenComparing(operation->operation.parameters().size())
       .thenComparing(MOperation::signature);
@@ -72,7 +72,7 @@ public final class InfoOperation extends AbstractJmxExecutor
       if (!operations.isEmpty())
       {
         beanTitle.printBeanNameTitle(bean);
-        Collections.sort(operations, COMPERATOR);
+        Collections.sort(operations, COMPARATOR);
         for (MOperation op : operations)
         {
           print(op);

@@ -9,39 +9,39 @@ Name                          java.lang:type=Threading
 Type                          com.sun.management.internal.HotSpotThreadImpl
 
 Attributes:
+AllThreadIds                  long[]
+CurrentThreadCpuTime          long
+CurrentThreadCpuTimeSupported boolean
+CurrentThreadUserTime         long
+DaemonThreadCount             int
+ObjectMonitorUsageSupported   boolean
+ObjectName                    javax.management.ObjectName
+PeakThreadCount               int
+SynchronizerUsageSupported    boolean
 ThreadAllocatedMemoryEnabled  boolean
 ThreadAllocatedMemorySuppo... boolean
+ThreadContentionMonitoring... boolean
+ThreadContentionMonitoring... boolean
 ThreadCount                   int
-TotalStartedThreadCount       long
-AllThreadIds                  long[]
-ThreadContentionMonitoring... boolean
-CurrentThreadCpuTime          long
-CurrentThreadUserTime         long
-ThreadCpuTimeSupported        boolean
 ThreadCpuTimeEnabled          boolean
-ThreadContentionMonitoring... boolean
-CurrentThreadCpuTimeSupported boolean
-ObjectMonitorUsageSupported   boolean
-SynchronizerUsageSupported    boolean
-PeakThreadCount               int
-DaemonThreadCount             int
-ObjectName                    javax.management.ObjectName
+ThreadCpuTimeSupported        boolean
+TotalStartedThreadCount       long
 
 Operations:
-getThreadCpuTime              long[] getThreadCpuTime(long[] p0)
-getThreadCpuTime              long getThreadCpuTime(long p0)
-getThreadUserTime             long[] getThreadUserTime(long[] p0)
-getThreadUserTime             long getThreadUserTime(long p0)
-getThreadAllocatedBytes       long[] getThreadAllocatedBytes(long[] p0)
-getThreadAllocatedBytes       long getThreadAllocatedBytes(long p0)
-getThreadInfo                 javax.management.openmbean.CompositeData getThreadInfo(long p0, int p1)
-getThreadInfo                 javax.management.openmbean.CompositeData[] getThreadInfo(long[] p0, boolean p1, boole...
-getThreadInfo                 javax.management.openmbean.CompositeData[] getThreadInfo(long[] p0, boolean p1, boole...
-getThreadInfo                 javax.management.openmbean.CompositeData[] getThreadInfo(long[] p0)
-getThreadInfo                 javax.management.openmbean.CompositeData getThreadInfo(long p0)
-getThreadInfo                 javax.management.openmbean.CompositeData[] getThreadInfo(long[] p0, int p1)
-findMonitorDeadlockedThreads  long[] findMonitorDeadlockedThreads()
-resetPeakThreadCount          void resetPeakThreadCount()
-findDeadlockedThreads         long[] findDeadlockedThreads()
 dumpAllThreads                javax.management.openmbean.CompositeData[] dumpAllThreads(boolean p0, boolean p1)
 dumpAllThreads                javax.management.openmbean.CompositeData[] dumpAllThreads(boolean p0, boolean p1, int...
+findDeadlockedThreads         long[] findDeadlockedThreads()
+findMonitorDeadlockedThreads  long[] findMonitorDeadlockedThreads()
+getThreadAllocatedBytes       long getThreadAllocatedBytes(long p0)
+getThreadAllocatedBytes       long[] getThreadAllocatedBytes(long[] p0)
+getThreadCpuTime              long getThreadCpuTime(long p0)
+getThreadCpuTime              long[] getThreadCpuTime(long[] p0)
+getThreadInfo                 javax.management.openmbean.CompositeData getThreadInfo(long p0)
+getThreadInfo                 javax.management.openmbean.CompositeData[] getThreadInfo(long[] p0)
+getThreadInfo                 javax.management.openmbean.CompositeData getThreadInfo(long p0, int p1)
+getThreadInfo                 javax.management.openmbean.CompositeData[] getThreadInfo(long[] p0, int p1)
+getThreadInfo                 javax.management.openmbean.CompositeData[] getThreadInfo(long[] p0, boolean p1, boole...
+getThreadInfo                 javax.management.openmbean.CompositeData[] getThreadInfo(long[] p0, boolean p1, boole...
+getThreadUserTime             long getThreadUserTime(long p0)
+getThreadUserTime             long[] getThreadUserTime(long[] p0)
+resetPeakThreadCount          void resetPeakThreadCount()

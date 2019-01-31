@@ -3,126 +3,6 @@ Attribute Info
 
 java.lang:type=Threading
 
-ThreadAllocatedMemorySupported
-
-ThreadAllocatedMemorySupported
-
-Name                          ThreadAllocatedMemorySupported
-Type                          boolean
-Readable                      true
-Writable                      false
-Value                         ???
-
-ThreadAllocatedMemoryEnabled
-
-ThreadAllocatedMemoryEnabled
-
-Name                          ThreadAllocatedMemoryEnabled
-Type                          boolean
-Readable                      true
-Writable                      true
-Value                         ???
-
-ThreadContentionMonitoringSupported
-
-ThreadContentionMonitoringSupported
-
-Name                          ThreadContentionMonitoringSupported
-Type                          boolean
-Readable                      true
-Writable                      false
-Value                         ???
-
-CurrentThreadCpuTimeSupported
-
-CurrentThreadCpuTimeSupported
-
-Name                          CurrentThreadCpuTimeSupported
-Type                          boolean
-Readable                      true
-Writable                      false
-Value                         ???
-
-ObjectMonitorUsageSupported
-
-ObjectMonitorUsageSupported
-
-Name                          ObjectMonitorUsageSupported
-Type                          boolean
-Readable                      true
-Writable                      false
-Value                         ???
-
-SynchronizerUsageSupported
-
-SynchronizerUsageSupported
-
-Name                          SynchronizerUsageSupported
-Type                          boolean
-Readable                      true
-Writable                      false
-Value                         ???
-
-ThreadContentionMonitoringEnabled
-
-ThreadContentionMonitoringEnabled
-
-Name                          ThreadContentionMonitoringEnabled
-Type                          boolean
-Readable                      true
-Writable                      true
-Value                         ???
-
-ThreadCpuTimeEnabled
-
-ThreadCpuTimeEnabled
-
-Name                          ThreadCpuTimeEnabled
-Type                          boolean
-Readable                      true
-Writable                      true
-Value                         ???
-
-PeakThreadCount
-
-PeakThreadCount
-
-Name                          PeakThreadCount
-Type                          int
-Readable                      true
-Writable                      false
-Value                         ???
-
-DaemonThreadCount
-
-DaemonThreadCount
-
-Name                          DaemonThreadCount
-Type                          int
-Readable                      true
-Writable                      false
-Value                         ???
-
-ThreadCount
-
-ThreadCount
-
-Name                          ThreadCount
-Type                          int
-Readable                      true
-Writable                      false
-Value                         ???
-
-TotalStartedThreadCount
-
-TotalStartedThreadCount
-
-Name                          TotalStartedThreadCount
-Type                          long
-Readable                      true
-Writable                      false
-Value                         ???
-
 AllThreadIds
 
 AllThreadIds
@@ -143,6 +23,16 @@ Readable                      true
 Writable                      false
 Value                         ???
 
+CurrentThreadCpuTimeSupported
+
+CurrentThreadCpuTimeSupported
+
+Name                          CurrentThreadCpuTimeSupported
+Type                          boolean
+Readable                      true
+Writable                      false
+Value                         ???
+
 CurrentThreadUserTime
 
 CurrentThreadUserTime
@@ -151,6 +41,116 @@ Name                          CurrentThreadUserTime
 Type                          long
 Readable                      true
 Writable                      false
+Value                         ???
+
+DaemonThreadCount
+
+DaemonThreadCount
+
+Name                          DaemonThreadCount
+Type                          int
+Readable                      true
+Writable                      false
+Value                         ???
+
+ObjectMonitorUsageSupported
+
+ObjectMonitorUsageSupported
+
+Name                          ObjectMonitorUsageSupported
+Type                          boolean
+Readable                      true
+Writable                      false
+Value                         ???
+
+ObjectName
+
+ObjectName
+
+Name                          ObjectName
+Type                          javax.management.ObjectName
+Readable                      true
+Writable                      false
+Value                         ???
+
+PeakThreadCount
+
+PeakThreadCount
+
+Name                          PeakThreadCount
+Type                          int
+Readable                      true
+Writable                      false
+Value                         ???
+
+SynchronizerUsageSupported
+
+SynchronizerUsageSupported
+
+Name                          SynchronizerUsageSupported
+Type                          boolean
+Readable                      true
+Writable                      false
+Value                         ???
+
+ThreadAllocatedMemoryEnabled
+
+ThreadAllocatedMemoryEnabled
+
+Name                          ThreadAllocatedMemoryEnabled
+Type                          boolean
+Readable                      true
+Writable                      true
+Value                         ???
+
+ThreadAllocatedMemorySupported
+
+ThreadAllocatedMemorySupported
+
+Name                          ThreadAllocatedMemorySupported
+Type                          boolean
+Readable                      true
+Writable                      false
+Value                         ???
+
+ThreadContentionMonitoringEnabled
+
+ThreadContentionMonitoringEnabled
+
+Name                          ThreadContentionMonitoringEnabled
+Type                          boolean
+Readable                      true
+Writable                      true
+Value                         ???
+
+ThreadContentionMonitoringSupported
+
+ThreadContentionMonitoringSupported
+
+Name                          ThreadContentionMonitoringSupported
+Type                          boolean
+Readable                      true
+Writable                      false
+Value                         ???
+
+ThreadCount
+
+ThreadCount
+
+Name                          ThreadCount
+Type                          int
+Readable                      true
+Writable                      false
+Value                         ???
+
+ThreadCpuTimeEnabled
+
+ThreadCpuTimeEnabled
+
+Name                          ThreadCpuTimeEnabled
+Type                          boolean
+Readable                      true
+Writable                      true
 Value                         ???
 
 ThreadCpuTimeSupported
@@ -163,12 +163,12 @@ Readable                      true
 Writable                      false
 Value                         ???
 
-ObjectName
+TotalStartedThreadCount
 
-ObjectName
+TotalStartedThreadCount
 
-Name                          ObjectName
-Type                          javax.management.ObjectName
+Name                          TotalStartedThreadCount
+Type                          long
 Readable                      true
 Writable                      false
 Value                         ???

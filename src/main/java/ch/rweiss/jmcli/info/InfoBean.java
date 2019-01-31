@@ -1,5 +1,8 @@
 package ch.rweiss.jmcli.info;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import ch.rweiss.jmcli.AbstractBeanCommand;
@@ -90,8 +93,9 @@ public class InfoBean extends AbstractJmxExecutor
     if (!bean.attributes().isEmpty())
     {
       ui().printSubTitle("Attributes:");
-
-      attributes.setRows(bean.attributes());
+      List<MAttribute> attribs = bean.attributes();
+      Collections.sort(attribs, InfoAttribute.COMPARATOR);
+      attributes.setRows(attribs);
       attributes.print();
       ui().printEmptyLine();
     }
@@ -102,7 +106,9 @@ public class InfoBean extends AbstractJmxExecutor
     if (!bean.operations().isEmpty())
     {
       ui().printSubTitle("Operations:");
-      operations.setRows(bean.operations());
+      List<MOperation> ops = bean.operations();
+      Collections.sort(ops, InfoOperation.COMPARATOR);
+      operations.setRows(ops);
       operations.print();
     }
   }

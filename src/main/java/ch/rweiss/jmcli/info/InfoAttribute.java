@@ -1,5 +1,7 @@
 package ch.rweiss.jmcli.info;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -41,6 +43,8 @@ public class InfoAttribute extends AbstractJmxExecutor
     }
  
   }
+  
+  static final Comparator<MAttribute> COMPARATOR = Comparator.comparing(MAttribute::name); 
   private Table<MAttribute> description = declareDescriptionTable();
   private Table<Pair<String, StyledText>> properties = declarePropertiesTable();
   private MBeanFilter beanFilter;
@@ -64,6 +68,7 @@ public class InfoAttribute extends AbstractJmxExecutor
       if (!attributes.isEmpty())
       {
         beanTitle.printBeanNameTitle(bean);
+        Collections.sort(attributes, COMPARATOR);
         for (MAttribute attr : attributes)
         {
           print(attr);
